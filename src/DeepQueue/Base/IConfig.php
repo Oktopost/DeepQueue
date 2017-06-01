@@ -11,7 +11,7 @@ use DeepQueue\Enums\Policy;
  * @property float			$MinimalDelay
  * @property float			$MaximalDelay
  * @property float			$DefaultDelay
- * @property int            $MaxBulkSize
+ * @property int			$MaxBulkSize
  */
 interface IConfig
 {
