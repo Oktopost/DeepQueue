@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Base\Manager;
+namespace DeepQueue\Base;
 
 
 /**

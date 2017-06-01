@@ -1,8 +1,8 @@
 <?php
-namespace DeepQueue\Base\Manager;
+namespace DeepQueue\Base;
 
 
-use DeepQueue\Base\Stream\IQueueStream;
+use DeepQueue\Base\Queue\IQueue;
 use DeepQueue\Enums\QueueState;
 
 
@@ -12,8 +12,8 @@ use DeepQueue\Enums\QueueState;
  * @property string|QueueState	$State
  * @property IConfig			$Config
  */
-interface IQueue
+interface IQueueObject
 {
-	public function getStream(): IQueueStream;
+	public function getStream(): IQueue;
 	public function getMetaData(): IMetaData;
 }

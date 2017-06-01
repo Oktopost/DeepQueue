@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Base\Connector;
+namespace DeepQueue\Base\Queue\Connector;
 
 
 /**

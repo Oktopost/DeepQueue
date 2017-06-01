@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Base\Stream;
+namespace DeepQueue\Base\Queue;
 
 
 use DeepQueue\Workload;

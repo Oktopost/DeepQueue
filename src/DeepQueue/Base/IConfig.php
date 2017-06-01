@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Base\Manager;
+namespace DeepQueue\Base;
 
 
 use DeepQueue\Enums\Policy;
@@ -11,6 +11,7 @@ use DeepQueue\Enums\Policy;
  * @property float			$MinimalDelay
  * @property float			$MaximalDelay
  * @property float			$DefaultDelay
+ * @property int            $MaxBulkSize
  */
 interface IConfig
 {

@@ -2,10 +2,10 @@
 namespace DeepQueue\Exceptions;
 
 
-class Codes
+class CodeCategory
 {
 	use \Objection\TConstsClass;
 	
 	
-	public const UNKNOWN	= '-1';
+	public const VALIDATION_CATEGORY   = 10000;
 }

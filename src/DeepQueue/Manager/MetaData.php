@@ -2,7 +2,7 @@
 namespace DeepQueue\Manager;
 
 
-use DeepQueue\Base\Manager\IMetaData;
+use DeepQueue\Base\IMetaData;
 
 use Objection\LiteSetup;
 use Objection\LiteObject;

@@ -1,10 +1,10 @@
 <?php
-namespace DeepQueue\Base\Connector;
+namespace DeepQueue\Base\Queue\Connector;
 
 
-use DeepQueue\Base\Stream\IDequeue;
-use DeepQueue\Base\Stream\IEnqueue;
-use DeepQueue\Base\Stream\IQueueStream;
+use DeepQueue\Base\Queue\IQueue;
+use DeepQueue\Base\Queue\IDequeue;
+use DeepQueue\Base\Queue\IEnqueue;
 
 
 /**
@@ -12,7 +12,8 @@ use DeepQueue\Base\Stream\IQueueStream;
  */
 trait TConnector
 {
-	public abstract function getStream(string $name): IQueueStream;
+	public abstract function getStream(string $name): IQueue;
+	
 	
 	public function getEnqueue(string $name): IEnqueue
 	{

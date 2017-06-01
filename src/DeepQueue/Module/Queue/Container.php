@@ -1,15 +1,15 @@
 <?php
-namespace DeepQueue\Module\Connector;
+namespace DeepQueue\Module\Queue;
 
 
-use DeepQueue\Base\Stream\IQueueStream;
-use DeepQueue\Base\Connector\IConnector;
-use DeepQueue\Base\Connector\IConnectorsContainer;
+use DeepQueue\Base\Queue\IQueue;
+use DeepQueue\Base\Queue\Connector\IConnector;
+use DeepQueue\Base\Queue\Connector\IConnectorsContainer;
 
 
 class Container implements IConnectorsContainer
 {
-	use \DeepQueue\Base\Connector\TConnector;
+	use \DeepQueue\Base\Queue\Connector\TConnector;
 
 	
 	private const CACHE_SIZE	= 32;
@@ -18,7 +18,7 @@ class Container implements IConnectorsContainer
 	/** @var IConnector */
 	private $connector;
 	
-	/** @var IQueueStream[] */
+	/** @var IQueue[] */
 	private $container;
 	
 	
@@ -29,7 +29,7 @@ class Container implements IConnectorsContainer
 	}
 	
 
-	public function getStream(string $name): IQueueStream
+	public function getStream(string $name): IQueue
 	{
 		if (!isset($this->container[$name]))
 		{
