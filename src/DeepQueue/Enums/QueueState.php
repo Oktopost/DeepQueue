@@ -23,11 +23,6 @@ class QueueState
 	public const STOPPED	= 'stopped';
 
 	/**
-	 * Queue is migrating from one type to another.
-	 */
-	public const MIGRATING	= 'migrating';
-
-	/**
 	 * Queue can not be started again.
 	 */
 	public const DELETED	= 'deleted';

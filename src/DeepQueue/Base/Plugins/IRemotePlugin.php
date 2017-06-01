@@ -2,8 +2,8 @@
 namespace DeepQueue\Base\Plugins;
 
 
-use DeepQueue\Base\Plugins\RemoteElements\IMetaDataDAO;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
+use DeepQueue\Base\Plugins\RemoteElements\IMetaDataDAO;
 
 
 interface IRemotePlugin

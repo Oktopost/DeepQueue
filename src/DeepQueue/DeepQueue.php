@@ -2,74 +2,39 @@
 namespace DeepQueue;
 
 
+use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\Queue\IQueue;
-use DeepQueue\Base\Queue\Connector\IConnector;
-use DeepQueue\Base\Queue\Connector\IConnectorsContainer;
-use DeepQueue\Base\Plugins\IRemotePlugin;
-use DeepQueue\Base\Plugins\IManagerPlugin;
-use DeepQueue\Base\Helpers\IQueueBuilder;
+use DeepQueue\Module\Queue\Queue;
 
 
-class DeepQueue implements IConnector
+class DeepQueue
 {
-	use \DeepQueue\Base\Queue\Connector\TConnector;
-	
-	
-	/** @var IRemotePlugin */
-	private $remotePlugin;
-	
-	/** @var IManagerPlugin */
-	private $managerPlugin;
-	
-	/** @var IConnectorsContainer */
-	private $container;
-	
-	/** @var IQueueBuilder */
-	private $builder;
+	/** @var DeepQueueConfig */
+	private $config;
 	
 	
 	public function __construct()
 	{
-		$this->builder = Scope::skeleton(IQueueBuilder::class);
-		
-		$this->container = Scope::skeleton(IConnectorsContainer::class);
-		$this->container->setConnector($this->builder);
+		$this->config = new DeepQueueConfig();
 	}
 	
 	
-	public function remote(): IRemotePlugin
+	public function config(): IDeepQueueConfig
 	{
-		return $this->remotePlugin;
+		return $this->config();
 	}
 	
-	public function manager(): IManagerPlugin
+	public function get(string $name): IQueue
 	{
-		return $this->managerPlugin;
-	}
-	
-	
-	public function setRemotePlugin(IRemotePlugin $plugin): DeepQueue
-	{
-		$this->builder->setRemotePlugin($plugin);
-		$this->remotePlugin = $plugin;
-		return $this;
-	}
-	
-	public function setManagerPlugin(IManagerPlugin $plugin): DeepQueue
-	{
-		$this->builder->setQueueDAO($plugin->getQueueDAO());
-		$this->managerPlugin = $plugin;
-		return $this;
-	}
-	
-	public function getStream(string $name): IQueue
-	{
-		return $this->container->getStream($name);
+		$remoteQueue = $this->config->getConnectorProvider()->getRemoteQueue($name);
+		return new Queue($remoteQueue);
 	}
 	
 	public function getQueueObject(string $name): ?IQueueObject
 	{
-		return $this->managerPlugin->getQueueDAO()->loadIfExists($name);
+		$manager = $this->config->manager();
+		$dao = $manager->getQueueDAO();
+		return $dao->loadIfExists($name);
 	}
 }

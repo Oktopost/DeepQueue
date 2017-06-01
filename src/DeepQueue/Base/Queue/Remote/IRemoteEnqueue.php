@@ -9,7 +9,7 @@ interface IRemoteEnqueue
 {
 	/**
 	 * @param Payload[] $payload
-	 * @return string[] IDs for each payload
+	 * @return ?string[] IDs for each payload
 	 */
 	public function enqueue(array $payload): array;
 }

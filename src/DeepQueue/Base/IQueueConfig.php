@@ -13,7 +13,7 @@ use DeepQueue\Enums\Policy;
  * @property float			$DefaultDelay
  * @property int			$MaxBulkSize
  */
-interface IConfig
+interface IQueueConfig
 {
 	
 }

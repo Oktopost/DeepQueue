@@ -6,6 +6,6 @@ class ValidationException extends DeepQueueException
 {
 	public function __construct($code, $message)
 	{
-		parent::__construct($message, CodeCategory::VALIDATION_CATEGORY | $code, null);
+		parent::__construct($message, CodeCategory::VALIDATION | $code, null);
 	}
 }

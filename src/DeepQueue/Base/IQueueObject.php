@@ -10,7 +10,7 @@ use DeepQueue\Enums\QueueState;
  * @property string				$ID
  * @property string				$Name
  * @property string|QueueState	$State
- * @property IConfig			$Config
+ * @property IQueueConfig		$Config
  */
 interface IQueueObject
 {
