@@ -2,11 +2,10 @@
 namespace DeepQueue\Module\Connector;
 
 
+use DeepQueue\Base\Loader\IQueueObjectLoader;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Base\Plugins\IRemotePlugin;
 use DeepQueue\Base\Connector\IConnectorBuilder;
-use DeepQueue\Base\Connector\IQueueLoaderBuilder;
-use DeepQueue\Base\Connector\Loader\IQueueLoader;
 use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
 
 
@@ -18,11 +17,11 @@ class ConnectorBuilder implements IConnectorBuilder
 	/** @var IDecoratorBuilder[] */
 	private $builders = [];
 	
-	/** @var IQueueLoaderBuilder */
-	private $loaderBuilder;
+	/** @var IQueueObjectLoader */
+	private $loader;
 	
 	
-	private function buildChain(IRemoteQueue $queue, IQueueLoader $loader): IRemoteQueue
+	private function buildChain(IRemoteQueue $queue): IRemoteQueue
 	{
 		$last = $queue;
 		
@@ -30,7 +29,7 @@ class ConnectorBuilder implements IConnectorBuilder
 		{
 			$decorator = $this->builders[$i]->build();
 			$decorator->setRemoteQueue($last);
-			$decorator->setQueueLoader($loader);
+			$decorator->setQueueLoader($this->loader);
 			$last = $decorator;
 		}
 		
@@ -43,18 +42,20 @@ class ConnectorBuilder implements IConnectorBuilder
 		$this->builders[] = $builder;
 	}
 	
-	public function setLoader(IQueueLoaderBuilder $builder): void
+	public function setLoader(IQueueObjectLoader $loader): void
 	{
-		$this->loaderBuilder = $builder;
+		$this->loader = $loader;
+	}
+	
+	public function setPlugin(IRemotePlugin $remote): void
+	{
+		$this->plugin = $remote;
 	}
 	
 	public function getRemoteQueue(string $name): IRemoteQueue
 	{
 		$remoteQueue = $this->plugin->getQueue($name);
-		$loader = $this->loaderBuilder->create($name);
 		
-		return ($this->builders ? 
-			$this->buildChain($remoteQueue, $loader) : 
-			$remoteQueue);
+		return ($this->builders ? $this->buildChain($remoteQueue) : $remoteQueue);
 	}
 }

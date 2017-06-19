@@ -4,7 +4,7 @@ namespace DeepQueue\Module\Connector\Decorators\Base;
 
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\Base\Connector\Loader\IQueueLoader;
+use DeepQueue\Base\Plugins\ManagerElements\IQueueLoader;
 
 
 trait TRemoteQueueDecorator

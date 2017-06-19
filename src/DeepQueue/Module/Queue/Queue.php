@@ -66,14 +66,14 @@ class Queue implements IQueue
 	 */
 	public function dequeue(int $count, ?float $waitSeconds = null): array
 	{
-		$res = $this->dequeueWorkload(1, $waitSeconds);
+		$res = $this->dequeueWorkload($count, $waitSeconds);
 		$payload = [];
 		
 		if ($res)
 		{
 			foreach ($res as $workload)
 			{
-				$payload[] = $workload;
+				$payload[] = $workload->Payload;
 			}
 		}
 		

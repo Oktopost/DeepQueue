@@ -6,7 +6,7 @@ use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Base\Connector\IConnectorBuilder;
 use DeepQueue\Base\Connector\IConnectorProvider;
-use DeepQueue\Base\Connector\IQueueLoaderBuilder;
+use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
 use DeepQueue\Base\Plugins\IRemotePlugin;
 use DeepQueue\Enums\QueueLoaderPolicy;
@@ -22,7 +22,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 	private $connectorBuilder;
 	
 	/** @var IQueueLoaderBuilder */
-	private $loader;
+	private $loaderBuilder;
 	
 	/** @var IRemotePlugin */
 	private $remotePlugin;
@@ -30,21 +30,38 @@ class DeepQueueConfig implements IDeepQueueConfig
 	/** @var IManagerPlugin */
 	private $managerPlugin;
 	
+	/** @var int */
+	private $queueNotExistsPolicy;
 	
-	public function __construct()
+	
+	private function createLoaderBuilder(): IQueueLoaderBuilder
+	{
+		$this->queueNotExistsPolicy = QueueLoaderPolicy::FORBIDDEN;
+		
+		$this->loaderBuilder = Scope::skeleton(IQueueLoaderBuilder::class);
+		
+		return $this->loaderBuilder;
+	}
+	
+	private function createConnectorBuilder(string $name): IConnectorBuilder
 	{
 		$this->connectorBuilder = Scope::skeleton(IConnectorBuilder::class);
+		
+		$this->connectorBuilder->setLoader(
+			$this->createLoaderBuilder()->getRemoteLoader($name, $this->queueNotExistsPolicy));
+		
 		$this->addConnectorBuilder(
 			QueueStateDecorator::class
 		);
-	}
-	
-	
-	public function getConnectorProvider(): IConnectorProvider
-	{
+		
 		return $this->connectorBuilder;
 	}
 	
+	
+	public function getConnectorProvider(string $name): IConnectorProvider
+	{
+		return $this->createConnectorBuilder($name);
+	}
 	
 	/**
 	 * @param string|IDecoratorBuilder[] $builder
@@ -80,7 +97,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 	 */
 	public function setQueueNotExistsPolicy(int $policy)
 	{
-		
+		$this->queueNotExistsPolicy = $policy;
 	}
 	
 	public function remote(): IRemotePlugin

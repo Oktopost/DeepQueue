@@ -1,17 +1,18 @@
 <?php
-namespace DeepQueue\Module\Connector;
+namespace DeepQueue\Module\Connector\LoaderDecorators;
 
 
 use DeepQueue\Base\IQueueObject;
-use DeepQueue\Base\Connector\Loader\IQueueLoader;
+use DeepQueue\Base\Loader\IQueueObjectLoader;
+use DeepQueue\Base\Loader\Decorator\IQueueLoaderDecorator;
 
 
-class CachedLoader implements IQueueLoader
+class CachedLoaderDecorator implements IQueueLoaderDecorator
 {
 	private $timeoutSec;
 	private $cachedTime = -1;
 	
-	/** @var IQueueLoader */
+	/** @var IQueueObjectLoader */
 	private $loader;
 	
 	/** @var IQueueObject|null */
@@ -27,14 +28,18 @@ class CachedLoader implements IQueueLoader
 	}
 	
 	
-	public function __construct(IQueueLoader $child, float $timeoutSec = 5.0)
+	public function __construct(float $timeoutSec = 5.0)
 	{
-		$this->loader = $child;
 		$this->timeoutSec = $timeoutSec;
 	}
-	
-	
-	public function load(): IQueueObject
+
+	public function setChildLoader(IQueueObjectLoader $loader): void
+	{
+		$this->loader = $loader;
+	}
+
+
+	public function load(): ?IQueueObject
 	{
 		$this->checkIfExpired();
 		

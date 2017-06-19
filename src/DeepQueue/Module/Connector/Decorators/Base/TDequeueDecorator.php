@@ -2,7 +2,7 @@
 namespace DeepQueue\Module\Connector\Decorators\Base;
 
 
-use DeepQueue\Payload;
+use DeepQueue\Workload;
 
 
 trait TDequeueDecorator
@@ -11,11 +11,11 @@ trait TDequeueDecorator
 	
 	
 	/**
-	 * @param Payload[] $payload
-	 * @return string[] IDs for each payload
+	 * @return Workload[]
 	 */
-	public function enqueue(array $payload): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null): array
 	{
-		return $this->enqueue($payload);
+		return $this->getRemoteQueue()->dequeueWorkload($count, $waitSeconds);
 	}
+	
 }

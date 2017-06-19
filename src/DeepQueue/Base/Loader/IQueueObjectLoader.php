@@ -1,11 +1,11 @@
 <?php
-namespace DeepQueue\Base\Connector\Loader;
+namespace DeepQueue\Base\Loader;
 
 
 use DeepQueue\Base\IQueueObject;
 
 
-interface IQueueLoader
+interface IQueueObjectLoader
 {
 	public function load(): ?IQueueObject;
 	

@@ -2,9 +2,9 @@
 namespace DeepQueue\Module\Connector\Decorators;
 
 
-use DeepQueue\Enums\QueueState;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
+use DeepQueue\Enums\QueueState;
 use DeepQueue\Base\Connector\Decorator\IRemoteQueueDecorator;
 
 
@@ -43,7 +43,7 @@ class QueueStateDecorator implements IRemoteQueueDecorator
 			$queue = $this->requireQueue();
 		}
 		
-		return $this->dequeueWorkload($count, $remainingMS);
+		return $this->getRemoteQueue()->dequeueWorkload($count, $remainingMS);
 	}
 	
 	/**

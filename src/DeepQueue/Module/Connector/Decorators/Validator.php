@@ -9,6 +9,7 @@ use DeepQueue\Base\Connector\Decorator\IRemoteQueueDecorator;
 class Validator implements IRemoteQueueDecorator
 {
 	use \DeepQueue\Module\Connector\Decorators\Base\TEnqueueDecorator;
+	use \DeepQueue\Module\Connector\Decorators\Base\TDequeueDecorator;
 	
 	/**
 	 * @param Payload[] $payload
