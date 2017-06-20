@@ -12,7 +12,7 @@ class InMemoryQueueConnector implements IInMemoryQueueConnector
 {
 	/**
 	 * @autoload
-	 * @var \DeepQueue\Plugins\InMemoryManager\Base\Storage\IInMemoryStorage
+	 * @var \DeepQueue\Plugins\InMemoryRemote\Base\IInMemoryRemoteStorage
 	 */
 	private $storage;
 	

@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryManager\Base\Storage;
+namespace DeepQueue\Plugins\InMemoryRemote\Base;
 
 
 use DeepQueue\Base\IQueueObject;
@@ -8,11 +8,8 @@ use DeepQueue\Base\IQueueObject;
 /**
  * @skeleton
  */
-interface IInMemoryStorage
+interface IInMemoryRemoteStorage
 {
-	public function pushQueue(IQueueObject $queue): IQueueObject;
-	public function pullQueue(string $name): ?IQueueObject;
-	
 	public function pushPayloads(string $queueName, array $payloads): array;
 	public function pullPayloads(string $queueName, int $count): array;
 	

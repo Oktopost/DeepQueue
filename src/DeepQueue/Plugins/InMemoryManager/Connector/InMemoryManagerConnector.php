@@ -13,7 +13,7 @@ class InMemoryManagerConnector implements IInMemoryManagerConnector
 {
 	/**
 	 * @autoload
-	 * @var \DeepQueue\Plugins\InMemoryManager\Base\Storage\IInMemoryStorage
+	 * @var \DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerStorage
 	 */
 	private $storage;
 	
