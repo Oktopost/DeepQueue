@@ -2,20 +2,26 @@
 namespace DeepQueue\Module\Loader;
 
 
+use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Loader\IQueueObjectLoader;
-use DeepQueue\Base\Loader\IRemoteQueueObjectLoader;
+use DeepQueue\Base\Loader\Remote\IRemoteQueueObjectLoader;
 use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
-use DeepQueue\Module\Connector\LoaderDecorators\QueueObjectLoader;
 
 
-class LoaderBuilder implements IQueueLoaderBuilder
+/**
+ * @autoload
+ */
+class QueueLoaderBuilder implements IQueueLoaderBuilder
 {
 	/** @var ILoaderDecoratorBuilder[] */
 	private $builders = [];
 	
 	/** @var IRemoteQueueObjectLoader */
-	private $loader;
+	private $remoteLoader;
+	
+	/** @var int|QueueLoaderPolicy */
+	private $newQueuePolicy = QueueLoaderPolicy::CREATE_NEW;
 	
 	
 	private function buildChain(IQueueObjectLoader $loader): IQueueObjectLoader
@@ -32,9 +38,9 @@ class LoaderBuilder implements IQueueLoaderBuilder
 		return $last;
 	}
 	
-	private function getLoader($name, $newQueuePolicy): IQueueObjectLoader
+	private function getLoader($name): IQueueObjectLoader
 	{
-		return new QueueObjectLoader($this->loader, $name, $newQueuePolicy);
+		return new QueueObjectLoader($this->remoteLoader, $name, $this->newQueuePolicy);
 	}
 	
 	public function addBuilder(ILoaderDecoratorBuilder $builder): void
@@ -44,12 +50,17 @@ class LoaderBuilder implements IQueueLoaderBuilder
 	
 	public function setRemoteLoader(IRemoteQueueObjectLoader $loader): void
 	{
-		$this->loader = $loader;
+		$this->remoteLoader = $loader;
+	}
+	
+	public function setNewQueuePolicy(int $newQueuePolicy): void
+	{
+		$this->newQueuePolicy = $newQueuePolicy;
 	}
 
-	public function getRemoteLoader(string $name, $newQueuePolicy): IQueueObjectLoader
+	public function getRemoteLoader(string $name): IQueueObjectLoader
 	{
-		$loader = $this->getLoader($name, $newQueuePolicy);
+		$loader = $this->getLoader($name);
 		
 		return ($this->builders ? $this->buildChain($loader) : $loader);
 	}

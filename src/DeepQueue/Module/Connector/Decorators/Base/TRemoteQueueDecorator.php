@@ -4,7 +4,7 @@ namespace DeepQueue\Module\Connector\Decorators\Base;
 
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\Base\Plugins\ManagerElements\IQueueLoader;
+use DeepQueue\Base\Loader\IQueueObjectLoader;
 
 
 trait TRemoteQueueDecorator
@@ -12,7 +12,7 @@ trait TRemoteQueueDecorator
 	/** @var IRemoteQueue */
 	private $_queue;
 	
-	/** @var IQueueLoader */
+	/** @var IQueueObjectLoader */
 	private $_loader;
 	
 	
@@ -37,7 +37,7 @@ trait TRemoteQueueDecorator
 		$this->_queue = $queue;
 	}
 	
-	public function setQueueLoader(IQueueLoader $loader): void
+	public function setQueueLoader(IQueueObjectLoader $loader): void
 	{
 		$this->_loader = $loader;
 	}

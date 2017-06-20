@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Module\Connector\Builder;
+namespace DeepQueue\Module\Loader\Builder;
 
 
 use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;

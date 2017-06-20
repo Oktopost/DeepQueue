@@ -4,5 +4,5 @@ namespace DeepQueue\Base\Loader;
 
 interface IQueueLoaderProvider
 {
-	public function getRemoteLoader(string $name, $newQueuePolicy): IQueueObjectLoader;
+	public function getRemoteLoader(string $name): IQueueObjectLoader;
 }

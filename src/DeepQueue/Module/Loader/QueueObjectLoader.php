@@ -1,10 +1,10 @@
 <?php
-namespace DeepQueue\Module\Connector\LoaderDecorators;
+namespace DeepQueue\Module\Loader;
 
 
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\Loader\IQueueObjectLoader;
-use DeepQueue\Base\Loader\IRemoteQueueObjectLoader;
+use DeepQueue\Base\Loader\Remote\IRemoteQueueObjectLoader;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Exceptions\QueueNotExistsException;
 

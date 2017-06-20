@@ -22,19 +22,18 @@ class DeepQueue
 	
 	public function config(): IDeepQueueConfig
 	{
-		return $this->config();
+		return $this->config;
 	}
 	
 	public function get(string $name): IQueue
 	{
-		$remoteQueue = $this->config->getConnectorProvider($name)->getRemoteQueue($name);
+		$remoteQueue = $this->config->getConnectorProvider()->getRemoteQueue($name);
 		return new Queue($remoteQueue);
 	}
 	
 	public function getQueueObject(string $name): ?IQueueObject
 	{
-		$manager = $this->config->manager();
-		$dao = $manager->getQueueDAO();
-		return $dao->loadIfExists($name);
+		$loader = $this->config->getQueueLoader($name);
+		return $loader->load();
 	}
 }

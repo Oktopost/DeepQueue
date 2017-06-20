@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "694cc1f71ee7fccaee624c5442948ded",
+    "hash": "3bfbaba127f3741ed2467ae9807e4dc3",
+    "content-hash": "acefcdd9032b93ee66b14f2116b589b2",
     "packages": [
         {
             "name": "oktopost/annotation",
@@ -43,7 +44,7 @@
                 }
             ],
             "description": "Annotations library (yes, another one)",
-            "time": "2017-05-18T10:47:28+00:00"
+            "time": "2017-05-18 10:47:28"
         },
         {
             "name": "oktopost/objection",
@@ -91,7 +92,53 @@
             ],
             "description": "Objects in PHP",
             "homepage": "https://github.com/Oktopost/Objection",
-            "time": "2016-12-06T12:39:59+00:00"
+            "time": "2016-12-06 12:39:59"
+        },
+        {
+            "name": "oktopost/serialization",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Oktopost/Serialization.git",
+                "reference": "887ef0b3b713cc1039eaf31b4c6ceb8f9444c3ae"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Oktopost/Serialization/zipball/887ef0b3b713cc1039eaf31b4c6ceb8f9444c3ae",
+                "reference": "887ef0b3b713cc1039eaf31b4c6ceb8f9444c3ae",
+                "shasum": ""
+            },
+            "require": {
+                "oktopost/objection": "^1.0",
+                "oktopost/skeleton": "^1.0",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.1",
+                "satooshi/php-coveralls": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Serialization": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alexey Puchkov",
+                    "email": "alexey@oktopost.com"
+                },
+                {
+                    "name": "Daniel Podrabinek",
+                    "email": "dpodrabinek@oktopost.com"
+                }
+            ],
+            "description": "Serialization library",
+            "time": "2017-05-24 12:40:12"
         },
         {
             "name": "oktopost/skeleton",
@@ -130,7 +177,7 @@
             ],
             "description": "Inversion of Control library",
             "homepage": "https://github.com/Oktopost/Skeleton",
-            "time": "2017-02-20T06:46:22+00:00"
+            "time": "2017-02-20 06:46:22"
         },
         {
             "name": "oktopost/squid",
@@ -170,7 +217,7 @@
             ],
             "description": "MySQL library build on top of PDO",
             "homepage": "https://github.com/Oktopost/Squid",
-            "time": "2017-03-16T14:57:48+00:00"
+            "time": "2017-03-16 14:57:48"
         },
         {
             "name": "predis/predis",
@@ -220,7 +267,7 @@
                 "predis",
                 "redis"
             ],
-            "time": "2016-06-16T16:22:20+00:00"
+            "time": "2016-06-16 16:22:20"
         }
     ],
     "packages-dev": [
@@ -276,7 +323,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2015-06-14T21:17:01+00:00"
+            "time": "2015-06-14 21:17:01"
         },
         {
             "name": "myclabs/deep-copy",
@@ -318,7 +365,7 @@
                 "object",
                 "object graph"
             ],
-            "time": "2017-04-12T18:52:22+00:00"
+            "time": "2017-04-12 18:52:22"
         },
         {
             "name": "phar-io/manifest",
@@ -373,7 +420,7 @@
                 }
             ],
             "description": "Component for reading phar.io manifest information from a PHP Archive (PHAR)",
-            "time": "2017-03-05T18:14:27+00:00"
+            "time": "2017-03-05 18:14:27"
         },
         {
             "name": "phar-io/version",
@@ -420,7 +467,7 @@
                 }
             ],
             "description": "Library for handling version information and constraints",
-            "time": "2017-03-05T17:38:23+00:00"
+            "time": "2017-03-05 17:38:23"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -474,7 +521,7 @@
                 "reflection",
                 "static analysis"
             ],
-            "time": "2015-12-27T11:43:31+00:00"
+            "time": "2015-12-27 11:43:31"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -519,7 +566,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2016-09-30T07:12:33+00:00"
+            "time": "2016-09-30 07:12:33"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -566,7 +613,7 @@
                     "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2016-11-25T06:54:22+00:00"
+            "time": "2016-11-25 06:54:22"
         },
         {
             "name": "phpspec/prophecy",
@@ -629,7 +676,7 @@
                 "spy",
                 "stub"
             ],
-            "time": "2017-03-02T20:05:34+00:00"
+            "time": "2017-03-02 20:05:34"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -693,7 +740,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-04-21T08:03:57+00:00"
+            "time": "2017-04-21 08:03:57"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -740,7 +787,7 @@
                 "filesystem",
                 "iterator"
             ],
-            "time": "2016-10-03T07:40:28+00:00"
+            "time": "2016-10-03 07:40:28"
         },
         {
             "name": "phpunit/php-text-template",
@@ -781,7 +828,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2015-06-21T13:50:34+00:00"
+            "time": "2015-06-21 13:50:34"
         },
         {
             "name": "phpunit/php-timer",
@@ -830,7 +877,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2017-02-26T11:10:40+00:00"
+            "time": "2017-02-26 11:10:40"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -879,7 +926,7 @@
             "keywords": [
                 "tokenizer"
             ],
-            "time": "2017-02-27T10:12:30+00:00"
+            "time": "2017-02-27 10:12:30"
         },
         {
             "name": "phpunit/phpunit",
@@ -963,7 +1010,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2017-04-29T10:40:17+00:00"
+            "time": "2017-04-29 10:40:17"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1022,7 +1069,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2017-03-03T06:30:20+00:00"
+            "time": "2017-03-03 06:30:20"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -1067,7 +1114,7 @@
             ],
             "description": "Looks up which function or method a line of code belongs to",
             "homepage": "https://github.com/sebastianbergmann/code-unit-reverse-lookup/",
-            "time": "2017-03-04T06:30:41+00:00"
+            "time": "2017-03-04 06:30:41"
         },
         {
             "name": "sebastian/comparator",
@@ -1131,7 +1178,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2017-03-03T06:26:08+00:00"
+            "time": "2017-03-03 06:26:08"
         },
         {
             "name": "sebastian/diff",
@@ -1183,7 +1230,7 @@
             "keywords": [
                 "diff"
             ],
-            "time": "2015-12-08T07:14:41+00:00"
+            "time": "2015-12-08 07:14:41"
         },
         {
             "name": "sebastian/environment",
@@ -1233,7 +1280,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2017-04-21T14:40:32+00:00"
+            "time": "2017-04-21 14:40:32"
         },
         {
             "name": "sebastian/exporter",
@@ -1300,7 +1347,7 @@
                 "export",
                 "exporter"
             ],
-            "time": "2017-04-03T13:19:02+00:00"
+            "time": "2017-04-03 13:19:02"
         },
         {
             "name": "sebastian/global-state",
@@ -1351,7 +1398,7 @@
             "keywords": [
                 "global state"
             ],
-            "time": "2017-04-27T15:39:26+00:00"
+            "time": "2017-04-27 15:39:26"
         },
         {
             "name": "sebastian/object-enumerator",
@@ -1398,7 +1445,7 @@
             ],
             "description": "Traverses array structures and object graphs to enumerate all referenced objects",
             "homepage": "https://github.com/sebastianbergmann/object-enumerator/",
-            "time": "2017-03-12T15:17:29+00:00"
+            "time": "2017-03-12 15:17:29"
         },
         {
             "name": "sebastian/object-reflector",
@@ -1443,7 +1490,7 @@
             ],
             "description": "Allows reflection of object attributes, including inherited and non-public ones",
             "homepage": "https://github.com/sebastianbergmann/object-reflector/",
-            "time": "2017-03-29T09:07:27+00:00"
+            "time": "2017-03-29 09:07:27"
         },
         {
             "name": "sebastian/recursion-context",
@@ -1496,7 +1543,7 @@
             ],
             "description": "Provides functionality to recursively process PHP variables",
             "homepage": "http://www.github.com/sebastianbergmann/recursion-context",
-            "time": "2017-03-03T06:23:57+00:00"
+            "time": "2017-03-03 06:23:57"
         },
         {
             "name": "sebastian/resource-operations",
@@ -1538,7 +1585,7 @@
             ],
             "description": "Provides a list of PHP built-in functions that operate on resources",
             "homepage": "https://www.github.com/sebastianbergmann/resource-operations",
-            "time": "2015-07-28T20:34:47+00:00"
+            "time": "2015-07-28 20:34:47"
         },
         {
             "name": "sebastian/version",
@@ -1581,7 +1628,7 @@
             ],
             "description": "Library that helps with managing the version number of Git-hosted PHP projects",
             "homepage": "https://github.com/sebastianbergmann/version",
-            "time": "2016-10-03T07:35:21+00:00"
+            "time": "2016-10-03 07:35:21"
         },
         {
             "name": "theseer/tokenizer",
@@ -1621,7 +1668,7 @@
                 }
             ],
             "description": "A small library for converting tokenized PHP source code into XML and potentially other formats",
-            "time": "2017-04-07T12:08:54+00:00"
+            "time": "2017-04-07 12:08:54"
         },
         {
             "name": "webmozart/assert",
@@ -1671,7 +1718,7 @@
                 "check",
                 "validate"
             ],
-            "time": "2016-11-23T20:04:58+00:00"
+            "time": "2016-11-23 20:04:58"
         }
     ],
     "aliases": [],

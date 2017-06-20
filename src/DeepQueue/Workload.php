@@ -7,7 +7,7 @@ use Objection\LiteObject;
 
 
 /**
- * @property string	$id
+ * @property string	$Id
  * @property mixed	$Payload
  */
 class Workload extends LiteObject
@@ -18,6 +18,7 @@ class Workload extends LiteObject
 	protected function _setup()
 	{
 		return [
+			'Id'		=> LiteSetup::createString(),
 			'Payload'	=> LiteSetup::createMixed(null)
 		];
 	}

@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Module\Connector\LoaderDecorators;
+namespace DeepQueue\Module\Loader\Decorators;
 
 
 use DeepQueue\Base\IQueueObject;

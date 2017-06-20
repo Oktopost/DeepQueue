@@ -15,7 +15,8 @@
         "oktopost/skeleton": "^1.0",
         "oktopost/objection": "^1.0",
         "oktopost/annotation": "^1.0",
-        "predis/predis": "^1.1"
+        "predis/predis": "^1.1",
+        "oktopost/serialization": "^1.0"
     },
     "autoload": {
         "psr-0": {

@@ -2,26 +2,29 @@
 namespace DeepQueue\Module\Connector;
 
 
-use DeepQueue\Base\Loader\IQueueObjectLoader;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\Base\Plugins\IRemotePlugin;
+use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Connector\IConnectorBuilder;
 use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
+use DeepQueue\Base\Connector\Remote\IRemoteQueueProvider;
 
 
+/**
+ * @autoload
+ */
 class ConnectorBuilder implements IConnectorBuilder
 {
-	/** @var IRemotePlugin */
-	private $plugin;
+	/** @var IRemoteQueueProvider */
+	private $remoteProvider;
 	
 	/** @var IDecoratorBuilder[] */
 	private $builders = [];
 	
-	/** @var IQueueObjectLoader */
-	private $loader;
+	/** @var IQueueLoaderBuilder */
+	private $loaderBuilder;
 	
 	
-	private function buildChain(IRemoteQueue $queue): IRemoteQueue
+	private function buildChain(IRemoteQueue $queue, string $name): IRemoteQueue
 	{
 		$last = $queue;
 		
@@ -29,7 +32,7 @@ class ConnectorBuilder implements IConnectorBuilder
 		{
 			$decorator = $this->builders[$i]->build();
 			$decorator->setRemoteQueue($last);
-			$decorator->setQueueLoader($this->loader);
+			$decorator->setQueueLoader($this->loaderBuilder->getRemoteLoader($name));
 			$last = $decorator;
 		}
 		
@@ -42,20 +45,20 @@ class ConnectorBuilder implements IConnectorBuilder
 		$this->builders[] = $builder;
 	}
 	
-	public function setLoader(IQueueObjectLoader $loader): void
+	public function setLoaderBuilder(IQueueLoaderBuilder $loaderBuilder): void
 	{
-		$this->loader = $loader;
+		$this->loaderBuilder = $loaderBuilder;
 	}
 	
-	public function setPlugin(IRemotePlugin $remote): void
+	public function setRemoteProvider(IRemoteQueueProvider $remoteProvider): void
 	{
-		$this->plugin = $remote;
+		$this->remoteProvider = $remoteProvider;
 	}
 	
 	public function getRemoteQueue(string $name): IRemoteQueue
 	{
-		$remoteQueue = $this->plugin->getQueue($name);
+		$remoteQueue = $this->remoteProvider->getQueue($name);
 		
-		return ($this->builders ? $this->buildChain($remoteQueue) : $remoteQueue);
+		return ($this->builders ? $this->buildChain($remoteQueue, $name) : $remoteQueue);
 	}
 }

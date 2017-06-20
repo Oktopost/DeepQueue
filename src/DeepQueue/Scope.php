@@ -2,16 +2,25 @@
 namespace DeepQueue;
 
 
-use DeepQueue\Exceptions\UnexpectedDeepQueueException;
+use Skeleton\Skeleton;
 
 
 class Scope
 {
+	use \Objection\TStaticClass;
+	
+	
+	/** @var Skeleton */
+	private static $skeleton;
+	
 	/**
 	 * @return mixed
 	 */
 	public static function skeleton(string $interface)
 	{
-		throw new UnexpectedDeepQueueException('Not implemented');
+		if (!self::$skeleton)
+			self::$skeleton = SkeletonSetup::create();
+		
+		return self::$skeleton->get($interface);
 	}
 }

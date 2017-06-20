@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Base\Loader;
+namespace DeepQueue\Base\Loader\Remote;
 
 
 use DeepQueue\Base\IQueueConfig;

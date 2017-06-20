@@ -2,12 +2,17 @@
 namespace DeepQueue\Base\Connector;
 
 
-use DeepQueue\Base\Loader\IQueueObjectLoader;
+use DeepQueue\Base\Loader\IQueueLoaderBuilder;
+use DeepQueue\Base\Connector\Remote\IRemoteQueueProvider;
 use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
 
 
+/**
+ * @skeleton
+ */
 interface IConnectorBuilder extends IConnectorProvider 
 {
-	public function setLoader(IQueueObjectLoader $loader): void;
+	public function setLoaderBuilder(IQueueLoaderBuilder $loaderBuilder): void;
+	public function setRemoteProvider(IRemoteQueueProvider $plugin): void;
 	public function addBuilder(IDecoratorBuilder $builder): void;
 }
