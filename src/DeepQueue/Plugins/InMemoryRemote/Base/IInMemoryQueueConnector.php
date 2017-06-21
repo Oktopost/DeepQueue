@@ -11,4 +11,6 @@ interface IInMemoryQueueConnector
 	public function dequeue(string $queueName, int $count = 1): array;
 	
 	public function delete(string $queueName, string $payloadId): bool;
+	
+	public function countEnqueued(string $queueName): int;
 }

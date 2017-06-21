@@ -47,4 +47,9 @@ class InMemoryQueueConnector implements IInMemoryQueueConnector
 	{
 		return $this->storage->deletePayload($queueName, $payloadId);
 	}
+	
+	public function countEnqueued(string $queueName): int 
+	{
+		return $this->storage->countEnqueued($queueName);
+	}
 }

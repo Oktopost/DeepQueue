@@ -39,16 +39,16 @@ class Payload extends LiteObject
 
 	public function hasDelay(): bool
 	{
-		return is_null($this->Delay);
+		return !is_null($this->Delay) && $this->Delay > 0;
 	}
 	
 	public function hasKey(): bool
 	{
-		return is_null($this->Key);
+		return !is_null($this->Key);
 	}
 	
 	public function hasPayload(): bool
 	{
-		return is_null($this->Payload);
+		return !is_null($this->Payload);
 	}
 }

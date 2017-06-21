@@ -4,6 +4,7 @@ namespace DeepQueue;
 
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Base\IDeepQueueConfig;
+use DeepQueue\Base\Data\IPayloadConverter;
 use DeepQueue\Base\Loader\IQueueObjectLoader;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
@@ -13,12 +14,15 @@ use DeepQueue\Base\Connector\IConnectorBuilder;
 use DeepQueue\Base\Connector\IConnectorProvider;
 use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
 use DeepQueue\Module\Connector\Builder\ClassNameBuilder;
-use DeepQueue\Module\Connector\Decorators\QueueDataTransformDecorator;
 use DeepQueue\Module\Connector\Decorators\QueueStateDecorator;
+use DeepQueue\Module\Data\PayloadConverter;
 use DeepQueue\Module\Loader\Builder\LoaderClassNameBuilder;
 use DeepQueue\Module\Loader\Decorators\CachedLoaderDecorator;
-
 use DeepQueue\Exceptions\InvalidUsageException;
+
+use Serialization\Base\ISerializer;
+use Serialization\Base\Json\IJsonDataConstructor;
+
 
 
 class DeepQueueConfig implements IDeepQueueConfig 
@@ -34,6 +38,12 @@ class DeepQueueConfig implements IDeepQueueConfig
 	
 	/** @var IManagerPlugin */
 	private $managerPlugin = null;
+	
+	/** @var ISerializer|IJsonDataConstructor */
+	private $payloadDataSerializer = null;
+	
+	/** @var IPayloadConverter */
+	private $payloadConverter = null;
 	
 	/** @var int */
 	private $queueNotExistsPolicy = QueueLoaderPolicy::CREATE_NEW;
@@ -61,11 +71,17 @@ class DeepQueueConfig implements IDeepQueueConfig
 		$this->connectorBuilder->setLoaderBuilder($this->createLoaderBuilder());
 		
 		$this->addConnectorBuilder(
-			QueueStateDecorator::class, 
-			QueueDataTransformDecorator::class
+			QueueStateDecorator::class
 		);
 		
 		return $this->connectorBuilder;
+	}
+	
+	private function createConverter(): IPayloadConverter
+	{
+		$this->payloadConverter = new PayloadConverter($this->payloadDataSerializer);
+
+		return $this->payloadConverter;
 	}
 	
 	
@@ -144,6 +160,22 @@ class DeepQueueConfig implements IDeepQueueConfig
 		
 		return $this;
 	}
+
+	public function setPayloadDataSerializer(ISerializer $serializer)
+	{
+		$this->payloadDataSerializer = $serializer;
+	}
+	
+	public function converter(): IPayloadConverter
+	{
+		if (!$this->payloadConverter)
+		{
+			return $this->createConverter();
+		}
+		
+		return $this->payloadConverter;
+	}
+	
 	
 	/**
 	 * @param int $policy See QueueLoaderPolicy const
@@ -173,6 +205,8 @@ class DeepQueueConfig implements IDeepQueueConfig
 	public function setRemotePlugin(IRemotePlugin $plugin): IDeepQueueConfig
 	{
 		$this->remotePlugin = $plugin;
+		$this->remotePlugin->setConfig($this);
+		
 		return $this;
 	}
 	

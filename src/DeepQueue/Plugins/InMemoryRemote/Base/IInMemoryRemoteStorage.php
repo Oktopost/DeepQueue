@@ -14,4 +14,6 @@ interface IInMemoryRemoteStorage
 	public function pullPayloads(string $queueName, int $count): array;
 	
 	public function deletePayload(string $queueName, string $key): bool;
+	
+	public function countEnqueued(string $queueName): int;
 }

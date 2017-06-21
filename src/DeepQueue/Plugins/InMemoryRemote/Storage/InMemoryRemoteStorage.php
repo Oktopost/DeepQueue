@@ -47,4 +47,9 @@ class InMemoryRemoteStorage implements IInMemoryRemoteStorage
 		
 		return true;
 	}
+	
+	public function countEnqueued(string $queueName): int
+	{
+		return sizeof($this->_payloads);
+	}
 }
