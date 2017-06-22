@@ -1,14 +1,14 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryRemote\Storage;
+namespace DeepQueue\Plugins\InMemoryConnector\Storage;
 
 
-use DeepQueue\Plugins\InMemoryRemote\Base\IInMemoryRemoteStorage;
+use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueStorage;
 
 
 /**
  * @autoload
  */
-class InMemoryRemoteStorage implements IInMemoryRemoteStorage
+class InMemoryQueueStorage implements IInMemoryQueueStorage
 {
 	/** @var string[]|array */
 	private $_payloads = [];
@@ -50,6 +50,6 @@ class InMemoryRemoteStorage implements IInMemoryRemoteStorage
 	
 	public function countEnqueued(string $queueName): int
 	{
-		return sizeof($this->_payloads);
+		return sizeof($this->_payloads[$queueName]);
 	}
 }

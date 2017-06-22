@@ -1,14 +1,14 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryRemote\Queue;
+namespace DeepQueue\Plugins\InMemoryConnector\Queue;
 
 
 use DeepQueue\Scope;
 use DeepQueue\Base\Data\IPayloadConverter;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\Plugins\InMemoryRemote\Base\IInMemoryQueueConnector;
+use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueConnector;
 
 
-class InMemoryRemoteQueue implements IRemoteQueue
+class InMemoryQueue implements IRemoteQueue
 {
 	private $name;
 

@@ -18,11 +18,6 @@ class QueueObjectLoader implements IQueueObjectLoader
 	private $remoteLoader;
 
 	
-	private function create(): IQueueObject
-	{
-		return $this->remoteLoader->create($this->name);
-	}
-	
 	private function canCreateNew(): bool
 	{
 		return $this->queueNotExistsPolicy == QueueLoaderPolicy::CREATE_NEW;	
@@ -40,12 +35,7 @@ class QueueObjectLoader implements IQueueObjectLoader
 
 	public function load(): ?IQueueObject
 	{
-		$queueObject = $this->remoteLoader->load($this->name);
-		
-		if (!$queueObject && $this->canCreateNew())
-		{
-			$queueObject = $this->create();
-		}
+		$queueObject = $this->remoteLoader->load($this->name, $this->canCreateNew());
 		
 		return $queueObject;
 	}
@@ -56,12 +46,7 @@ class QueueObjectLoader implements IQueueObjectLoader
 	 */
 	public function require(): IQueueObject
 	{
-		$queueObject = $this->remoteLoader->load($this->name);
-		
-		if (!$queueObject && $this->canCreateNew())
-		{
-			$queueObject = $this->create();
-		}
+		$queueObject = $this->remoteLoader->load($this->name, $this->canCreateNew());
 		
 		if (!$queueObject)
 		{

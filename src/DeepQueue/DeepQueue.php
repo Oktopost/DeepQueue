@@ -2,8 +2,9 @@
 namespace DeepQueue;
 
 
-use DeepQueue\Base\IDeepQueueConfig;
+use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\IQueueObject;
+use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\Queue\IQueue;
 use DeepQueue\Module\Queue\Queue;
 
@@ -35,5 +36,12 @@ class DeepQueue
 	{
 		$loader = $this->config->getQueueLoader($name);
 		return $loader->load();
+	}
+	
+	public function getMetaData(string $name): ?IMetaData
+	{
+		$queueObject = $this->getQueueObject($name);
+		
+		return $queueObject ? $this->config()->connector()->getMetaData($queueObject) : null;
 	}
 }

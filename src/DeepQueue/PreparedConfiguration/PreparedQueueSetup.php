@@ -18,7 +18,7 @@ class PreparedQueueSetup implements IPreparedQueueSetup
 		$deepQueue->config()
 			->setQueueNotExistsPolicy($config->getNotExistsPolicy())
 			->setManagerPlugin($config->getManager())
-			->setRemotePlugin($config->getRemote());
+			->setConnectorPlugin($config->getConnector());
 		
 		return $deepQueue;
 	}

@@ -3,11 +3,11 @@ namespace DeepQueue\PreparedConfiguration\Plugins;
 
 
 use DeepQueue\Base\Plugins\IManagerPlugin;
-use DeepQueue\Base\Plugins\IRemotePlugin;
+use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\PreparedConfiguration\Plugins\IPluginConfiguration;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
-use DeepQueue\Plugins\InMemoryRemote\InMemoryRemote;
+use DeepQueue\Plugins\InMemoryConnector\InMemoryConnectorPlugin;
 
 
 class InMemoryConfiguration implements IPluginConfiguration
@@ -17,9 +17,9 @@ class InMemoryConfiguration implements IPluginConfiguration
 		return new InMemoryManager();
 	}
 
-	public function getRemote(): IRemotePlugin
+	public function getConnector(): IConnectorPlugin
 	{
-		return new InMemoryRemote();
+		return new InMemoryConnectorPlugin();
 	}
 
 	public function getNotExistsPolicy(): int

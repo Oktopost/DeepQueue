@@ -12,8 +12,8 @@ use DeepQueue\Module\Connector\ConnectorBuilder;
 
 use DeepQueue\Plugins\InMemoryManager\Storage\InMemoryManagerStorage;
 use DeepQueue\Plugins\InMemoryManager\Connector\InMemoryManagerConnector;
-use DeepQueue\Plugins\InMemoryRemote\Storage\InMemoryRemoteStorage;
-use DeepQueue\Plugins\InMemoryRemote\Connector\InMemoryQueueConnector;
+use DeepQueue\Plugins\InMemoryConnector\Storage\InMemoryQueueStorage;
+use DeepQueue\Plugins\InMemoryConnector\Connector\InMemoryQueueConnector;
 
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 
@@ -27,7 +27,7 @@ $this->set(Base\Loader\IQueueLoaderBuilder::class, QueueLoaderBuilder::class);
 $this->set(Plugins\InMemoryManager\Base\IInMemoryManagerStorage::class, InMemoryManagerStorage::class, Type::Singleton);
 $this->set(Plugins\InMemoryManager\Base\IInMemoryManagerConnector::class, InMemoryManagerConnector::class);
 
-$this->set(Plugins\InMemoryRemote\Base\IInMemoryRemoteStorage::class, InMemoryRemoteStorage::class, Type::Singleton);
-$this->set(Plugins\InMemoryRemote\Base\IInMemoryQueueConnector::class, InMemoryQueueConnector::class);
+$this->set(Plugins\InMemoryConnector\Base\IInMemoryQueueStorage::class, InMemoryQueueStorage::class, Type::Singleton);
+$this->set(Plugins\InMemoryConnector\Base\IInMemoryQueueConnector::class, InMemoryQueueConnector::class);
 
 $this->set(Base\Ids\IIdGenerator::class, TimeBasedRandomGenerator::class);

@@ -8,6 +8,7 @@ use DeepQueue\Base\Loader\Remote\IRemoteQueueObjectLoader;
 
 interface IManagerPlugin extends IRemoteQueueObjectLoader
 {
+	public function create(IQueueObject $object): IQueueObject;
 	public function update(IQueueObject $object): IQueueObject;
 	
 	/**

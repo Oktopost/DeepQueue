@@ -8,7 +8,5 @@ use DeepQueue\Base\IQueueObject;
 
 interface IRemoteQueueObjectLoader 
 {
-	public function create(string $name, ?IQueueConfig $config = null): IQueueObject;
-	
-	public function load(string $name): ?IQueueObject;
+	public function load(string $name, bool $canCreate = false): ?IQueueObject;
 }

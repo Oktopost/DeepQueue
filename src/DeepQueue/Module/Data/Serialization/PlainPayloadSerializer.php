@@ -65,7 +65,6 @@ class PlainPayloadSerializer implements IPlainSerializer
 	{
 		$meta = get_class($object);
 		
-		
 		return [
 			'Key'		=> $object->Key,
 			'Delay'		=> $object->Delay,
@@ -80,13 +79,13 @@ class PlainPayloadSerializer implements IPlainSerializer
 	 */
 	public function deserialize($data, $meta)
 	{
-		/** @var Payload $object */
-		$object = new $meta;
+		/** @var Payload $payload */
+		$payload = new $meta;
 		
-		if (!($object instanceof Payload))
+		if (!($payload instanceof Payload))
 			throw new SerializationException("Class named $meta is not a Payload class");
 		
-		$payload = $object->fromArray((array)$data);
+		$payload->fromArray((array)$data);
 		
 		$payload->Payload = $this->deserializePayload($payload->Payload);
 		

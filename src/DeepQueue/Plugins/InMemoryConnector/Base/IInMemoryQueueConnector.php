@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryRemote\Base;
+namespace DeepQueue\Plugins\InMemoryConnector\Base;
 
 
 /**

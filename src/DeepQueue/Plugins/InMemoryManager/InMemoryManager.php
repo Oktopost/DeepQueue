@@ -4,7 +4,6 @@ namespace DeepQueue\Plugins\InMemoryManager;
 
 use DeepQueue\Scope;
 use DeepQueue\Enums\QueueState;
-use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManager;
@@ -25,31 +24,27 @@ class InMemoryManager implements IInMemoryManager
 	}
 
 
-	public function create(string $name, ?IQueueConfig $config = null): IQueueObject
+	public function create(IQueueObject $queue): IQueueObject
 	{
-		if (!$config)
-		{
-			$config = new InMemoryQueueConfig();
-		}
-		
-		$queue = new InMemoryQueue();
-		
-		$queue->Name = $name;
-		$queue->ID = (new TimeBasedRandomGenerator())->get();
-		$queue->Config = $config;
-		
 		return $this->connector->upsert($queue);
 	}
 
-	public function load(string $name): ?IQueueObject
+	public function load(string $name, bool $canCreate = false): ?IQueueObject
 	{
 		$queueObject = $this->connector->load($name);
 		
-		if (!$queueObject || $queueObject->State == QueueState::DELETED)
+		if (!$queueObject && $canCreate)
 		{
-			return null;
+			$config = new InMemoryQueueConfig();
+			
+			$queueObject = new InMemoryQueue();
+			$queueObject->Name = $name;
+			$queueObject->ID = (new TimeBasedRandomGenerator())->get();
+			$queueObject->Config = $config;
+			
+			return $this->create($queueObject);
 		}
-		
+
 		return $queueObject;
 	}
 

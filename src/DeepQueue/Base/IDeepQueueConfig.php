@@ -4,7 +4,7 @@ namespace DeepQueue\Base;
 
 use DeepQueue\Base\Connector\IConnectorProvider;
 use DeepQueue\Base\Loader\IQueueObjectLoader;
-use DeepQueue\Base\Plugins\IRemotePlugin;
+use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Base\Data\IPayloadConverter;
 use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
@@ -34,11 +34,11 @@ interface IDeepQueueConfig
 	public function getQueueLoader(string $name): IQueueObjectLoader;
 	
 	public function setPayloadDataSerializer(ISerializer $serializer);	
-	public function setRemotePlugin(IRemotePlugin $plugin): IDeepQueueConfig;
+	public function setConnectorPlugin(IConnectorPlugin $plugin): IDeepQueueConfig;
 	public function setManagerPlugin(IManagerPlugin $plugin): IDeepQueueConfig;
 	
 	public function notExistsPolicy(): int;
-	public function remote(): IRemotePlugin;
+	public function connector(): IConnectorPlugin;
 	public function manager(): IManagerPlugin;
 	public function converter(): IPayloadConverter;
 }

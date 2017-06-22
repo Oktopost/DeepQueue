@@ -8,7 +8,7 @@ use DeepQueue\Base\Data\IPayloadConverter;
 use DeepQueue\Base\Loader\IQueueObjectLoader;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
-use DeepQueue\Base\Plugins\IRemotePlugin;
+use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Base\Connector\IConnectorBuilder;
 use DeepQueue\Base\Connector\IConnectorProvider;
@@ -33,7 +33,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 	/** @var IQueueLoaderBuilder */
 	private $loaderBuilder = null;
 	
-	/** @var IRemotePlugin */
+	/** @var IConnectorPlugin */
 	private $remotePlugin = null;
 	
 	/** @var IManagerPlugin */
@@ -67,7 +67,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 	{
 		$this->connectorBuilder = Scope::skeleton(IConnectorBuilder::class);
 
-		$this->connectorBuilder->setRemoteProvider($this->remote());
+		$this->connectorBuilder->setRemoteProvider($this->connector());
 		$this->connectorBuilder->setLoaderBuilder($this->createLoaderBuilder());
 		
 		$this->addConnectorBuilder(
@@ -164,6 +164,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 	public function setPayloadDataSerializer(ISerializer $serializer)
 	{
 		$this->payloadDataSerializer = $serializer;
+		$this->createConverter();
 	}
 	
 	public function converter(): IPayloadConverter
@@ -175,7 +176,6 @@ class DeepQueueConfig implements IDeepQueueConfig
 		
 		return $this->payloadConverter;
 	}
-	
 	
 	/**
 	 * @param int $policy See QueueLoaderPolicy const
@@ -192,7 +192,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 		return $this->queueNotExistsPolicy;
 	}
 	
-	public function remote(): IRemotePlugin
+	public function connector(): IConnectorPlugin
 	{
 		return $this->remotePlugin;
 	}
@@ -202,7 +202,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 		return $this->managerPlugin;
 	}
 	
-	public function setRemotePlugin(IRemotePlugin $plugin): IDeepQueueConfig
+	public function setConnectorPlugin(IConnectorPlugin $plugin): IDeepQueueConfig
 	{
 		$this->remotePlugin = $plugin;
 		$this->remotePlugin->setConfig($this);

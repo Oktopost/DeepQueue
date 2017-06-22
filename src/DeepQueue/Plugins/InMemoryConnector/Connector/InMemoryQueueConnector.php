@@ -1,8 +1,8 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryRemote\Connector;
+namespace DeepQueue\Plugins\InMemoryConnector\Connector;
 
 
-use DeepQueue\Plugins\InMemoryRemote\Base\IInMemoryQueueConnector;
+use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueConnector;
 
 
 /**
@@ -12,12 +12,12 @@ class InMemoryQueueConnector implements IInMemoryQueueConnector
 {
 	/**
 	 * @autoload
-	 * @var \DeepQueue\Plugins\InMemoryRemote\Base\IInMemoryRemoteStorage
+	 * @var \DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueStorage
 	 */
 	private $storage;
 	
 	
-	private function getUnsetted(string $queueName, array $payloads): array 
+	private function getAvailable(string $queueName, array $payloads): array 
 	{
 		foreach ($payloads as $key => $payload)
 		{
@@ -40,7 +40,7 @@ class InMemoryQueueConnector implements IInMemoryQueueConnector
 	{
 		$payloads = $this->storage->pullPayloads($queueName, $count);
 		
-		return $this->getUnsetted($queueName, $payloads);
+		return $this->getAvailable($queueName, $payloads);
 	}
 	
 	public function delete(string $queueName, string $payloadId): bool

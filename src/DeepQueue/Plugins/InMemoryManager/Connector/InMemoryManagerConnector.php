@@ -3,6 +3,7 @@ namespace DeepQueue\Plugins\InMemoryManager\Connector;
 
 
 use DeepQueue\Base\IQueueObject;
+use DeepQueue\Enums\QueueState;
 use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerConnector;
 
 
@@ -25,6 +26,13 @@ class InMemoryManagerConnector implements IInMemoryManagerConnector
 
 	public function load(string $queueName): ?IQueueObject
 	{
-		return $this->storage->pullQueue($queueName);
+		$queue = $this->storage->pullQueue($queueName);
+		
+		if (!$queue || $queue->State == QueueState::DELETED)
+		{
+			return null;
+		}
+		
+		return $queue;
 	}
 }
