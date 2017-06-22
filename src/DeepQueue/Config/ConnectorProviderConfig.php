@@ -20,13 +20,31 @@ class ConnectorProviderConfig implements IConnectorProviderConfig
 	private $connectorBuilder;
 	
 	/** @var IConnectorPlugin */
-	private $connector;
+	private $connector = null;
 	
 	/** @var IQueueLoaderBuilder  */
-	private $loaderBuilder;
+	private $loaderBuilder = null;
+	
+	
+	private function checkConfiguration(): void
+	{
+		if (!($this->connector instanceof IConnectorPlugin))
+		{
+			throw new InvalidUsageException('Connector plugin must be setted up');
+		}
+		
+		if(!($this->loaderBuilder instanceof IQueueLoaderBuilder))
+		{
+			throw new InvalidUsageException('Loader builder must be setted up');
+		}
+		
+		
+	}
 	
 	private function createConnectorBuilder(): IConnectorBuilder
 	{
+		$this->checkConfiguration();
+		
 		$this->connectorBuilder = Scope::skeleton(IConnectorBuilder::class);
 
 		$this->connectorBuilder->setRemoteProvider($this->connector);
@@ -57,8 +75,13 @@ class ConnectorProviderConfig implements IConnectorProviderConfig
 	/**
 	 * @param string|IDecoratorBuilder[] $builders
 	 */
-	public function addConnectorBuilder(...$builders): void
+	public function addConnectorBuilder(...$builders): IConnectorProviderConfig
 	{
+		if (!$this->connectorBuilder)
+		{
+			$this->createConnectorBuilder();
+		}
+		
 		foreach ($builders as $builder)
 		{
 			if (is_array($builder))
@@ -78,6 +101,8 @@ class ConnectorProviderConfig implements IConnectorProviderConfig
 				throw new InvalidUsageException('Parameter must be string, array or IConnectorBuilder instance!');
 			}
 		}
+		
+		return $this;
 	}
 	
 	public function getConnectorProvider(): IConnectorProvider

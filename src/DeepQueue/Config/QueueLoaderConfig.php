@@ -2,6 +2,7 @@
 namespace DeepQueue\Config;
 
 
+use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Scope;
 use DeepQueue\Base\Config\IQueueLoaderConfig;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
@@ -19,12 +20,23 @@ class QueueLoaderConfig implements IQueueLoaderConfig
 	private $loaderBuilder;
 	
 	/** @var IManagerPlugin */
-	private $manager;
+	private $manager = null;
 	
-	private $queueNotExistsPolicy;
+	private $queueNotExistsPolicy = QueueLoaderPolicy::FORBIDDEN;
+	
+	
+	private function checkConfiguration(): void
+	{
+		if (!($this->manager instanceof IManagerPlugin))
+		{
+			throw new InvalidUsageException('Manager plugin must be setted up');
+		}
+	}
 	
 	private function createLoaderBuilder(): IQueueLoaderBuilder
 	{
+		$this->checkConfiguration();
+		
 		$this->loaderBuilder = Scope::skeleton(IQueueLoaderBuilder::class);
 		
 		$this->loaderBuilder->setRemoteLoader($this->manager);
@@ -55,8 +67,13 @@ class QueueLoaderConfig implements IQueueLoaderConfig
 	/**
 	 * @param string|ILoaderDecoratorBuilder[] $builders
 	 */
-	public function addLoaderBuilder(...$builders): void
+	public function addLoaderBuilder(...$builders): IQueueLoaderConfig
 	{
+		if (!$this->loaderBuilder)
+		{
+			$this->createLoaderBuilder();
+		}
+		
 		foreach ($builders as $builder)
 		{
 			if (is_array($builder))
@@ -76,6 +93,8 @@ class QueueLoaderConfig implements IQueueLoaderConfig
 				throw new InvalidUsageException('Parameter must be string, array or ILoaderDecoratorBuilder instance!');
 			}
 		}
+		
+		return $this;
 	}
 	
 	public function getQueueLoader(string $name): IQueueObjectLoader

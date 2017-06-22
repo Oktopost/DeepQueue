@@ -71,7 +71,11 @@ class DeepQueueConfig implements IDeepQueueConfig
 	 */
 	public function addConnectorBuilder(...$builders): IDeepQueueConfig
 	{
-		$this->connectorConfig->addConnectorBuilder($builders);
+		$this->connectorConfig
+			->setConnector($this->connector())
+			->setLoaderBuilder($this->getLoaderBuilder())
+			->addConnectorBuilder($builders);
+		
 		return $this;
 	}
 	
@@ -80,7 +84,11 @@ class DeepQueueConfig implements IDeepQueueConfig
 	 */
 	public function addLoaderBuilder(...$builders): IDeepQueueConfig
 	{
-		$this->loaderConfig->addLoaderBuilder($builders);
+		$this->loaderConfig
+			->setQueueNotExistsPolicy($this->queueNotExistsPolicy)
+			->setManager($this->manager())
+			->addLoaderBuilder($builders);
+		
 		return $this;
 	}
 

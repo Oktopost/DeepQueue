@@ -16,7 +16,7 @@ interface IConnectorProviderConfig
 	/**
 	 * @param string|IDecoratorBuilder[] $builders
 	 */
-	public function addConnectorBuilder(...$builders): void;
+	public function addConnectorBuilder(...$builders): IConnectorProviderConfig;
 	
 	public function getConnectorProvider(): IConnectorProvider;
 }

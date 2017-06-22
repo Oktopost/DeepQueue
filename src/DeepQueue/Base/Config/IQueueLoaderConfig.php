@@ -16,7 +16,7 @@ interface IQueueLoaderConfig
 	/**
 	 * @param string|ILoaderDecoratorBuilder[] $builders
 	 */
-	public function addLoaderBuilder(...$builders): void;
+	public function addLoaderBuilder(...$builders): IQueueLoaderConfig;
 	
 	public function getQueueLoader(string $name): IQueueObjectLoader;
 	public function getLoaderBuilder(): IQueueLoaderBuilder;

@@ -76,7 +76,7 @@ class PayloadConverter implements IPayloadConverter
 		
 		foreach ($payloads as $key => $payload)
 		{
-			$deserializedPayloads[] = $this->serializer->deserialize($payload);
+			$deserializedPayloads[$key] = $this->serializer->deserialize($payload);
 		}
 		
 		return $deserializedPayloads;
