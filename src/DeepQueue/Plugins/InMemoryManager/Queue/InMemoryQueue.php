@@ -4,15 +4,21 @@ namespace DeepQueue\Plugins\InMemoryManager\Queue;
 
 use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\IQueueObject;
+use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\Queue\IQueue;
 use DeepQueue\Enums\QueueState;
 
+use DeepQueue\Module\Queue\Queue;
 use Objection\LiteObject;
 use Objection\LiteSetup;
 
 
 class InMemoryQueue extends LiteObject implements IQueueObject
 {
+	/** @var IDeepQueueConfig */
+	private $deepConfig = null;
+	
+	
 	protected function _setup()
 	{
 		return [
@@ -23,14 +29,18 @@ class InMemoryQueue extends LiteObject implements IQueueObject
 		];
 	}
 
+	public function setDeepConfig(IDeepQueueConfig $config): void
+	{
+		$this->deepConfig = $config;
+	}
 	
 	public function getStream(): IQueue
 	{
-		// TODO: Implement getStream() method.
+		return new Queue($this->deepConfig->getConnectorProvider()->getRemoteQueue($this->Name));
 	}
 
 	public function getMetaData(): IMetaData
 	{
-		// TODO: Implement getMetaData() method.
+		return $this->deepConfig->connector()->getMetaData($this);
 	}
 }

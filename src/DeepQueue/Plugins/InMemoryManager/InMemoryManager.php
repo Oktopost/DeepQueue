@@ -5,6 +5,7 @@ namespace DeepQueue\Plugins\InMemoryManager;
 use DeepQueue\Scope;
 use DeepQueue\Enums\QueueState;
 use DeepQueue\Base\IQueueObject;
+use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManager;
 use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerConnector;
@@ -17,16 +18,28 @@ class InMemoryManager implements IInMemoryManager
 	/** @var IInMemoryManagerConnector */
 	private $connector;
 	
+	/** @var IDeepQueueConfig */
+	private $config = null;
+	
 	
 	public function __construct()
 	{
 		$this->connector = Scope::skeleton(IInMemoryManagerConnector::class);
 	}
 
-
-	public function create(IQueueObject $queue): IQueueObject
+	
+	public function setConfig(IDeepQueueConfig $config): void
 	{
-		return $this->connector->upsert($queue);
+		$this->config = $config;
+	}
+
+	public function create(IQueueObject $queueObject): IQueueObject
+	{
+		$queueObject = $this->connector->upsert($queueObject);
+		
+		$queueObject->setDeepConfig($this->config);
+		
+		return $queueObject;
 	}
 
 	public function load(string $name, bool $canCreate = false): ?IQueueObject
@@ -44,20 +57,27 @@ class InMemoryManager implements IInMemoryManager
 			
 			return $this->create($queueObject);
 		}
+		
+		if ($queueObject)
+		{
+			$queueObject->setDeepConfig($this->config);
+		}
 
 		return $queueObject;
 	}
 
 	public function update(IQueueObject $object): IQueueObject
 	{
-		$queue = null;
+		$queueObject = $object;
 		
 		if ($this->connector->load($object->Name))
 		{
-			$queue = $this->connector->upsert($object);
+			$queueObject = $this->connector->upsert($object);
 		}
 		
-		return $queue;
+		$queueObject->setDeepConfig($this->config);
+		
+		return $queueObject;
 	}
 
 	public function delete($object): void
@@ -67,13 +87,13 @@ class InMemoryManager implements IInMemoryManager
 			$object = $object->Name;
 		}
 		
-		$queue = $this->connector->load($object->Name);
+		$queueObject = $this->connector->load($object->Name);
 		
-		if (!$queue)
+		if (!$queueObject)
 			return;
 		
-		$queue->State = QueueState::DELETED;
+		$queueObject->State = QueueState::DELETED;
 		
-		$this->connector->load($queue);
+		$this->connector->upsert($queueObject);
 	}
 }

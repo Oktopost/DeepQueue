@@ -50,6 +50,6 @@ class InMemoryQueueStorage implements IInMemoryQueueStorage
 	
 	public function countEnqueued(string $queueName): int
 	{
-		return sizeof($this->_payloads[$queueName]);
+		return isset($this->_payloads[$queueName]) ? sizeof($this->_payloads[$queueName]) : 0;
 	}
 }

@@ -2,16 +2,12 @@
 namespace DeepQueue\Base\Plugins;
 
 
-use DeepQueue\Base\Connector\Remote\IRemoteQueueProvider;
-use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\IQueueObject;
-use DeepQueue\Base\Plugins\RemoteElements\IMetaDataDAO;
+use DeepQueue\Base\Connector\Remote\IRemoteQueueProvider;
 
 
-interface IConnectorPlugin extends IRemoteQueueProvider
+interface IConnectorPlugin extends IRemoteQueueProvider, IConfigurable
 {
 	public function getMetaData(IQueueObject $queueObject): IMetaData;
-	
-	public function setConfig(IDeepQueueConfig $config): void;
 }

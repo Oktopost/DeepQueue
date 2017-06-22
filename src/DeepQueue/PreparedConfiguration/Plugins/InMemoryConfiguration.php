@@ -7,7 +7,7 @@ use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\PreparedConfiguration\Plugins\IPluginConfiguration;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
-use DeepQueue\Plugins\InMemoryConnector\InMemoryConnectorPlugin;
+use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
 
 
 class InMemoryConfiguration implements IPluginConfiguration
@@ -19,7 +19,7 @@ class InMemoryConfiguration implements IPluginConfiguration
 
 	public function getConnector(): IConnectorPlugin
 	{
-		return new InMemoryConnectorPlugin();
+		return new InMemoryConnector();
 	}
 
 	public function getNotExistsPolicy(): int

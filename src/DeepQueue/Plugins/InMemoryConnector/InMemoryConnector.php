@@ -6,12 +6,12 @@ use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryConnectorPlugin;
+use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryConnector;
 use DeepQueue\Plugins\InMemoryConnector\Queue\InMemoryQueue;
 use DeepQueue\Plugins\InMemoryConnector\Manager\InMemoryQueueManager;
 
 
-class InMemoryConnectorPlugin implements IInMemoryConnectorPlugin
+class InMemoryConnector implements IInMemoryConnector
 {
 	/** @var IDeepQueueConfig */
 	private $config = null;

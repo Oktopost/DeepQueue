@@ -16,4 +16,5 @@ interface IQueueObject
 {
 	public function getStream(): IQueue;
 	public function getMetaData(): IMetaData;
+	public function setDeepConfig(IDeepQueueConfig $config): void;
 }

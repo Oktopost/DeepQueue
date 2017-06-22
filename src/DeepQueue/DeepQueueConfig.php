@@ -24,7 +24,6 @@ use Serialization\Base\ISerializer;
 use Serialization\Base\Json\IJsonDataConstructor;
 
 
-
 class DeepQueueConfig implements IDeepQueueConfig 
 {
 	/** @var IConnectorBuilder */
@@ -34,7 +33,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 	private $loaderBuilder = null;
 	
 	/** @var IConnectorPlugin */
-	private $remotePlugin = null;
+	private $connectorPlugin = null;
 	
 	/** @var IManagerPlugin */
 	private $managerPlugin = null;
@@ -161,10 +160,12 @@ class DeepQueueConfig implements IDeepQueueConfig
 		return $this;
 	}
 
-	public function setPayloadDataSerializer(ISerializer $serializer)
+	public function setPayloadDataSerializer(ISerializer $serializer): IDeepQueueConfig
 	{
 		$this->payloadDataSerializer = $serializer;
 		$this->createConverter();
+		
+		return $this;
 	}
 	
 	public function converter(): IPayloadConverter
@@ -194,7 +195,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 	
 	public function connector(): IConnectorPlugin
 	{
-		return $this->remotePlugin;
+		return $this->connectorPlugin;
 	}
 	
 	public function manager(): IManagerPlugin
@@ -204,8 +205,8 @@ class DeepQueueConfig implements IDeepQueueConfig
 	
 	public function setConnectorPlugin(IConnectorPlugin $plugin): IDeepQueueConfig
 	{
-		$this->remotePlugin = $plugin;
-		$this->remotePlugin->setConfig($this);
+		$this->connectorPlugin = $plugin;
+		$this->connectorPlugin->setConfig($this);
 		
 		return $this;
 	}
@@ -213,6 +214,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 	public function setManagerPlugin(IManagerPlugin $plugin): IDeepQueueConfig
 	{
 		$this->managerPlugin = $plugin;
+		$this->managerPlugin->setConfig($this);
 		return $this;
 	}
 }
