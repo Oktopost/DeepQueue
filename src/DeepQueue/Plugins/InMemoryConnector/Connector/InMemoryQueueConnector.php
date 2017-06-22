@@ -2,18 +2,13 @@
 namespace DeepQueue\Plugins\InMemoryConnector\Connector;
 
 
+use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueStorage;
 use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueConnector;
 
 
-/**
- * @autoload
- */
 class InMemoryQueueConnector implements IInMemoryQueueConnector
 {
-	/**
-	 * @autoload
-	 * @var \DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueStorage
-	 */
+	/** @var IInMemoryQueueStorage */
 	private $storage;
 	
 	
@@ -31,6 +26,12 @@ class InMemoryQueueConnector implements IInMemoryQueueConnector
 	}
 	
 	
+	public function __construct(IInMemoryQueueStorage $storage)
+	{
+		$this->storage = $storage;
+	}
+
+
 	public function enqueue(string $queueName, array $payloads): array
 	{
 		return $this->storage->pushPayloads($queueName, $payloads);

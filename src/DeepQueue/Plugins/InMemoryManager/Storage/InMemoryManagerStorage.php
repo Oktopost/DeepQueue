@@ -3,16 +3,16 @@ namespace DeepQueue\Plugins\InMemoryManager\Storage;
 
 
 use DeepQueue\Base\IQueueObject;
-use DeepQueue\Plugins\InMemoryManager\Queue\InMemoryQueue;
 use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerStorage;
 
 
 /**
+ * @unique
  * @autoload
  */
 class InMemoryManagerStorage implements IInMemoryManagerStorage
 {
-	/** @var InMemoryQueue[]|array  */
+	/** @var IQueueObject[]|array  */
 	private $_queues = [];
 	
 	

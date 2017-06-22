@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Module\Data\Serialization;
+namespace DeepQueue\Module\Serialization;
 
 
 use Serialization\Base\ISerializer;

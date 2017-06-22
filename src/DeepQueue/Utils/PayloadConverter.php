@@ -1,14 +1,14 @@
 <?php
-namespace DeepQueue\Module\Data;
+namespace DeepQueue\Utils;
 
 
 use DeepQueue\Scope;
 use DeepQueue\Payload;
-use DeepQueue\Base\Data\IPayloadConverter;
-use DeepQueue\Base\Ids\IIdGenerator;
-use DeepQueue\Module\Data\Serialization\PayloadSerializer;
-
 use DeepQueue\Workload;
+use DeepQueue\Base\Utils\IPayloadConverter;
+use DeepQueue\Base\Ids\IIdGenerator;
+use DeepQueue\Module\Serialization\PayloadSerializer;
+
 use Serialization\Base\ISerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
 use Serialization\Serializers\JsonSerializer;
@@ -41,10 +41,11 @@ class PayloadConverter implements IPayloadConverter
 	}
 	
 
-	public function serializeAll(array $payloads): array
+	public function prepareAll(array $payloads): array
 	{
-		$keyValuePayloads = [];
+		$preparedPayloads = [];
 
+		/** @var Payload $payload */
 		foreach ($payloads as $payload)
 		{
 			$key = null;
@@ -54,11 +55,19 @@ class PayloadConverter implements IPayloadConverter
 				$key = $this->createKey();
 			}
 			
-			/** @var Payload $payload */
-			$keyValuePayloads[$payload->Key ?: $key] = $this->serializer->serialize($payload);
+			$preparedPayloads['keyValue'][$payload->Key ?: $key] = $this->serializer->serialize($payload);
+			
+			if (!$payload->hasDelay())
+			{
+				$preparedPayloads['immediately'][] = $payload->Key ?: $key;
+			}
+			else
+			{
+				$preparedPayloads['delayed'][$payload->Key] = $payload->Delay;
+			}
 		}
 	
-		return $keyValuePayloads;
+		return $preparedPayloads;
 	}
 
 	public function deserializeAll(array $payloads): array
@@ -73,7 +82,7 @@ class PayloadConverter implements IPayloadConverter
 		return $deserializedPayloads;
 	}
 
-	public function deserializeToWorkloads(array $payloads): array
+	public function getWorkloads(array $payloads): array
 	{
 		$workloads = [];
 		
@@ -89,37 +98,5 @@ class PayloadConverter implements IPayloadConverter
 		}
 		
 		return $workloads;
-	}
-
-	public function getDelayed(array $payloads): array
-	{
-		$delayed = [];
-
-		foreach ($payloads as $payload)
-		{
-			/** @var Payload $payload */
-			if ($payload->hasDelay())
-			{
-				$delayed[$payload->Key] = $payload->Delay;
-			}
-		}
-		
-		return $delayed;
-	}
-
-	public function getImmediately(array $payloads): array
-	{
-		$immediately = [];
-
-		foreach ($payloads as $payload)
-		{
-			/** @var Payload $payload */
-			if (!$payload->hasDelay())
-			{
-				$immediately[] = $payload->Key;
-			}
-		}
-		
-		return $immediately;
 	}
 }

@@ -3,9 +3,11 @@ namespace DeepQueue\Plugins\InMemoryConnector\Queue;
 
 
 use DeepQueue\Scope;
-use DeepQueue\Base\Data\IPayloadConverter;
+use DeepQueue\Utils\PayloadConverter;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueConnector;
+
+use Serialization\Base\ISerializer;
 
 
 class InMemoryQueue implements IRemoteQueue
@@ -15,7 +17,7 @@ class InMemoryQueue implements IRemoteQueue
 	/** @var IInMemoryQueueConnector */
 	private $connector;
 	
-	/** @var IPayloadConverter */
+	/** @var PayloadConverter */
 	private $converter;
 
 	
@@ -47,10 +49,10 @@ class InMemoryQueue implements IRemoteQueue
 	}
 	
 	
-	public function __construct(string $name, IPayloadConverter $converter)
+	public function __construct(string $name, ISerializer $serializer)
 	{
-		$this->connector = Scope::skeleton(IInMemoryQueueConnector::class);		
-		$this->converter = $converter;
+		$this->connector = Scope::skeleton(IInMemoryQueueConnector::class);
+		$this->converter = new PayloadConverter($serializer);
 		$this->name = $name;
 	}
 
@@ -66,15 +68,13 @@ class InMemoryQueue implements IRemoteQueue
 			$payloads = $this->getPayloads($count);
 		}
 
-		return $this->converter->deserializeToWorkloads($payloads);
+		return $this->converter->getWorkloads($payloads);
 	}
 
 	public function enqueue(array $payload): array
 	{
-		$serializedPayloads = $this->converter->serializeAll($payload);
+		$prepared = $this->converter->prepareAll($payload);
 		
-		$this->connector->enqueue($this->name, $serializedPayloads);
-		
-		return array_keys($serializedPayloads);
+		return $this->connector->enqueue($this->name, $prepared['keyValue']);
 	}
 }

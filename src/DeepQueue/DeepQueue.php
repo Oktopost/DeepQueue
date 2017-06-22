@@ -41,7 +41,6 @@ class DeepQueue
 	public function getMetaData(string $name): ?IMetaData
 	{
 		$queueObject = $this->getQueueObject($name);
-		
 		return $queueObject ? $this->config()->connector()->getMetaData($queueObject) : null;
 	}
 }

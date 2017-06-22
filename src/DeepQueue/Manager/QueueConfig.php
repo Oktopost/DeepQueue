@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryManager\Queue;
+namespace DeepQueue\Manager;
 
 
 use DeepQueue\Enums\Policy;
@@ -9,7 +9,7 @@ use Objection\LiteObject;
 use Objection\LiteSetup;
 
 
-class InMemoryQueueConfig extends LiteObject implements IQueueConfig
+class QueueConfig extends LiteObject implements IQueueConfig
 {
 	protected function _setup()
 	{

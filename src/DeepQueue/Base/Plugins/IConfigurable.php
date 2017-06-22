@@ -7,5 +7,5 @@ use DeepQueue\Base\IDeepQueueConfig;
 
 interface IConfigurable
 {
-	public function setConfig(IDeepQueueConfig $config): void;
+	public function setDeepConfig(IDeepQueueConfig $config): void;
 }

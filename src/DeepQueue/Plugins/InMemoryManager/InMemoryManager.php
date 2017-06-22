@@ -3,41 +3,65 @@ namespace DeepQueue\Plugins\InMemoryManager;
 
 
 use DeepQueue\Scope;
+use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueState;
+use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\IDeepQueueConfig;
+use DeepQueue\Manager\QueueConfig;
+use DeepQueue\Manager\QueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManager;
+use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerStorage;
 use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerConnector;
-use DeepQueue\Plugins\InMemoryManager\Queue\InMemoryQueue;
-use DeepQueue\Plugins\InMemoryManager\Queue\InMemoryQueueConfig;
 
 
 class InMemoryManager implements IInMemoryManager
 {
+	/** @var IInMemoryManagerStorage */
+	private $storage;
+	
 	/** @var IInMemoryManagerConnector */
 	private $connector;
 	
 	/** @var IDeepQueueConfig */
-	private $config = null;
+	private $deepConfig = null;
+	
+	/** @var IQueueConfig */
+	private $defaultQueueConfig = null;
+	
+	
+	private function getDefaultConfig(): IQueueConfig
+	{
+		if (!$this->defaultQueueConfig)
+		{
+			$this->defaultQueueConfig = new QueueConfig();
+			$this->defaultQueueConfig->UniqueKeyPolicy = Policy::ALLOWED;
+			$this->defaultQueueConfig->DelayPolicy = Policy::IGNORED;
+			$this->defaultQueueConfig->MaxBulkSize = 256;
+		}
+		
+		return clone $this->defaultQueueConfig;
+	}
 	
 	
 	public function __construct()
 	{
+		$this->storage = Scope::skeleton(IInMemoryManagerStorage::class);
 		$this->connector = Scope::skeleton(IInMemoryManagerConnector::class);
 	}
 
 	
-	public function setConfig(IDeepQueueConfig $config): void
+	public function setDeepConfig(IDeepQueueConfig $deepConfig): void
 	{
-		$this->config = $config;
+		$this->deepConfig = $deepConfig;
 	}
 
 	public function create(IQueueObject $queueObject): IQueueObject
 	{
 		$queueObject = $this->connector->upsert($queueObject);
 		
-		$queueObject->setDeepConfig($this->config);
+		$queueObject->setDeepConfig($this->deepConfig);
 		
 		return $queueObject;
 	}
@@ -48,19 +72,17 @@ class InMemoryManager implements IInMemoryManager
 		
 		if (!$queueObject && $canCreate)
 		{
-			$config = new InMemoryQueueConfig();
-			
-			$queueObject = new InMemoryQueue();
+			$queueObject = new QueueObject();
 			$queueObject->Name = $name;
-			$queueObject->ID = (new TimeBasedRandomGenerator())->get();
-			$queueObject->Config = $config;
+			$queueObject->Id = (new TimeBasedRandomGenerator())->get();
+			$queueObject->Config = $this->getDefaultConfig();
 			
 			return $this->create($queueObject);
 		}
 		
 		if ($queueObject)
 		{
-			$queueObject->setDeepConfig($this->config);
+			$queueObject->setDeepConfig($this->deepConfig);
 		}
 
 		return $queueObject;
@@ -75,7 +97,7 @@ class InMemoryManager implements IInMemoryManager
 			$queueObject = $this->connector->upsert($object);
 		}
 		
-		$queueObject->setDeepConfig($this->config);
+		$queueObject->setDeepConfig($this->deepConfig);
 		
 		return $queueObject;
 	}

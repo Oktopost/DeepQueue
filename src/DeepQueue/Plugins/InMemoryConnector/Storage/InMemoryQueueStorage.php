@@ -6,6 +6,7 @@ use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueStorage;
 
 
 /**
+ * @unique
  * @autoload
  */
 class InMemoryQueueStorage implements IInMemoryQueueStorage
@@ -23,7 +24,7 @@ class InMemoryQueueStorage implements IInMemoryQueueStorage
 		
 		$this->_payloads[$queueName] = array_merge($this->_payloads[$queueName], $payloads);
 		
-		return []; //TODO: return keys of $payloads
+		return array_keys($payloads);
 	}
 
 	public function pullPayloads(string $queueName, int $count): array

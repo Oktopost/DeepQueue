@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryManager\Queue;
+namespace DeepQueue\Manager;
 
 
 use DeepQueue\Base\IMetaData;
@@ -7,13 +7,13 @@ use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\Queue\IQueue;
 use DeepQueue\Enums\QueueState;
-
 use DeepQueue\Module\Queue\Queue;
-use Objection\LiteObject;
+
 use Objection\LiteSetup;
+use Objection\LiteObject;
 
 
-class InMemoryQueue extends LiteObject implements IQueueObject
+class QueueObject extends LiteObject implements IQueueObject
 {
 	/** @var IDeepQueueConfig */
 	private $deepConfig = null;
@@ -22,10 +22,10 @@ class InMemoryQueue extends LiteObject implements IQueueObject
 	protected function _setup()
 	{
 		return [
-			'ID'		=> LiteSetup::createString(),
+			'Id'		=> LiteSetup::createString(),
 			'Name'		=> LiteSetup::createString(),
-			'State'		=> LiteSetup::createString(QueueState::PAUSED),
-			'Config'	=> LiteSetup::createInstanceOf(InMemoryQueueConfig::class)
+			'State'		=> LiteSetup::createString(QueueState::RUNNING),
+			'Config'	=> LiteSetup::createInstanceOf(QueueConfig::class)
 		];
 	}
 
