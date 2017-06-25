@@ -2,17 +2,17 @@
 namespace DeepQueue\Module\Connector\Decorators;
 
 
-use DeepQueue\Base\IQueueObject;
-use DeepQueue\Base\Validator\IDelayValidator;
-use DeepQueue\Base\Validator\IKeyValidator;
-use DeepQueue\Payload;
-use DeepQueue\Base\Connector\Decorator\IRemoteQueueDecorator;
 use DeepQueue\Scope;
+use DeepQueue\Payload;
+use DeepQueue\Base\IQueueObject;
+use DeepQueue\Base\Validator\IKeyValidator;
+use DeepQueue\Base\Validator\IDelayValidator;
+use DeepQueue\Base\Connector\Decorator\IRemoteQueueDecorator;
 
 
 class Validator implements IRemoteQueueDecorator
 {
-	use \DeepQueue\Module\Connector\Decorators\Base\TDequeueDecorator;
+	use \DeepQueue\Module\Connector\Decorators\Base\TRemoteQueueDecorator;
 	
 	
 	private function validate(array $payload, IQueueObject $queue): void
@@ -26,6 +26,7 @@ class Validator implements IRemoteQueueDecorator
 		$delayValidator->validate($payload, $queue);
 	}
 	
+	
 	/**
 	 * @param Payload[] $payload
 	 * @return ?string[] IDs for each payload
@@ -37,5 +38,17 @@ class Validator implements IRemoteQueueDecorator
 		$this->validate($payload, $queue);
 		
 		return $this->getRemoteQueue()->enqueue($payload);
+	}
+	
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null): array
+	{
+		$queue = $this->requireQueue();
+		
+		if ($count > $queue->Config->MaxBulkSize)
+		{
+			$count = $queue->Config->MaxBulkSize;
+		}
+		
+		return $this->getRemoteQueue()->dequeueWorkload($count, $waitSeconds);
 	}
 }

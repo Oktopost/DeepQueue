@@ -35,4 +35,16 @@ class InMemoryManagerConnector implements IInMemoryManagerConnector
 		
 		return $queue;
 	}
+	
+	public function loadById(string $queueId): ?IQueueObject
+	{
+		$queue = $this->storage->pullQueueById($queueId);
+		
+		if (!$queue || $queue->State == QueueState::DELETED)
+		{
+			return null;
+		}
+		
+		return $queue;
+	}
 }

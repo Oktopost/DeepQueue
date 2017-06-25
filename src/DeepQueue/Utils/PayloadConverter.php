@@ -2,6 +2,7 @@
 namespace DeepQueue\Utils;
 
 
+use DeepQueue\Exceptions\InvalidUsageException;
 use DeepQueue\Scope;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
@@ -28,6 +29,15 @@ class PayloadConverter implements IPayloadConverter
 		return $this->idGenerator->get();
 	}
 	
+	private function checkType($object): void
+	{
+		if (!$object instanceof Payload)
+		{
+			throw new InvalidUsageException('Prepared payload must be instance of Payload');
+		}
+	}
+	
+	
 	
 	public function __construct(ISerializer $payloadDataSerializer)
 	{
@@ -40,7 +50,7 @@ class PayloadConverter implements IPayloadConverter
 			->add(new PayloadSerializer($payloadDataSerializer));
 	}
 	
-
+	
 	public function prepareAll(array $payloads): array
 	{
 		$preparedPayloads = [];
@@ -48,6 +58,8 @@ class PayloadConverter implements IPayloadConverter
 		/** @var Payload $payload */
 		foreach ($payloads as $payload)
 		{
+			$this->checkType($payload);
+			
 			$key = null;
 			
 			if (!$payload->Key)
@@ -59,7 +71,7 @@ class PayloadConverter implements IPayloadConverter
 			
 			if (!$payload->hasDelay())
 			{
-				$preparedPayloads['immediately'][] = $payload->Key ?: $key;
+				$preparedPayloads['now'][] = $payload->Key ?: $key;
 			}
 			else
 			{
@@ -70,6 +82,9 @@ class PayloadConverter implements IPayloadConverter
 		return $preparedPayloads;
 	}
 
+	/**
+	 * @return Payload[]|array
+	 */
 	public function deserializeAll(array $payloads): array
 	{
 		$deserializedPayloads = [];
@@ -82,6 +97,9 @@ class PayloadConverter implements IPayloadConverter
 		return $deserializedPayloads;
 	}
 
+	/**
+	 * @return Workload[]|array
+	 */
 	public function getWorkloads(array $payloads): array
 	{
 		$workloads = [];

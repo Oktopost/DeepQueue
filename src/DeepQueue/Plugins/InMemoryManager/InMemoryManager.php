@@ -106,10 +106,10 @@ class InMemoryManager implements IInMemoryManager
 	{
 		if ($object instanceof IQueueObject)
 		{
-			$object = $object->Name;
+			$object = $object->Id;
 		}
 		
-		$queueObject = $this->connector->load($object->Name);
+		$queueObject = $this->connector->loadById($object);
 		
 		if (!$queueObject)
 			return;

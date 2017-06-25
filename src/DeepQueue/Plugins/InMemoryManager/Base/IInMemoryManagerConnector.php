@@ -12,4 +12,5 @@ interface IInMemoryManagerConnector
 {
 	public function upsert(IQueueObject $queue): IQueueObject;
 	public function load(string $queueName): ?IQueueObject;
+	public function loadById(string $queueId): ?IQueueObject;
 }

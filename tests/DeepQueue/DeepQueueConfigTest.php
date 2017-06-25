@@ -83,6 +83,20 @@ class DeepQueueConfigTest extends TestCase
 		self::assertInstanceOf(IDeepQueueConfig::class, 
 			$dc->addConnectorBuilder(QueueStateDecorator::class));
 	}
+
+	/**
+	 * @expectedException \DeepQueue\Exceptions\DecoratorNotExistsException
+	 */
+	public function test_AddConnectorBuilder_WrongType_ThrowsException()
+	{
+		$dc = $this->getSubject();
+		
+		$dc->setConnectorPlugin($this->mockConnector());
+		$dc->setManagerPlugin($this->mockManager());
+		
+		self::assertInstanceOf(IDeepQueueConfig::class, 
+			$dc->addConnectorBuilder('wrong'));
+	}
 	
 	public function test_AddLoaderBuilder_ReturnSelf()
 	{
@@ -93,5 +107,19 @@ class DeepQueueConfigTest extends TestCase
 		
 		self::assertInstanceOf(IDeepQueueConfig::class,
 			$dc->addLoaderBuilder(CachedLoaderDecorator::class));
+	}
+
+	/**
+	 * @expectedException \DeepQueue\Exceptions\DecoratorNotExistsException
+	 */
+	public function test_AddLoaderBuilder_WrongType_ThrowsException()
+	{
+		$dc = $this->getSubject();
+		
+		$dc->setConnectorPlugin($this->mockConnector());
+		$dc->setManagerPlugin($this->mockManager());
+		
+		self::assertInstanceOf(IDeepQueueConfig::class,
+			$dc->addLoaderBuilder('wrong'));
 	}
 }

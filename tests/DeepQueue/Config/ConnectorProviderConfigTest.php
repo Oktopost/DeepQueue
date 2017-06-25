@@ -88,7 +88,7 @@ class ConnectorProviderConfigTest extends TestCase
 		$config->setConnector($this->mockConnector());
 		$config->setLoaderBuilder($this->mockLoaderBuilder());
 		
-		$provider = $config->getConnectorProvider();
+		$config->getConnectorProvider();
 		
 		self::assertInstanceOf(IConnectorProvider::class, $config->getConnectorProvider());
 	}

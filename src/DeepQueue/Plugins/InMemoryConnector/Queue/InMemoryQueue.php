@@ -3,6 +3,8 @@ namespace DeepQueue\Plugins\InMemoryConnector\Queue;
 
 
 use DeepQueue\Scope;
+use DeepQueue\Payload;
+use DeepQueue\Workload;
 use DeepQueue\Utils\PayloadConverter;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueConnector;
@@ -35,7 +37,7 @@ class InMemoryQueue implements IRemoteQueue
 
 		while ($nowTime < $endTime)
 		{
-			$payloads = $this->connector->dequeue($count);
+			$payloads = $this->getPayloads($count);
 			
 			if ($payloads)
 			{
@@ -56,7 +58,9 @@ class InMemoryQueue implements IRemoteQueue
 		$this->name = $name;
 	}
 
-
+	/**
+	 * @return Workload[]
+	 */
 	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null): array
 	{
 		if ($waitSeconds > 0)
@@ -71,6 +75,10 @@ class InMemoryQueue implements IRemoteQueue
 		return $this->converter->getWorkloads($payloads);
 	}
 
+	/**
+	 * @param Payload[] $payload
+	 * @return ?string[] IDs for each payload
+	 */
 	public function enqueue(array $payload): array
 	{
 		$prepared = $this->converter->prepareAll($payload);

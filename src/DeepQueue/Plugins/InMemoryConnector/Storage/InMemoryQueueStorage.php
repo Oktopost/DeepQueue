@@ -12,45 +12,45 @@ use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueStorage;
 class InMemoryQueueStorage implements IInMemoryQueueStorage
 {
 	/** @var string[]|array */
-	private $_payloads = [];
+	private $payloads = [];
 	
 	
 	public function pushPayloads(string $queueName, array $payloads): array
 	{
-		if (!isset($this->_payloads[$queueName]))
+		if (!isset($this->payloads[$queueName]))
 		{
-			$this->_payloads[$queueName] = [];
+			$this->payloads[$queueName] = [];
 		}
 		
-		$this->_payloads[$queueName] = array_merge($this->_payloads[$queueName], $payloads);
+		$this->payloads[$queueName] = array_merge($this->payloads[$queueName], $payloads);
 		
 		return array_keys($payloads);
 	}
 
 	public function pullPayloads(string $queueName, int $count): array
 	{
-		if (!isset($this->_payloads[$queueName]) || !$this->_payloads[$queueName])
+		if (!isset($this->payloads[$queueName]) || !$this->payloads[$queueName])
 		{
 			return [];
 		}
 		
-		return array_slice($this->_payloads[$queueName], 0, $count);
+		return array_slice($this->payloads[$queueName], 0, $count);
 	}
 	
 	public function deletePayload(string $queueName, string $key): bool
 	{
-		if (!isset($this->_payloads[$queueName]) || !isset($this->_payloads[$queueName][$key]))
+		if (!isset($this->payloads[$queueName]) || !isset($this->payloads[$queueName][$key]))
 		{
 			return false;
 		}
 		
-		unset($this->_payloads[$queueName][$key]);
+		unset($this->payloads[$queueName][$key]);
 		
 		return true;
 	}
 	
 	public function countEnqueued(string $queueName): int
 	{
-		return isset($this->_payloads[$queueName]) ? sizeof($this->_payloads[$queueName]) : 0;
+		return isset($this->payloads[$queueName]) ? sizeof($this->payloads[$queueName]) : 0;
 	}
 }

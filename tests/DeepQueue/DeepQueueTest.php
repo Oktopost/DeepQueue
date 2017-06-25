@@ -41,6 +41,8 @@ class DeepQueueTest extends TestCase
 		
 		self::assertEquals(1, $queueMetaData->Enqueued);
 		self::assertEquals($queueObjectMetaData->Enqueued, $queueMetaData->Enqueued);
+		self::assertTrue($queueMetaData->hasEnqueued());
+		self::assertFalse($queueMetaData->hasDelayed());
 		
 		$workload = $queue->dequeueWorkload(1);
 
@@ -79,5 +81,28 @@ class DeepQueueTest extends TestCase
 		$queue->enqueue($testPayload);
 		
 		self::assertEquals('777', $queueObject->getStream()->dequeue(1)[0]);
+	}
+	
+	public function test_sanity_withNullPayload()
+	{
+		$dq = new DeepQueue();
+		
+		$dq->config()
+			->setManagerPlugin(new InMemoryManager())
+			->setQueueNotExistsPolicy(QueueLoaderPolicy::CREATE_NEW)
+			->setConnectorPlugin(new InMemoryConnector())
+			->setSerializer((new JsonSerializer())->add(new ArraySerializer())->add(new PrimitiveSerializer()));
+		
+		$queue = $dq->get('nullTest');
+		
+		$payload = new Payload();
+		$payload->Key = 'nullkey';
+		
+		$queue->enqueue($payload);
+		
+		$workload = $queue->dequeueWorkload(1);
+		
+		self::assertEquals($payload->Key, $workload[0]->Id);
+		self::assertNull($workload[0]->Payload);
 	}
 }

@@ -28,6 +28,7 @@ class QueueStateDecorator implements IRemoteQueueDecorator
 	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null): array
 	{
 		$queue = $this->requireQueue();
+
 		$remainingMS = (int)(($waitSeconds ?: 0) * 1000);
 		
 		while ($queue->State != QueueState::RUNNING)
@@ -38,7 +39,6 @@ class QueueStateDecorator implements IRemoteQueueDecorator
 			$sleepMS = min($remainingMS, $this->sleepTimeMS);
 			$remainingMS -= $sleepMS;
 			
-//			usleep($sleepMS * 1000);
 			usleep($sleepMS);
 			
 			$queue = $this->requireQueue();

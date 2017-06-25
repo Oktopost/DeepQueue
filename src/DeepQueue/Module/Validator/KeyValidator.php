@@ -17,7 +17,7 @@ class KeyValidator implements IKeyValidator
 		/** @var Payload $item */
 		foreach ($payload as $item)
 		{
-			if (!$item->Key)
+			if (!$item->hasKey())
 			{
 				throw new ValidationException(ValidationErrorCode::KEY_REQUIRED, 
 					'Unique key in payload is required for this Queue');
@@ -30,7 +30,7 @@ class KeyValidator implements IKeyValidator
 		/** @var Payload $item */
 		foreach ($payload as $item)
 		{
-			if ($item->Key)
+			if ($item->hasKey())
 			{
 				throw new ValidationException(ValidationErrorCode::KEY_FORBIDDEN, 
 					'Unique key in payload is forbidden for this Queue');

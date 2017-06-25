@@ -12,7 +12,7 @@ interface IManagerPlugin extends IRemoteQueueObjectLoader, IConfigurable
 	public function update(IQueueObject $object): IQueueObject;
 	
 	/**
-	 * @param string|IQueueObject $object ID or the object itself.
+	 * @param string|IQueueObject $object Id or the object itself.
 	 */
 	public function delete($object): void;
 }

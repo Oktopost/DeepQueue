@@ -2,6 +2,7 @@
 namespace DeepQueue\Config;
 
 
+use DeepQueue\Module\Connector\Decorators\Validator;
 use DeepQueue\Scope;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
@@ -51,7 +52,8 @@ class ConnectorProviderConfig implements IConnectorProviderConfig
 		$this->connectorBuilder->setLoaderBuilder($this->loaderBuilder);
 		
 		$this->addConnectorBuilder(
-			QueueStateDecorator::class
+			QueueStateDecorator::class,
+			Validator::class
 		);
 		
 		return $this->connectorBuilder;

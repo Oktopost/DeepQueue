@@ -13,18 +13,34 @@ use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerStorage;
 class InMemoryManagerStorage implements IInMemoryManagerStorage
 {
 	/** @var IQueueObject[]|array  */
-	private $_queues = [];
+	private $queues = [];
+	
+	/** @var string[]|array */
+	private $queueNames = [];
 	
 	
 	public function pushQueue(IQueueObject $queue): IQueueObject
 	{
-		$this->_queues[$queue->Name] = $queue;
+		$this->queues[$queue->Name] = $queue;
+		$this->queueNames[$queue->Id] = $queue->Name; 
 		
-		return $this->_queues[$queue->Name];
+		return $this->queues[$queue->Name];
 	}
 
 	public function pullQueue(string $name): ?IQueueObject
 	{
-		return isset($this->_queues[$name]) ? $this->_queues[$name] : null;
+		return isset($this->queues[$name]) ? $this->queues[$name] : null;
+	}
+	
+	public function pullQueueById(string $id): ?IQueueObject
+	{
+		$queue = null;
+		
+		if (isset($this->queueNames[$id]) && isset($this->queues[$this->queueNames[$id]]))
+		{
+			$queue = $this->queues[$this->queueNames[$id]];
+		}
+		
+		return $queue;
 	}
 }

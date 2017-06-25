@@ -39,7 +39,7 @@ class DelayValidator implements IDelayValidator
 		/** @var Payload $item */
 		foreach ($payload as $item)
 		{
-			if ($item->Delay > 0)
+			if ($item->hasDelay())
 			{
 				$this->checkMinAndMaxDelay($item, $queue);
 			}
@@ -51,13 +51,13 @@ class DelayValidator implements IDelayValidator
 		/** @var Payload $item */
 		foreach ($payload as $item)
 		{
-			if (($item->Delay <= 0) && ($queue->Config->DefaultDelay <= 0))
+			if ((!$item->hasDelay()) && ($queue->Config->DefaultDelay <= 0))
 			{
 				throw new ValidationException(ValidationErrorCode::DELAY_REQUIRED, 
 					'Non-zero delay in payload is required for this Queue');
 			}
 			
-			if ($item->Delay <= 0)
+			if (!$item->hasDelay())
 			{
 				$item->Delay = $queue->Config->DefaultDelay;
 			}
@@ -74,7 +74,7 @@ class DelayValidator implements IDelayValidator
 		/** @var Payload $item */
 		foreach ($payload as $item)
 		{
-			if ($item->Delay > 0)
+			if ($item->hasDelay())
 			{
 				throw new ValidationException(ValidationErrorCode::DELAY_FORBIDDEN, 
 					'Non-zero delay in payload is forbidden for this Queue');
