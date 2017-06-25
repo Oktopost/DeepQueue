@@ -1,34 +1,29 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryManager;
+namespace DeepQueue\Plugins\RedisManager;
 
 
 use DeepQueue\Scope;
 use DeepQueue\Enums\Policy;
-use DeepQueue\Enums\QueueState;
 use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\IDeepQueueConfig;
+use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
-use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
-use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManager;
-use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerStorage;
-use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerConnector;
+use DeepQueue\Plugins\RedisManager\Base\IRedisManager;
+use DeepQueue\Plugins\RedisManager\Base\IRedisManagerConnector;
 
 
-class InMemoryManager implements IInMemoryManager
+class RedisManager implements IRedisManager
 {
-	/** @var IInMemoryManagerStorage */
-	private $storage;
-	
-	/** @var IInMemoryManagerConnector */
-	private $connector;
-	
 	/** @var IDeepQueueConfig|null */
 	private $deepConfig = null;
 	
 	/** @var IQueueConfig|null */
 	private $defaultQueueConfig = null;
+	
+	/** @var IRedisManagerConnector */
+	private $connector;
 	
 	
 	private function getDefaultConfig(): IQueueConfig
@@ -37,8 +32,10 @@ class InMemoryManager implements IInMemoryManager
 		{
 			$this->defaultQueueConfig = new QueueConfig();
 			$this->defaultQueueConfig->UniqueKeyPolicy = Policy::ALLOWED;
-			$this->defaultQueueConfig->DelayPolicy = Policy::IGNORED;
+			$this->defaultQueueConfig->DelayPolicy = Policy::ALLOWED;
 			$this->defaultQueueConfig->MaxBulkSize = 256;
+			$this->defaultQueueConfig->MaximalDelay = 5;
+			$this->defaultQueueConfig->DefaultDelay = 1;
 		}
 		
 		return clone $this->defaultQueueConfig;
@@ -53,19 +50,18 @@ class InMemoryManager implements IInMemoryManager
 	
 	public function __construct()
 	{
-		$this->storage = Scope::skeleton(IInMemoryManagerStorage::class);
-		$this->connector = Scope::skeleton(IInMemoryManagerConnector::class);
+		$this->connector = Scope::skeleton(IRedisManagerConnector::class);
 	}
 
-	
-	public function setDeepConfig(IDeepQueueConfig $deepConfig): void
+
+	public function setDeepConfig(IDeepQueueConfig $config): void
 	{
-		$this->deepConfig = $deepConfig;
+		$this->deepConfig = $config;
 	}
 
-	public function create(IQueueObject $queueObject): IQueueObject
+	public function create(IQueueObject $object): IQueueObject
 	{
-		$queueObject = $this->connector->upsert($queueObject);
+		$queueObject = $this->connector->upsert($object);
 		
 		return $this->prepare($queueObject);
 	}
@@ -106,13 +102,6 @@ class InMemoryManager implements IInMemoryManager
 			$object = $object->Id;
 		}
 		
-		$queueObject = $this->connector->loadById($object);
-		
-		if (!$queueObject)
-			return;
-		
-		$queueObject->State = QueueState::DELETED;
-		
-		$this->connector->upsert($queueObject);
+		$this->connector->delete($object);
 	}
 }
