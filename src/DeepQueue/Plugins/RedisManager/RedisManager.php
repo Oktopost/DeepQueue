@@ -7,11 +7,14 @@ use DeepQueue\Enums\Policy;
 use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\IDeepQueueConfig;
+use DeepQueue\Base\Config\IRedisConfig;
+use DeepQueue\Base\Validator\IQueueObjectValidator;
+use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
 use DeepQueue\Plugins\RedisManager\Base\IRedisManager;
-use DeepQueue\Plugins\RedisManager\Base\IRedisManagerConnector;
+use DeepQueue\Plugins\RedisManager\Base\IRedisManagerDAO;
 
 
 class RedisManager implements IRedisManager
@@ -22,8 +25,8 @@ class RedisManager implements IRedisManager
 	/** @var IQueueConfig|null */
 	private $defaultQueueConfig = null;
 	
-	/** @var IRedisManagerConnector */
-	private $connector;
+	/** @var IRedisManagerDAO */
+	private $dao;
 	
 	
 	private function getDefaultConfig(): IQueueConfig
@@ -47,12 +50,41 @@ class RedisManager implements IRedisManager
 		return $queueObject;
 	}
 	
-	
-	public function __construct()
+	private function getId(): string
 	{
-		$this->connector = Scope::skeleton(IRedisManagerConnector::class);
+		return (new TimeBasedRandomGenerator())->get();
+	}
+	
+	private function validate(IQueueObject $queueObject): void
+	{
+		if (!$queueObject->Id)
+		{
+			$queueObject->Id = $this->getId();
+		}
+		
+		/** @var IQueueObjectValidator $validator */
+		$validator = Scope::skeleton(IQueueObjectValidator::class);
+		
+		$validator->validate($queueObject);
+	}
+	
+
+	/**
+	 * @param IRedisConfig|array $redisConfig
+	 */
+	public function __construct($redisConfig)
+	{
+		$redisConfig = RedisConfigParser::parse($redisConfig);
+		
+		$this->dao = Scope::skeleton(IRedisManagerDAO::class);
+		$this->dao->initClient($redisConfig);
 	}
 
+	
+	public function setTTL(int $seconds): void
+	{
+		$this->dao->setTTL($seconds);
+	}
 
 	public function setDeepConfig(IDeepQueueConfig $config): void
 	{
@@ -61,20 +93,22 @@ class RedisManager implements IRedisManager
 
 	public function create(IQueueObject $object): IQueueObject
 	{
-		$queueObject = $this->connector->upsert($object);
+		$this->validate($object);
+		
+		$queueObject = $this->dao->upsert($object);
 		
 		return $this->prepare($queueObject);
 	}
 
 	public function load(string $name, bool $canCreate = false): ?IQueueObject
 	{
-		$queueObject = $this->connector->load($name);
+		$queueObject = $this->dao->load($name);
 		
 		if (!$queueObject && $canCreate)
 		{
 			$queueObject = new QueueObject();
 			$queueObject->Name = $name;
-			$queueObject->Id = (new TimeBasedRandomGenerator())->get();
+			$queueObject->Id = $this->getId();
 			$queueObject->Config = $this->getDefaultConfig();
 			
 			return $this->create($queueObject);
@@ -85,14 +119,14 @@ class RedisManager implements IRedisManager
 
 	public function update(IQueueObject $object): IQueueObject
 	{
-		$queueObject = $object;
+		$this->validate($object);
 		
-		if ($this->connector->load($object->Name))
+		if ($this->dao->load($object->Name))
 		{
-			$queueObject = $this->connector->upsert($object);
+			$object = $this->dao->upsert($object);
 		}
 		
-		return $this->prepare($queueObject);
+		return $this->prepare($object);
 	}
 
 	public function delete($object): void
@@ -102,6 +136,6 @@ class RedisManager implements IRedisManager
 			$object = $object->Id;
 		}
 		
-		$this->connector->delete($object);
+		$this->dao->delete($object);
 	}
 }

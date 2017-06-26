@@ -1,16 +1,16 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryManager\Connector;
+namespace DeepQueue\Plugins\InMemoryManager\DAO;
 
 
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Enums\QueueState;
-use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerConnector;
+use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerDAO;
 
 
 /**
  * @autoload
  */
-class InMemoryManagerConnector implements IInMemoryManagerConnector
+class InMemoryManagerDAO implements IInMemoryManagerDAO
 {
 	/**
 	 * @autoload

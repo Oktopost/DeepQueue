@@ -8,7 +8,7 @@ use DeepQueue\Base\IQueueObject;
 /**
  * @skeleton
  */
-interface IInMemoryManagerConnector
+interface IInMemoryManagerDAO
 {
 	public function upsert(IQueueObject $queue): IQueueObject;
 	public function load(string $queueName): ?IQueueObject;

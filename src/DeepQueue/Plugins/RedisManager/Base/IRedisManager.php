@@ -2,10 +2,10 @@
 namespace DeepQueue\Plugins\RedisManager\Base;
 
 
-use DeepQueue\Base\Plugins\IManagerPlugin;
+use DeepQueue\Base\Plugins\ICacheableManager;
 
 
-interface IRedisManager extends IManagerPlugin
+interface IRedisManager extends ICacheableManager
 {
 	
 }

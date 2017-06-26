@@ -7,7 +7,7 @@ use DeepQueue\Payload;
 use DeepQueue\Workload;
 use DeepQueue\Utils\PayloadConverter;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueConnector;
+use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueDAO;
 
 use Serialization\Base\ISerializer;
 
@@ -16,8 +16,8 @@ class InMemoryQueue implements IRemoteQueue
 {
 	private $name;
 
-	/** @var IInMemoryQueueConnector */
-	private $connector;
+	/** @var IInMemoryQueueDAO */
+	private $dao;
 	
 	/** @var PayloadConverter */
 	private $converter;
@@ -25,7 +25,7 @@ class InMemoryQueue implements IRemoteQueue
 	
 	private function getPayloads(int $count): array 
 	{
-		return $this->connector->dequeue($this->name, $count);
+		return $this->dao->dequeue($this->name, $count);
 	}
 	
 	private function getPayloadsWithWaiting(int $count, float $waitSeconds)
@@ -53,7 +53,7 @@ class InMemoryQueue implements IRemoteQueue
 	
 	public function __construct(string $name, ISerializer $serializer)
 	{
-		$this->connector = Scope::skeleton(IInMemoryQueueConnector::class);
+		$this->dao = Scope::skeleton(IInMemoryQueueDAO::class);
 		$this->converter = new PayloadConverter($serializer);
 		$this->name = $name;
 	}
@@ -83,6 +83,6 @@ class InMemoryQueue implements IRemoteQueue
 	{
 		$prepared = $this->converter->prepareAll($payload);
 		
-		return $this->connector->enqueue($this->name, $prepared['keyValue']);
+		return $this->dao->enqueue($this->name, $prepared['keyValue']);
 	}
 }

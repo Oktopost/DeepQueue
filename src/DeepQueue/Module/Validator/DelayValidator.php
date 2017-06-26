@@ -14,12 +14,12 @@ class DelayValidator implements IDelayValidator
 {
 	private function checkMinAndMaxDelay(Payload $payload, IQueueObject $queue): void
 	{
-		if ($payload->Delay > $queue->Config->MaximalDelay)
+		if ($payload->Delay > $queue->Config->MaximalDelay && $queue->Config->MaximalDelay > -1)
 		{
 			$payload->Delay = $queue->Config->MaximalDelay;
 		}
 		
-		if ($payload->Delay < $queue->Config->MinimalDelay)
+		if ($payload->Delay < $queue->Config->MinimalDelay && $queue->Config->MaximalDelay > -1)
 		{
 			$payload->Delay = $queue->Config->MinimalDelay;
 		}

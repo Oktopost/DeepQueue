@@ -36,7 +36,6 @@ class InMemoryManagerTest extends TestCase
 	public function test_createQueueObject_returnQueueObject()
 	{
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
 		$object->Name = 'createtest';
 		
 		$objectConfig = new QueueConfig();

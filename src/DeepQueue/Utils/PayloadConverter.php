@@ -71,11 +71,11 @@ class PayloadConverter implements IPayloadConverter
 			
 			if (!$payload->hasDelay())
 			{
-				$preparedPayloads['now'][] = $payload->Key ?: $key;
+				$preparedPayloads['now'][$payload->Key ?: $key] = time();
 			}
 			else
 			{
-				$preparedPayloads['delayed'][$payload->Key] = $payload->Delay;
+				$preparedPayloads['delayed'][$payload->Key ?: $key] = $payload->Delay;
 			}
 		}
 	

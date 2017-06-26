@@ -1,12 +1,12 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryConnector\Connector;
+namespace DeepQueue\Plugins\InMemoryConnector\DAO;
 
 
 use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueStorage;
-use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueConnector;
+use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueDAO;
 
 
-class InMemoryQueueConnector implements IInMemoryQueueConnector
+class InMemoryQueueDAO implements IInMemoryQueueDAO
 {
 	/** @var IInMemoryQueueStorage */
 	private $storage;

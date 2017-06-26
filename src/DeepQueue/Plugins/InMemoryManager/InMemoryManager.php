@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\InMemoryManager;
 
 
+use DeepQueue\Base\Validator\IQueueObjectValidator;
 use DeepQueue\Scope;
 use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueState;
@@ -13,7 +14,7 @@ use DeepQueue\Manager\QueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManager;
 use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerStorage;
-use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerConnector;
+use DeepQueue\Plugins\InMemoryManager\Base\IInMemoryManagerDAO;
 
 
 class InMemoryManager implements IInMemoryManager
@@ -21,8 +22,8 @@ class InMemoryManager implements IInMemoryManager
 	/** @var IInMemoryManagerStorage */
 	private $storage;
 	
-	/** @var IInMemoryManagerConnector */
-	private $connector;
+	/** @var IInMemoryManagerDAO */
+	private $dao;
 	
 	/** @var IDeepQueueConfig|null */
 	private $deepConfig = null;
@@ -50,11 +51,29 @@ class InMemoryManager implements IInMemoryManager
 		return $queueObject;
 	}
 	
+	private function getId(): string
+	{
+		return (new TimeBasedRandomGenerator())->get();
+	}
+	
+	private function validate(IQueueObject $queueObject): void
+	{
+		if (!$queueObject->Id)
+		{
+			$queueObject->Id = $this->getId();
+		}
+		
+		/** @var IQueueObjectValidator $validator */
+		$validator = Scope::skeleton(IQueueObjectValidator::class);
+		
+		$validator->validate($queueObject);
+	}
+	
 	
 	public function __construct()
 	{
 		$this->storage = Scope::skeleton(IInMemoryManagerStorage::class);
-		$this->connector = Scope::skeleton(IInMemoryManagerConnector::class);
+		$this->dao = Scope::skeleton(IInMemoryManagerDAO::class);
 	}
 
 	
@@ -65,20 +84,22 @@ class InMemoryManager implements IInMemoryManager
 
 	public function create(IQueueObject $queueObject): IQueueObject
 	{
-		$queueObject = $this->connector->upsert($queueObject);
+		$this->validate($queueObject);
+		
+		$queueObject = $this->dao->upsert($queueObject);
 		
 		return $this->prepare($queueObject);
 	}
 
 	public function load(string $name, bool $canCreate = false): ?IQueueObject
 	{
-		$queueObject = $this->connector->load($name);
+		$queueObject = $this->dao->load($name);
 		
 		if (!$queueObject && $canCreate)
 		{
 			$queueObject = new QueueObject();
 			$queueObject->Name = $name;
-			$queueObject->Id = (new TimeBasedRandomGenerator())->get();
+			$queueObject->Id = $this->getId();
 			$queueObject->Config = $this->getDefaultConfig();
 			
 			return $this->create($queueObject);
@@ -89,14 +110,14 @@ class InMemoryManager implements IInMemoryManager
 
 	public function update(IQueueObject $object): IQueueObject
 	{
-		$queueObject = $object;
-		
-		if ($this->connector->load($object->Name))
+		$this->validate($object);
+
+		if ($this->dao->load($object->Name))
 		{
-			$queueObject = $this->connector->upsert($object);
+			$object = $this->dao->upsert($object);
 		}
 		
-		return $this->prepare($queueObject);
+		return $this->prepare($object);
 	}
 
 	public function delete($object): void
@@ -106,13 +127,13 @@ class InMemoryManager implements IInMemoryManager
 			$object = $object->Id;
 		}
 		
-		$queueObject = $this->connector->loadById($object);
+		$queueObject = $this->dao->loadById($object);
 		
 		if (!$queueObject)
 			return;
 		
 		$queueObject->State = QueueState::DELETED;
 		
-		$this->connector->upsert($queueObject);
+		$this->dao->upsert($queueObject);
 	}
 }

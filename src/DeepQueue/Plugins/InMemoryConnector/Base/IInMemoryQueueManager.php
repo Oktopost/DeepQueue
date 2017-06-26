@@ -2,10 +2,10 @@
 namespace DeepQueue\Plugins\InMemoryConnector\Base;
 
 
-use DeepQueue\Base\IMetaData;
+use DeepQueue\Base\Plugins\RemoteElements\IQueueManager;
 
 
-interface IInMemoryQueueManager
+interface IInMemoryQueueManager extends IQueueManager
 {
-	public function getMetadata(): IMetaData;
+	
 }

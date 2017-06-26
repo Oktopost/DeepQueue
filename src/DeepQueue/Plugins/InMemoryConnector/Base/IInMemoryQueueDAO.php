@@ -5,7 +5,7 @@ namespace DeepQueue\Plugins\InMemoryConnector\Base;
 /**
  * @skeleton
  */
-interface IInMemoryQueueConnector
+interface IInMemoryQueueDAO
 {
 	public function enqueue(string $queueName, array $payloads): array;
 	public function dequeue(string $queueName, int $count = 1): array;
