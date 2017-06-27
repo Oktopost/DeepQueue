@@ -2,7 +2,7 @@
 namespace DeepQueue\Plugins\RedisConnector\Helper;
 
 
-class NameBuilder
+class BucketNameBuilder
 {
 	use \Objection\TStaticClass;
 	
