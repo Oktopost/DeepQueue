@@ -6,6 +6,7 @@ use DeepQueue\Utils\PayloadConverter;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Plugins\RedisConnector\Base\IRedisQueueDAO;
 
+use DeepQueue\Utils\TimeGenerator;
 use Serialization\Base\ISerializer;
 
 
@@ -30,7 +31,16 @@ class RedisQueue implements IRemoteQueue
 	
 	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null): array
 	{
+		if ($count <= 0)
+		{
+			return [];
+		}
 		
+		$dequeuer = new RedisDequeue($this->dao, $this->name, round($waitSeconds));
+		
+		$payloads = $dequeuer->dequeue($count);
+		
+		return $this->converter->getWorkloads($payloads);
 	}
 
 	public function enqueue(array $payload): array

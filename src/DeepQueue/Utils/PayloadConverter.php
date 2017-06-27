@@ -17,6 +17,9 @@ use Serialization\Serializers\JsonSerializer;
 
 class PayloadConverter implements IPayloadConverter
 {
+	private const UNIQUE_PREFIX = 'unq';
+	
+	
 	/** @var ISerializer */
 	private $serializer;
 	
@@ -26,7 +29,7 @@ class PayloadConverter implements IPayloadConverter
 	
 	private function createKey()
 	{
-		return $this->idGenerator->get();
+		return self::UNIQUE_PREFIX . $this->idGenerator->get();
 	}
 	
 	private function checkType($object): void
@@ -60,22 +63,17 @@ class PayloadConverter implements IPayloadConverter
 		{
 			$this->checkType($payload);
 			
-			$key = null;
+			$key = $payload->Key ?: $this->createKey();
 			
-			if (!$payload->Key)
-			{
-				$key = $this->createKey();
-			}
-			
-			$preparedPayloads['keyValue'][$payload->Key ?: $key] = $this->serializer->serialize($payload);
+			$preparedPayloads['keyValue'][$key] = $this->serializer->serialize($payload);
 			
 			if (!$payload->hasDelay())
 			{
-				$preparedPayloads['now'][$payload->Key ?: $key] = time();
+				$preparedPayloads['now'][] = $key;
 			}
 			else
 			{
-				$preparedPayloads['delayed'][$payload->Key ?: $key] = $payload->Delay;
+				$preparedPayloads['delayed'][$key] = $payload->Delay;
 			}
 		}
 	

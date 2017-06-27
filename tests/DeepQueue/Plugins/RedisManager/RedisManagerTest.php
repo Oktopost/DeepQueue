@@ -1,8 +1,10 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryManager;
+namespace DeepQueue\Plugins\RedisManager;
 
 
+use DeepQueue\Base\Config\IRedisConfig;
 use DeepQueue\Base\Plugins\IManagerPlugin;
+use DeepQueue\Config\RedisConfig;
 use DeepQueue\DeepQueue;
 use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueLoaderPolicy;
@@ -11,6 +13,8 @@ use DeepQueue\Manager\QueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
 
+use DeepQueue\Utils\RedisConfigParser;
+use Predis\Client;
 use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
@@ -18,14 +22,22 @@ use Serialization\Json\Serializers\PrimitiveSerializer;
 use PHPUnit\Framework\TestCase;
 
 
-class InMemoryManagerTest extends TestCase
+class RedisManagerTest extends TestCase
 {
+	private function getConfig(): IRedisConfig
+	{
+		$config = [];
+		$config['prefix'] = 'test.deepqueue';
+		
+		return RedisConfigParser::parse($config);
+	}
+	
 	private function getSubject(): IManagerPlugin
 	{
 		$dq = new DeepQueue();
 		
 		$dq->config()
-			->setManagerPlugin(new InMemoryManager())
+			->setManagerPlugin(new RedisManager($this->getConfig()))
 			->setQueueNotExistsPolicy(QueueLoaderPolicy::CREATE_NEW)
 			->setConnectorPlugin(new InMemoryConnector())
 			->setSerializer((new JsonSerializer())->add(new ArraySerializer())->add(new PrimitiveSerializer()));
@@ -34,6 +46,17 @@ class InMemoryManagerTest extends TestCase
 	}
 	
 	
+	public function setUp()
+	{
+		$config = $this->getConfig();
+		
+		$client = new Client($config->getParameters(), $config->getOptions());
+
+		$client->eval("return redis.call('del', 'defaultKey', unpack(redis.call('keys', ARGV[1])))", 
+			0, 'test.deepqueue:*');
+	}
+
+
 	public function test_createQueueObject_returnQueueObject()
 	{
 		$object = new QueueObject();

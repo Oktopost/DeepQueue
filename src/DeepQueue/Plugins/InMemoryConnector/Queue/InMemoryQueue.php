@@ -5,6 +5,7 @@ namespace DeepQueue\Plugins\InMemoryConnector\Queue;
 use DeepQueue\Scope;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
+use DeepQueue\Utils\TimeGenerator;
 use DeepQueue\Utils\PayloadConverter;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueDAO;
@@ -30,8 +31,8 @@ class InMemoryQueue implements IRemoteQueue
 	
 	private function getPayloadsWithWaiting(int $count, float $waitSeconds)
 	{
-		$endTime = (microtime(true) + $waitSeconds) * 1000;
-		$nowTime = microtime(true) * 1000;
+		$endTime = TimeGenerator::getMs($waitSeconds);
+		$nowTime = TimeGenerator::getMs();
 
 		$payloads = [];
 
@@ -44,7 +45,7 @@ class InMemoryQueue implements IRemoteQueue
 				break;
 			}
 			
-			$nowTime = microtime(true) * 1000;
+			$nowTime = TimeGenerator::getMs();
 		}
 		
 		return $payloads;

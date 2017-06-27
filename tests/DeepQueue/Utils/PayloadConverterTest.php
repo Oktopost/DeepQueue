@@ -30,7 +30,7 @@ class PayloadConverterTest extends TestCase
 		self::assertEquals(1, sizeof($prepared['now']));
 		self::assertEquals(1, sizeof($prepared['delayed']));
 		
-		self::assertEquals($payload2->Key, array_keys($prepared['now'])[0]);
+		self::assertEquals($payload2->Key, $prepared['now'][0]);
 		
 		self::assertJson($prepared['keyValue'][$payload2->Key]);
 	}

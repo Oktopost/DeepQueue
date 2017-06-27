@@ -49,6 +49,11 @@ class Validator implements IRemoteQueueDecorator
 			$count = $queue->Config->MaxBulkSize;
 		}
 		
+		if ($count < 0)
+		{
+			$count = 0;
+		}
+		
 		return $this->getRemoteQueue()->dequeueWorkload($count, $waitSeconds);
 	}
 }
