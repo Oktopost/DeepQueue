@@ -103,7 +103,7 @@ class RedisManager implements IRedisManager
 	public function load(string $name, bool $canCreate = false): ?IQueueObject
 	{
 		$queueObject = $this->dao->load($name);
-		
+
 		if (!$queueObject && $canCreate)
 		{
 			$queueObject = new QueueObject();

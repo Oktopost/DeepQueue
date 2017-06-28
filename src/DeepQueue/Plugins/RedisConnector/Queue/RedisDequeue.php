@@ -3,63 +3,22 @@ namespace DeepQueue\Plugins\RedisConnector\Queue;
 
 
 use DeepQueue\Utils\TimeGenerator;
+use DeepQueue\Plugins\RedisConnector\Base\IRedisDequeue;
 use DeepQueue\Plugins\RedisConnector\Base\IRedisQueueDAO;
+use DeepQueue\Plugins\RedisConnector\Helper\RedisNameBuilder;
 
 
-class RedisDequeue
-{
-	private const ZEROKEY = '000-000-000';
-	
-	
+class RedisDequeue implements IRedisDequeue
+{	
 	/** @var IRedisQueueDAO */
 	private $dao;
 	
+	/** @var string */
 	private $name;
 	
-	private $waitSeconds;
+	/** @var int */
+	private $startTime = null;
 	
-	
-	private function dequeueWithWaiting(int $count): array
-	{
-		$endTime = TimeGenerator::getMs($this->waitSeconds);
-		$nowTime = TimeGenerator::getMs();
-		
-		$payloads = [];
-
-		while ($nowTime < $endTime)
-		{
-			$key = $this->dao->dequeueInitialKey($this->name, $this->waitSeconds);
-			
-			if ($key == self::ZEROKEY)
-			{
-				$this->dao->popDelayed($this->name);
-				
-				$this->waitSeconds = $this->getDelayedWaitSeconds($this->waitSeconds);
-				
-				$endTime = TimeGenerator::getMs($this->waitSeconds);
-			}
-
-			if ($key)
-			{
-				$payloads = $this->dao->dequeueAll($this->name, $count - 1, $key);
-			}
-			
-			if ($payloads)
-			{
-				break;
-			}
-			
-			$nowTime = TimeGenerator::getMs();
-		}
-		
-		return $payloads;
-	}
-	
-	private function dequeueNow(int $count): array
-	{
-		$key = $this->dao->dequeueInitialKey($this->name, $this->waitSeconds);
-		return $this->dao->dequeueAll($this->name, $count - 1, $key);
-	}
 	
 	private function getWaitingTime(array $result, int $waitingSeconds): int 
 	{
@@ -70,36 +29,61 @@ class RedisDequeue
 		
 		$lastTime = round(($result[array_keys($result)[0]] - TimeGenerator::getMs()) / 1000);	
 		
-		return $lastTime < $waitingSeconds ? $lastTime : $waitingSeconds;
+		return ($lastTime > 0 && $lastTime < $waitingSeconds) ? $lastTime : $waitingSeconds;
 	}
 	
-	private function getDelayedWaitSeconds(int $waitingSeconds): int 
+	private function getFirstDelayedWaitSeconds(int $waitingSeconds): int 
 	{
+		if ($waitingSeconds <= 0)
+			return $waitingSeconds;
+		
 		$firstDelayed = $this->dao->getFirstDelayed($this->name);
 		
 		return $firstDelayed ? $this->getWaitingTime($firstDelayed, $waitingSeconds) : $waitingSeconds;
 	}
 	
-	
-	public function __construct(IRedisQueueDAO $dao, string $queueName, int $waitSeconds)
+	private function decreaseWaiting(): int 
 	{
-		$this->dao = $dao;
-		$this->name = $queueName;
-		$this->waitSeconds = $waitSeconds;
+		$timeLeft = ($this->startTime - TimeGenerator::getMs()) / 1000;
+
+		$timeLeft = $timeLeft >= 0 ? round($timeLeft) : -1;
+				
+		$timeToWait = $this->getFirstDelayedWaitSeconds($timeLeft);
+		
+		return $timeToWait >= 0 ? $timeToWait : -1;
 	}
 	
 	
-	public function dequeue(int $count = 1)
+	public function __construct(IRedisQueueDAO $dao, string $queueName)
 	{
-		$this->dao->popDelayed($this->name);
-		
-		if ($this->waitSeconds > 0)
+		$this->dao = $dao;
+		$this->name = $queueName;
+	}
+
+	
+	public function dequeue(int $count = 1, int $waitSeconds): array 
+	{
+		if (!$this->startTime)
 		{
-			$this->waitSeconds = $this->getDelayedWaitSeconds($this->waitSeconds);
-			
-			return $this->dequeueWithWaiting($count);
+			$this->startTime = TimeGenerator::getMs($waitSeconds);
 		}
 		
-		return $this->dequeueNow($count);
+		$this->dao->popDelayed($this->name);
+
+		$waitSeconds = $this->decreaseWaiting();
+
+		$initialKey = $this->dao->dequeueInitialKey($this->name, $waitSeconds);
+
+		if ($initialKey == RedisNameBuilder::getZeroKey() || (!$initialKey && $waitSeconds >= 0))
+		{
+			return $this->dequeue($count, $waitSeconds);
+		}
+		
+		if (!$initialKey)
+		{
+			return [];
+		}
+		
+		return $this->dao->dequeueAll($this->name, $count - 1, $initialKey);
 	}
 }

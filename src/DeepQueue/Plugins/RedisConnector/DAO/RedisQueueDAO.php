@@ -4,7 +4,7 @@ namespace DeepQueue\Plugins\RedisConnector\DAO;
 
 use DeepQueue\Utils\TimeGenerator;
 use DeepQueue\Base\Config\IRedisConfig;
-use DeepQueue\Plugins\RedisConnector\Helper\BucketNameBuilder;
+use DeepQueue\Plugins\RedisConnector\Helper\RedisNameBuilder;
 use DeepQueue\Plugins\RedisConnector\Base\IRedisQueueDAO;
 
 use Predis\Client;
@@ -13,21 +13,18 @@ use Predis\Pipeline\Pipeline;
 
 class RedisQueueDAO implements IRedisQueueDAO
 {
-	private const ZEROKEY = '000-000-000';
-	
-	
 	/** @var Client	*/
 	private $client;
 	
 	
 	private function prepareNow(string $queueName, Pipeline $pipeline, $payloads): void
 	{
-		$pipeline->rpush(BucketNameBuilder::getNowKey($queueName), $payloads);
+		$pipeline->rpush(RedisNameBuilder::getNowKey($queueName), $payloads);
 	}
 	
 	private function preparePayloads(string $queueName, Pipeline $pipeline, $payloads): void 
 	{
-		$pipeline->hmset(BucketNameBuilder::getPayloadsKey($queueName), $payloads['keyValue']);
+		$pipeline->hmset(RedisNameBuilder::getPayloadsKey($queueName), $payloads['keyValue']);
 	}
 	
 	private function prepareDelayed(string $queueName, Pipeline $pipeline, $payloads): void
@@ -39,7 +36,7 @@ class RedisQueueDAO implements IRedisQueueDAO
 			$delayed[$key] = TimeGenerator::getMs($delay);
 		}
 		
-		$pipeline->zadd(BucketNameBuilder::getDelayedKey($queueName), $delayed);
+		$pipeline->zadd(RedisNameBuilder::getDelayedKey($queueName), $delayed);
 	}
 	
 	private function setupEnqueuePipeline(string $queueName, $payloads): Pipeline
@@ -56,27 +53,35 @@ class RedisQueueDAO implements IRedisQueueDAO
 			$this->prepareDelayed($queueName, $pipeline, $payloads['delayed']);
 		}
 		
-		$this->preparePayloads($queueName, $pipeline, $payloads);
+		if (isset($payloads['keyValue']))
+		{
+			$this->preparePayloads($queueName, $pipeline, $payloads);
+		}
 		
 		return $pipeline;
 	}
 	
 	private function addZeroKeyIfEmpty(string $queueName): void
 	{
-		if ($this->client->llen(BucketNameBuilder::getNowKey($queueName)) == 0)
+		if ($this->client->llen(RedisNameBuilder::getNowKey($queueName)) == 0)
 		{
-			$this->client->rpush(BucketNameBuilder::getNowKey($queueName), [self::ZEROKEY]);
+			$this->client->rpush(RedisNameBuilder::getNowKey($queueName), [RedisNameBuilder::getZeroKey()]);
 		}
 	}
 	
-	private function getKeys(string $queueName, int $count, string $initialKey): array 
+	private function getKeys(string $queueName, int $count, ?string $initialKey = null): array 
 	{
-		$dequeuingKeys[] = $initialKey;
+		$dequeuingKeys = [];
 		
+		if ($initialKey)
+		{
+			$dequeuingKeys[] = $initialKey;
+		}
+
 		$pipeline = $this->client->pipeline();
 		
-		$pipeline->lrange(BucketNameBuilder::getNowKey($queueName), 0, $count - 1);
-		$pipeline->ltrim(BucketNameBuilder::getNowKey($queueName), $count, -1);
+		$pipeline->lrange(RedisNameBuilder::getNowKey($queueName), 0, $count - 1);
+		$pipeline->ltrim(RedisNameBuilder::getNowKey($queueName), $count, -1); //TODO: check correct amount of trim!
 		
 		$response = $pipeline->execute();
 
@@ -92,8 +97,8 @@ class RedisQueueDAO implements IRedisQueueDAO
 		
 		$pipeline = $this->client->pipeline();
 		
-		$pipeline->hmget(BucketNameBuilder::getPayloadsKey($queueName), $keys);
-		$pipeline->hdel(BucketNameBuilder::getPayloadsKey($queueName), $keys);
+		$pipeline->hmget(RedisNameBuilder::getPayloadsKey($queueName), $keys);
+		$pipeline->hdel(RedisNameBuilder::getPayloadsKey($queueName), $keys);
 		
 		$response = $pipeline->execute();
 		
@@ -110,6 +115,9 @@ class RedisQueueDAO implements IRedisQueueDAO
 
 	public function enqueue(string $queueName, array $payloads): array
 	{
+		if (!$payloads)
+			return [];
+		
 		$pipeline = $this->setupEnqueuePipeline($queueName, $payloads);
 		
 		$pipeline->execute();
@@ -131,12 +139,12 @@ class RedisQueueDAO implements IRedisQueueDAO
 		
 		if ($waitSeconds > 0)
 		{
-			$key = $this->client->blpop([BucketNameBuilder::getNowKey($queueName)], $waitSeconds);
+			$key = $this->client->blpop([RedisNameBuilder::getNowKey($queueName)], $waitSeconds);
 			$key = $key[1];
 		}
 		else
 		{
-			$key = $this->client->lpop(BucketNameBuilder::getNowKey($queueName));
+			$key = $this->client->lpop(RedisNameBuilder::getNowKey($queueName));
 		}
 		
 		if (!$key)
@@ -145,7 +153,7 @@ class RedisQueueDAO implements IRedisQueueDAO
 		return $key;
 	}
 	
-	public function dequeueAll(string $queueName, int $count, string $initialKey): array
+	public function dequeueAll(string $queueName, int $count, ?string $initialKey = null): array
 	{
 		$keys = $this->getKeys($queueName, $count, $initialKey);
 
@@ -154,26 +162,26 @@ class RedisQueueDAO implements IRedisQueueDAO
 	
 	public function popDelayed(string $queueName): void
 	{
-		$delayed = $this->client->zrangebyscore(BucketNameBuilder::getDelayedKey($queueName), 
+		$delayed = $this->client->zrangebyscore(RedisNameBuilder::getDelayedKey($queueName), 
 			0, TimeGenerator::getMs());
 
 		if (!$delayed)
 		{
 			return;
 		}
-
+		
 		$pipeline = $this->client->pipeline();
 		
 		$this->prepareNow($queueName, $pipeline, $delayed);
 		
-		$pipeline->zrem(BucketNameBuilder::getDelayedKey($queueName), $delayed);
+		$pipeline->zrem(RedisNameBuilder::getDelayedKey($queueName), $delayed);
 		
 		$pipeline->execute();
 	}
 	
 	public function getFirstDelayed(string $queueName): array 
 	{
-		$result = $this->client->zrange(BucketNameBuilder::getDelayedKey($queueName), 
+		$result = $this->client->zrange(RedisNameBuilder::getDelayedKey($queueName), 
 				0, 0, 'WITHSCORES');
 		
 		return $result ?: [];
@@ -181,11 +189,11 @@ class RedisQueueDAO implements IRedisQueueDAO
 	
 	public function countEnqueued(string $queueName): int
 	{
-		return $this->client->hlen(BucketNameBuilder::getPayloadsKey($queueName));
+		return $this->client->hlen(RedisNameBuilder::getPayloadsKey($queueName));
 	}
 
 	public function countDelayed(string $queueName): int
 	{
-		return $this->client->zcard(BucketNameBuilder::getDelayedKey($queueName));
+		return $this->client->zcard(RedisNameBuilder::getDelayedKey($queueName));
 	}
 }

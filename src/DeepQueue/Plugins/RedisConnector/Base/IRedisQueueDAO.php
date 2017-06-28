@@ -13,7 +13,7 @@ interface IRedisQueueDAO
 	public function initClient(IRedisConfig $config);
 	public function enqueue(string $queueName, array $payloads): array;
 	public function dequeueInitialKey($queueName, $waitSeconds): ?string;
-	public function dequeueAll(string $queueName, int $count, string $initialKey): array;
+	public function dequeueAll(string $queueName, int $count, ?string $initialKey = null): array;
 	public function popDelayed(string $queueName): void;
 	public function getFirstDelayed(string $queueName): array;
 		

@@ -2,19 +2,20 @@
 namespace DeepQueue\Plugins\RedisManager;
 
 
-use DeepQueue\Base\Config\IRedisConfig;
-use DeepQueue\Base\Plugins\IManagerPlugin;
-use DeepQueue\Config\RedisConfig;
 use DeepQueue\DeepQueue;
 use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueLoaderPolicy;
+use DeepQueue\Base\Config\IRedisConfig;
+use DeepQueue\Base\Plugins\IManagerPlugin;
+use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
+use DeepQueue\Plugins\RedisManager\Base\IRedisManager;
 use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
 
-use DeepQueue\Utils\RedisConfigParser;
 use Predis\Client;
+
 use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
@@ -27,7 +28,7 @@ class RedisManagerTest extends TestCase
 	private function getConfig(): IRedisConfig
 	{
 		$config = [];
-		$config['prefix'] = 'test.deepqueue';
+		$config['prefix'] = 'test.manager.deepqueue';
 		
 		return RedisConfigParser::parse($config);
 	}
@@ -53,7 +54,7 @@ class RedisManagerTest extends TestCase
 		$client = new Client($config->getParameters(), $config->getOptions());
 
 		$client->eval("return redis.call('del', 'defaultKey', unpack(redis.call('keys', ARGV[1])))", 
-			0, 'test.deepqueue:*');
+			0, 'test.manager.deepqueue:*');
 	}
 
 
@@ -214,5 +215,29 @@ class RedisManagerTest extends TestCase
 		$manager->delete($object->Id);
 		
 		self::assertNull($manager->load('deleted', false));
+	}
+	
+	public function test_setTTL_QueueNotExistAfterTTL()
+	{
+		/** @var IRedisManager $manager */
+		$manager = $this->getSubject();
+		
+		$object = new QueueObject();
+		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Name = 'ttltest';
+		
+		$objectConfig = new QueueConfig();
+		$objectConfig->UniqueKeyPolicy = Policy::ALLOWED;
+		$objectConfig->DelayPolicy = Policy::IGNORED;
+		$objectConfig->MaxBulkSize = 256;
+		
+		$object->Config = $objectConfig;
+		
+		$manager->setTTL(2);
+		$manager->create($object);
+		
+		sleep(3);
+		
+		self::assertNull($manager->load('ttltest'));
 	}
 }

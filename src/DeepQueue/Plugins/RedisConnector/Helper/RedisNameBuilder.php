@@ -2,10 +2,12 @@
 namespace DeepQueue\Plugins\RedisConnector\Helper;
 
 
-class BucketNameBuilder
+class RedisNameBuilder
 {
 	use \Objection\TStaticClass;
 	
+	
+	private const ZEROKEY = '000-000-000';
 	
 	private const NOW_SUFFIX = 'now';
 	private const DELAYED_SUFFIX = 'delayed';
@@ -27,4 +29,8 @@ class BucketNameBuilder
 		return "{$queueName}:" . self::DELAYED_SUFFIX;
 	}
 	
+	public static function getZeroKey(): string
+	{
+		return self::ZEROKEY;
+	}
 }
