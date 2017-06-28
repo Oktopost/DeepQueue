@@ -80,15 +80,6 @@ class RedisDequeueTest extends TestCase
 		self::assertEmpty($this->getSubject()->dequeue(255, 2));
 	}
 	
-	public function test_dequeue_Empty_WithWaiting_CorrectWaitingTime()
-	{
-		$startTime = time();
-		$this->getSubject()->dequeue(255, 3);
-		$endTime = time();
-		
-		self::assertTrue($endTime - $startTime < 4);
-	}
-	
 	public function test_dequeue_Now_WithoutWaiting_GetPayloads()
 	{
 		$payload1 = new Payload();
@@ -137,11 +128,7 @@ class RedisDequeueTest extends TestCase
 		$payloads = $this->preparePayloads([$payload1, $payload2, $payload3, $payload4]);
 		$this->getDAO()->enqueue(self::QUEUE_NAME, $payloads);
 		
-		$startTime = time();
-		
 		$payloads = $this->getSubject()->dequeue(3, 3);
-		
-		$endTime = time();
 		
 		self::assertEquals(3, sizeof($payloads));
 		self::assertEquals($payload1->Key, array_keys($payloads)[0]);
@@ -151,8 +138,6 @@ class RedisDequeueTest extends TestCase
 		
 		self::assertEquals(1, sizeof($leftIds));
 		self::assertEquals($payload4->Key, $leftIds[0]);
-		
-		self::assertTrue($endTime - $startTime < 1);
 	}
 	
 	public function test_dequeue_Delayed_WithWaiting_GetPayloads()
@@ -178,11 +163,7 @@ class RedisDequeueTest extends TestCase
 		$payloads = $this->preparePayloads([$payload1, $payload2, $payload3, $payload4]);
 		$this->getDAO()->enqueue(self::QUEUE_NAME, $payloads);
 		
-		$startTime = time();
-		
 		$payloads = $this->getSubject()->dequeue(3, 3);
-		
-		$endTime = time();
 		
 		self::assertEquals(1, sizeof($payloads));
 		self::assertEquals($payload1->Key, array_keys($payloads)[0]);
@@ -197,8 +178,6 @@ class RedisDequeueTest extends TestCase
 		
 		self::assertEquals(3, sizeof($delayIds));
 		self::assertEquals($payload2->Key, $delayIds[0]);
-		
-		self::assertEquals(1, $endTime - $startTime);
 	}
 	
 	public function test_dequeue_Delayed_WithoutWaiting_GetEmptyArray()

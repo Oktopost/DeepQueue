@@ -81,7 +81,7 @@ class RedisQueueDAO implements IRedisQueueDAO
 		$pipeline = $this->client->pipeline();
 		
 		$pipeline->lrange(RedisNameBuilder::getNowKey($queueName), 0, $count - 1);
-		$pipeline->ltrim(RedisNameBuilder::getNowKey($queueName), $count, -1); //TODO: check correct amount of trim!
+		$pipeline->ltrim(RedisNameBuilder::getNowKey($queueName), $count, -1);
 		
 		$response = $pipeline->execute();
 
@@ -122,7 +122,7 @@ class RedisQueueDAO implements IRedisQueueDAO
 		
 		$pipeline->execute();
 		
-		$now_keys = isset($payloads['now']) ? array_keys($payloads['now']) : [];
+		$now_keys = isset($payloads['now']) ? $payloads['now'] : [];
 		$delayed_keys = isset($payloads['delayed']) ? array_keys($payloads['delayed']) : [];
 		
 		if (!$now_keys && $delayed_keys)

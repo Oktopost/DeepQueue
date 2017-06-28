@@ -81,7 +81,10 @@ class RedisQueueDAOTest extends TestCase
 		
 		$payloads = $this->preparePayloads([$payload1, $payload2]);
 		
-		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		$ids = $this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		self::assertEquals(2, sizeof($ids));
+		self::assertEquals($payload1->Key, $ids[0]);
 		
 		$nowIds = $this->getClient()
 			->lrange(RedisNameBuilder::getNowKey(self::QUEUE_NAME), 0, 1);
