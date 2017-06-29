@@ -18,16 +18,35 @@ class InMemoryQueueManager implements IInMemoryQueueManager
 	/** @var IInMemoryQueueDAO */
 	private $dao;
 	
+	/** @var bool */
+	private $isErrorsEnabled;
 	
-	public function __construct(IQueueObject $queueObject)
+	
+	private function throwErrorWithRand(): void
+	{
+		$rand = (float)rand()/(float)getrandmax();
+		if ($rand < 0.2)
+		{
+			throw new \Exception('Error for debug');
+		}
+	}
+	
+	
+	public function __construct(IQueueObject $queueObject, $enableErrors = false)
 	{
 		$this->queueObject = $queueObject;
 		$this->dao = Scope::skeleton(IInMemoryQueueDAO::class);
+		$this->isErrorsEnabled = $enableErrors;
 	}
 
 
 	public function getMetadata(): IMetaData
 	{
+		if ($this->isErrorsEnabled)
+		{
+			$this->throwErrorWithRand();
+		}
+		
 		$enqueued = $this->dao->countEnqueued($this->queueObject->Name);
 		
 		$metaData = new MetaData();

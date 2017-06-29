@@ -105,4 +105,11 @@ class ValidatorTest extends TestCase
 		
 		self::assertEquals(1, sizeof($workloads));
 	}
+	
+	public function test_Dequeue_NegativeCount()
+	{
+		$validator = $this->getSubject();
+		
+		self::assertEmpty($validator->dequeueWorkload(-1));
+	}
 }
