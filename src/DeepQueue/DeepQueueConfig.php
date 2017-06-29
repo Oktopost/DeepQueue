@@ -2,7 +2,6 @@
 namespace DeepQueue;
 
 
-use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\Loader\IQueueObjectLoader;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
@@ -13,6 +12,7 @@ use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Base\Connector\IConnectorProvider;
 use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
+use DeepQueue\Enums\QueueLoaderPolicy;
 
 use Serialization\Base\ISerializer;
 use Serialization\Base\Json\IJsonDataConstructor;
@@ -34,6 +34,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 
 	/** @var ISerializer|IJsonDataConstructor */
 	private $payloadDataSerializer = null;
+	
 	/** @var int */
 	private $queueNotExistsPolicy = QueueLoaderPolicy::CREATE_NEW;
 
