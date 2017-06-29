@@ -36,7 +36,7 @@ class RedisQueueDAO implements IRedisQueueDAO
 			$delayed[$key] = TimeGenerator::getMs($delay);
 		}
 		
-		$pipeline->zadd(RedisNameBuilder::getDelayedKey($queueName), $delayed);
+		$pipeline->zadd(RedisNameBuilder::getDelayedKey($queueName), 'NX', $delayed);
 	}
 	
 	private function setupEnqueuePipeline(string $queueName, $payloads): Pipeline

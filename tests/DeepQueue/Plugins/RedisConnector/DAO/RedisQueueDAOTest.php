@@ -417,4 +417,28 @@ class RedisQueueDAOTest extends TestCase
 		
 		self::assertEquals(1, $this->getSubject()->countDelayed(self::QUEUE_NAME));
 	}
+	
+	public function test_NotUpdateExistingDelayedTime_ReturnPayload()
+	{
+		$payload1 = new Payload();
+		$payload1->Key = 'd1';
+		$payload1->Payload = 'payload1';
+		$payload1->Delay = 2;
+		
+		$payloads = $this->preparePayloads([$payload1]);
+		
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		sleep(3);
+		
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		$this->getSubject()->popDelayed(self::QUEUE_NAME);
+		
+		//count = 2 because first one is zerokey
+		$payloads = $this->getSubject()->dequeueAll(self::QUEUE_NAME, 2);
+		
+		self::assertNotEmpty($payloads);
+		self::assertEquals($payload1->Key, array_keys($payloads)[0]);
+	}
 }
