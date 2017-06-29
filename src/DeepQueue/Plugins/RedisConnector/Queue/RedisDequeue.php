@@ -22,11 +22,6 @@ class RedisDequeue implements IRedisDequeue
 	
 	private function getWaitingTime(array $result, int $waitingSeconds): int 
 	{
-		if ($waitingSeconds < 1 || empty($result))
-		{
-			return $waitingSeconds;
-		}
-		
 		$lastTime = round(($result[array_keys($result)[0]] - TimeGenerator::getMs()) / 1000);	
 		
 		return ($lastTime > 0 && $lastTime < $waitingSeconds) ? $lastTime : $waitingSeconds;
@@ -34,7 +29,7 @@ class RedisDequeue implements IRedisDequeue
 	
 	private function getFirstDelayedWaitSeconds(int $waitingSeconds): int 
 	{
-		if ($waitingSeconds <= 0)
+		if ($waitingSeconds <= 1)
 			return $waitingSeconds;
 		
 		$firstDelayed = $this->dao->getFirstDelayed($this->name);

@@ -21,10 +21,14 @@ class InMemoryConnector implements IInMemoryConnector
 	/** @var IInMemoryQueueStorage */
 	private $storage;
 	
+	/** @var bool */
+	private $isErrorsEnabled;
 	
-	public function __construct()
+	
+	public function __construct($enableErrorThrowing = false)
 	{
 		$this->storage = Scope::skeleton(IInMemoryQueueStorage::class);
+		$this->isErrorsEnabled = $enableErrorThrowing;
 	}
 	
 
@@ -42,6 +46,6 @@ class InMemoryConnector implements IInMemoryConnector
 
 	public function getQueue(string $name): IRemoteQueue
 	{
-		return new InMemoryQueue($name, $this->deepConfig->serializer());
+		return new InMemoryQueue($name, $this->deepConfig->serializer(), $this->isErrorsEnabled);
 	}
 }

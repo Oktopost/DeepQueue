@@ -23,6 +23,9 @@ class InMemoryQueue implements IRemoteQueue
 	/** @var PayloadConverter */
 	private $converter;
 
+	/** @var bool */
+	private $isErrorsEnabled;
+	
 	
 	private function getPayloads(int $count): array 
 	{
@@ -51,12 +54,22 @@ class InMemoryQueue implements IRemoteQueue
 		return $payloads;
 	}
 	
+	private function throwErrorWithRand(): void
+	{
+		$rand = (float)rand()/(float)getrandmax();
+		if ($rand < 0.2)
+		{
+			throw new \Exception('Error for debug');
+		}
+	}
 	
-	public function __construct(string $name, ISerializer $serializer)
+	
+	public function __construct(string $name, ISerializer $serializer, $enableErrors = false)
 	{
 		$this->dao = Scope::skeleton(IInMemoryQueueDAO::class);
 		$this->converter = new PayloadConverter($serializer);
 		$this->name = $name;
+		$this->isErrorsEnabled = $enableErrors;
 	}
 
 	/**
@@ -64,6 +77,11 @@ class InMemoryQueue implements IRemoteQueue
 	 */
 	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null): array
 	{
+		if ($this->isErrorsEnabled)
+		{
+			$this->throwErrorWithRand();
+		}
+		
 		if ($waitSeconds > 0)
 		{
 			$payloads = $this->getPayloadsWithWaiting($count, $waitSeconds);
@@ -78,10 +96,15 @@ class InMemoryQueue implements IRemoteQueue
 
 	/**
 	 * @param Payload[] $payload
-	 * @return ?string[] IDs for each payload
+	 * @return string[]|array IDs for each payload
 	 */
 	public function enqueue(array $payload): array
 	{
+		if ($this->isErrorsEnabled)
+		{
+			$this->throwErrorWithRand();
+		}
+		
 		$prepared = $this->converter->prepareAll($payload);
 		
 		return $this->dao->enqueue($this->name, $prepared['keyValue']);

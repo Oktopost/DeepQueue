@@ -6,6 +6,7 @@ use DeepQueue\DeepQueue;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueLoaderPolicy;
+use DeepQueue\Plugins\CachedManager\Base\ICachedManager;
 use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
@@ -259,5 +260,38 @@ class CachedManagerTest extends TestCase
 		$cacheData = $this->getClient(self::CACHE_BUCKET)->hgetall('queue:deleted2');
 		
 		self::assertEmpty($cacheData);
+	}
+	
+	public function test_setTTL_QueueNotExistInCacheAfterTTL()
+	{
+		/** @var ICachedManager $manager */
+		$manager = $this->getSubject();
+		
+		$object = new QueueObject();
+		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Name = 'ttltest';
+		
+		$objectConfig = new QueueConfig();
+		$objectConfig->UniqueKeyPolicy = Policy::ALLOWED;
+		$objectConfig->DelayPolicy = Policy::IGNORED;
+		$objectConfig->MaxBulkSize = 256;
+		
+		$object->Config = $objectConfig;
+		
+		$manager->setTTL(2);
+		$manager->create($object);
+		$manager->load($object->Name);
+		
+		$cacheData = $this->getClient(self::CACHE_BUCKET)->hgetall('queue:ttltest');
+		
+		self::assertNotEmpty($cacheData);
+		
+		sleep(3);
+		
+		$cacheData = $this->getClient(self::CACHE_BUCKET)->hgetall('queue:ttltest');
+		
+		self::assertEmpty($cacheData);
+		
+		self::assertEquals($object->Id, $manager->load('ttltest')->Id);
 	}
 }
