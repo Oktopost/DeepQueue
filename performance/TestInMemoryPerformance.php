@@ -23,6 +23,6 @@ $dq->config()
 	->setSerializer((new JsonSerializer())->add(new PrimitiveSerializer()));
 
 
-$result = $tester->test($dq, 10000);
+$result = $tester->test($dq, 255);
 
 var_dump($result);
