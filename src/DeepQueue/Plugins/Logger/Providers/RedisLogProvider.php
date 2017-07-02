@@ -32,6 +32,7 @@ class RedisLogProvider implements ILogProvider
 
 	public function write(array $record): void
 	{
+		//TODO:: fix it
 		$this->client->hmset(self::KEY, [$record['Id'] => json_encode($record)]);
 	}
 

@@ -37,7 +37,6 @@ class RedisQueue implements IRemoteQueue
 	}
 	
 	
-	
 	public function __construct(string $name, IRedisQueueDAO $dao, ISerializer $serializer, ILogger $logger)
 	{
 		$this->dao = $dao;
