@@ -4,18 +4,25 @@ namespace DeepQueue\Plugins\MySQLManager\DAO;
 
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Plugins\MySQLManager\Base\IMySQLManagerDAO;
+use Squid\MySql\IMySqlConnector;
 
 
 class MySQLManagerDAO implements IMySQLManagerDAO
 {
-	public function setConfig($config)
+	/**
+	 * @var IMySqlConnector
+	 */
+	private $connector = null;
+	
+	
+	public function setConnector(IMySqlConnector $connector)
 	{
-		// TODO: Implement setConfig() method.
+		$this->connector = $connector;
 	}
 
 	public function upsert(IQueueObject $queue): IQueueObject
 	{
-		// TODO: Implement upsert() method.
+
 	}
 
 	public function loadById(string $id): ?IQueueObject

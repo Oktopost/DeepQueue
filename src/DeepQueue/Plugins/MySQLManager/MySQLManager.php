@@ -14,6 +14,7 @@ use DeepQueue\Manager\QueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Plugins\MySQLManager\Base\IMySQLManager;
 use DeepQueue\Plugins\MySQLManager\Base\IMySQLManagerDAO;
+use Squid\MySql;
 
 
 class MySQLManager implements IMySQLManager
@@ -71,7 +72,13 @@ class MySQLManager implements IMySQLManager
 	
 	public function __construct(array $config)
 	{
-		//setup squid and dao
+		$sql = new MySql();
+		$sql->config()->setConfig($config);
+		
+		$connector = $sql->getConnector();
+		
+		$this->dao = Scope::skeleton(IMySQLManagerDAO::class);
+		$this->dao->setConnector($connector);
 	}
 
 

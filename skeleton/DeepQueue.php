@@ -23,6 +23,10 @@ use DeepQueue\Config\QueueLoaderConfig;
 use DeepQueue\Plugins\RedisConnector\DAO\RedisQueueDAO;
 use DeepQueue\Plugins\RedisManager\DAO\RedisManagerDAO;
 
+use DeepQueue\Plugins\MySQLManager\DAO\MySQLManagerDAO;
+
+use DeepQueue\Plugins\Logger\Logger;
+
 
 $this->set(Base\Validator\IKeyValidator::class, KeyValidator::class);
 $this->set(Base\Validator\IDelayValidator::class, DelayValidator::class);
@@ -45,3 +49,7 @@ $this->set(Plugins\InMemoryConnector\Base\IInMemoryQueueDAO::class, InMemoryQueu
 
 $this->set(Plugins\RedisManager\Base\IRedisManagerDAO::class, RedisManagerDAO::class);
 $this->set(Plugins\RedisConnector\Base\IRedisQueueDAO::class, RedisQueueDAO::class);
+
+$this->set(Plugins\MySQLManager\Base\IMySQLManagerDAO::class, MySQLManagerDAO::class);
+
+//$this->set(Plugins\Logger\Base\ILogger::class, Logger::class);

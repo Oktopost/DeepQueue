@@ -1,7 +1,7 @@
 <?php
-use DeepQueue\Base\Queue\IQueue;
 use DeepQueue\Payload;
 use DeepQueue\DeepQueue;
+use DeepQueue\Base\Queue\IQueue;
 
 
 class PerformanceTester

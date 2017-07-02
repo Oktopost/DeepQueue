@@ -14,6 +14,9 @@ use DeepQueue\Base\Connector\IConnectorProvider;
 use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
 use DeepQueue\Enums\QueueLoaderPolicy;
 
+use DeepQueue\Plugins\Logger\Base\ILogger;
+use DeepQueue\Plugins\Logger\Base\ILogProvider;
+use DeepQueue\Plugins\Logger\Logger;
 use Serialization\Base\ISerializer;
 use Serialization\Base\Json\IJsonDataConstructor;
 
@@ -37,12 +40,17 @@ class DeepQueueConfig implements IDeepQueueConfig
 	
 	/** @var int */
 	private $queueNotExistsPolicy = QueueLoaderPolicy::CREATE_NEW;
+	
+	/** @var ILogger */
+	private $loggerPlugin;
 
 
 	public function __construct()
 	{
 		$this->connectorConfig = Scope::skeleton(IConnectorProviderConfig::class);
 		$this->loaderConfig = Scope::skeleton(IQueueLoaderConfig::class);
+		
+		$this->loggerPlugin = Logger::instance();
 	}
 
 
@@ -90,6 +98,12 @@ class DeepQueueConfig implements IDeepQueueConfig
 			->setManager($this->manager())
 			->addLoaderBuilder($builders);
 		
+		return $this;
+	}
+	
+	public function addLogProvider(ILogProvider $provider): IDeepQueueConfig
+	{
+		$this->logger()->addProvider($provider);
 		return $this;
 	}
 
@@ -141,5 +155,10 @@ class DeepQueueConfig implements IDeepQueueConfig
 	public function manager(): IManagerPlugin
 	{
 		return $this->managerPlugin;
+	}
+
+	public function logger(): ILogger
+	{
+		return $this->loggerPlugin;
 	}
 }

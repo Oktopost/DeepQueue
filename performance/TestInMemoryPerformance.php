@@ -4,8 +4,8 @@ use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
 use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
 
-use Serialization\Json\Serializers\PrimitiveSerializer;
 use Serialization\Serializers\JsonSerializer;
+use Serialization\Json\Serializers\PrimitiveSerializer;
 
 
 require '../vendor/autoload.php';

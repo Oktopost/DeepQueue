@@ -3,6 +3,8 @@ namespace DeepQueue\Module\Queue;
 
 
 use DeepQueue\Payload;
+use DeepQueue\Plugins\Logger\Base\ILogger;
+use DeepQueue\Plugins\Logger\Logger;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\IQueue;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
@@ -22,6 +24,15 @@ class QueueTest extends TestCase
 
 		return $dq->get('test');
 	}
+	
+	/**
+	 * @return \PHPUnit_Framework_MockObject_MockObject|ILogger
+	 */
+	private function getLoggerMock(): ILogger
+	{
+		$logger = $this->createMock(ILogger::class);
+		return $logger;
+	}
 
 	/**
 	 * @return \PHPUnit_Framework_MockObject_MockObject|IRemoteQueue
@@ -37,7 +48,7 @@ class QueueTest extends TestCase
 	{
 		$remoteQueue = $this->getRemoteMock();
 
-		$queue = new Queue($remoteQueue);
+		$queue = new Queue('test', $remoteQueue, $this->getLoggerMock());
 
 		self::assertInstanceOf(IQueue::class, $queue);
 	}
@@ -49,7 +60,7 @@ class QueueTest extends TestCase
 	{
 		$remote = new \stdClass();
 
-		$queue = new Queue($remote);
+		$queue = new Queue('test', $remote, $this->getLoggerMock());
 
 		self::assertInstanceOf(IQueue::class, $queue);
 	}
@@ -63,7 +74,7 @@ class QueueTest extends TestCase
 
 		$enqueue = $this->getRemoteMock();
 
-		$queue = new Queue($remote, $enqueue);
+		$queue = new Queue('test', $remote, $this->getLoggerMock(), $enqueue);
 
 		self::assertInstanceOf(IQueue::class, $queue);
 	}

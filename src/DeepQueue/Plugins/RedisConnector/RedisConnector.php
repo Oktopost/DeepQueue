@@ -50,6 +50,6 @@ class RedisConnector implements IRedisConnector
 
 	public function getQueue(string $name): IRemoteQueue
 	{
-		return new RedisQueue($name, $this->dao, $this->deepConfig->serializer());
+		return new RedisQueue($name, $this->dao, $this->deepConfig->serializer(), $this->deepConfig->logger());
 	}
 }

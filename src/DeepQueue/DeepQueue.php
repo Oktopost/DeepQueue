@@ -29,7 +29,7 @@ class DeepQueue
 	public function get(string $name): IQueue
 	{
 		$remoteQueue = $this->config->getConnectorProvider()->getRemoteQueue($name);
-		return new Queue($remoteQueue);
+		return new Queue($name, $remoteQueue, $this->config->logger());
 	}
 	
 	public function getQueueObject(string $name): ?IQueueObject

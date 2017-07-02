@@ -29,6 +29,7 @@ class QueueObject extends LiteObject implements IQueueObject
 		];
 	}
 
+	
 	public function setDeepConfig(IDeepQueueConfig $config): void
 	{
 		$this->deepConfig = $config;
@@ -36,7 +37,9 @@ class QueueObject extends LiteObject implements IQueueObject
 	
 	public function getStream(): IQueue
 	{
-		return new Queue($this->deepConfig->getConnectorProvider()->getRemoteQueue($this->Name));
+		$remoteQueue = $this->deepConfig->getConnectorProvider()->getRemoteQueue($this->Name);
+		
+		return new Queue($this->Name, $remoteQueue, $this->deepConfig->logger());
 	}
 
 	public function getMetaData(): IMetaData

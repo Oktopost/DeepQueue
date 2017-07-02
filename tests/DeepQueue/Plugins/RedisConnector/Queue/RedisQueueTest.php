@@ -2,17 +2,20 @@
 namespace DeepQueue\Plugins\RedisConnector\Queue;
 
 
-use DeepQueue\Base\Config\IRedisConfig;
 use DeepQueue\Payload;
+use DeepQueue\Base\Config\IRedisConfig;
+use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Plugins\RedisConnector\Base\IRedisQueueDAO;
 use DeepQueue\Plugins\RedisConnector\DAO\RedisQueueDAO;
 use DeepQueue\Utils\RedisConfigParser;
+
 use PHPUnit\Framework\TestCase;
+
 use Predis\Client;
+
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
 use Serialization\Serializers\JsonSerializer;
-use Symfony\Component\Yaml\Tests\A;
 
 
 class RedisQueueTest extends TestCase
@@ -38,6 +41,15 @@ class RedisQueueTest extends TestCase
 		return $dao;
 	}
 	
+	/**
+	 * @return \PHPUnit_Framework_MockObject_MockObject|ILogger
+	 */
+	private function getLoggerMock(): ILogger
+	{
+		$logger = $this->createMock(ILogger::class);
+		return $logger;
+	}
+	
 	private function getClient(): Client
 	{
 		return new Client($this->getConfig()->getParameters(), $this->getConfig()->getOptions());
@@ -46,7 +58,8 @@ class RedisQueueTest extends TestCase
 	private function getSubject(): RedisQueue
 	{
 		return new RedisQueue(self::QUEUE_NAME, $this->getDAO(), 
-			(new JsonSerializer())->add(new PrimitiveSerializer())->add(new ArraySerializer()));
+			(new JsonSerializer())->add(new PrimitiveSerializer())->add(new ArraySerializer()),
+			$this->getLoggerMock());
 	}
 	
 	

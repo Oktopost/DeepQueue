@@ -3,6 +3,7 @@ namespace DeepQueue\Plugins\RedisConnector\Queue;
 
 
 use DeepQueue\Payload;
+use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Workload;
 use DeepQueue\Utils\PayloadConverter;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
@@ -21,12 +22,28 @@ class RedisQueue implements IRemoteQueue
 	/** @var PayloadConverter */
 	private $converter;
 	
+	/** @var ILogger */
+	private $logger;
 	
-	public function __construct(string $name, IRedisQueueDAO $dao, ISerializer $serializer)
+	
+	private function log(array $data, $operation): void
+	{
+		$message = ucfirst($operation) . ' payload with id: ';
+		
+		foreach ($data as $key => $payload)
+		{
+			$this->logger->info($message . $key, $payload, $key);
+		}
+	}
+	
+	
+	
+	public function __construct(string $name, IRedisQueueDAO $dao, ISerializer $serializer, ILogger $logger)
 	{
 		$this->dao = $dao;
-		$this->converter = new PayloadConverter($serializer);
 		$this->name = $name;
+		$this->converter = new PayloadConverter($serializer);
+		$this->logger = $logger;
 	}
 	
 	
@@ -44,6 +61,8 @@ class RedisQueue implements IRemoteQueue
 		
 		$payloads = $dequeuer->dequeue($count, round($waitSeconds));
 		
+		$this->log($payloads, 'dequeue');
+		
 		return $this->converter->getWorkloads($payloads);
 	}
 
@@ -55,6 +74,10 @@ class RedisQueue implements IRemoteQueue
 	{
 		$prepared = $this->converter->prepareAll($payload);
 		
-		return $this->dao->enqueue($this->name, $prepared);
+		$ids = $this->dao->enqueue($this->name, $prepared);
+		
+		$this->log(array_intersect_key($prepared['keyValue'], array_flip($ids)), 'enqueue');
+		
+		return $ids;
 	}
 }

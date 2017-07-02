@@ -6,6 +6,7 @@ use DeepQueue\Payload;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\IQueue;
 use DeepQueue\Base\Queue\Remote;
+use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Exceptions\UnexpectedDeepQueueException;
 
 
@@ -17,12 +18,18 @@ class Queue implements IQueue
 	/** @var Remote\IRemoteEnqueue */
 	private $remoteEnqueue;
 	
+	/** @var ILogger */
+	private $logger;
+	
+	private $name;
+	
 	
 	/**
 	 * @param Remote\IRemoteDequeue|Remote\IRemoteQueue $queue
+	 * @param ILogger $logger
 	 * @param Remote\IRemoteEnqueue|null $enqueue
 	 */
-	public function __construct($queue, Remote\IRemoteEnqueue $enqueue = null)
+	public function __construct(string $name, $queue, ILogger $logger, Remote\IRemoteEnqueue $enqueue = null)
 	{
 		if (is_null($enqueue) && $queue instanceof Remote\IRemoteQueue)
 		{
@@ -35,6 +42,9 @@ class Queue implements IQueue
 		
 		$this->remoteDequeue = $queue;
 		$this->remoteEnqueue = $enqueue;
+		
+		$this->logger = $logger;
+		$this->name = $name;
 	}
 	
 	
@@ -43,7 +53,22 @@ class Queue implements IQueue
 	 */
 	public function dequeueWorkload(int $count, ?float $waitSeconds = null): array
 	{
-		return $this->remoteDequeue->dequeueWorkload($count, $waitSeconds);
+		try
+		{
+			return $this->remoteDequeue->dequeueWorkload($count, $waitSeconds);
+		}
+		catch (\Throwable $e)
+		{
+			$this->logger->error("Error: Failed to dequeue workload for {$this->name} queue. " .   
+			"Got {$e->getMessage()}, Trace {$e->getTraceAsString()}", 
+			[
+				'queue'			=> $this->name,
+				'count'			=> $count,
+				'waitSeconds'	=> $waitSeconds
+			]);
+		}
+				
+		return [];
 	}
 	
 	/**
@@ -92,9 +117,24 @@ class Queue implements IQueue
 			$payload->Delay = $delay;
 		}
 		
-		$ids = $this->remoteEnqueue->enqueue([$payload]);
+		try
+		{
+			$ids = $this->remoteEnqueue->enqueue([$payload]);
+			return $ids[0];
+		}
+		catch (\Throwable $e)
+		{
+			$this->logger->error("Error: Failed to enqueue payload for {$this->name} queue. " .   
+			"Got {$e->getMessage()}, Trace {$e->getTraceAsString()}", 
+			[
+				'queue'			=> $this->name,
+				'payloadKey'	=> $key,
+				'delay'			=> $delay,
+				'payload'		=> $payload
+			]);
+		}
 		
-		return $ids[0];
+		return null;
 	}
 
 	/**
@@ -119,6 +159,21 @@ class Queue implements IQueue
 			}
 		}
 		
-		return $this->remoteEnqueue->enqueue($payloads);
+		try
+		{
+			return $this->remoteEnqueue->enqueue($payloads);
+		}
+		catch (\Throwable $e)
+		{
+			$this->logger->error("Error: Failed to enqueueAll payloads for {$this->name} queue. " .   
+			"Got {$e->getMessage()}, Trace {$e->getTraceAsString()}", 
+			[
+				'queue'			=> $this->name,
+				'payloadsCount'	=> sizeof($payloads),
+				'delay'			=> $delay
+			]);
+		}
+					
+		return [];
 	}
 }

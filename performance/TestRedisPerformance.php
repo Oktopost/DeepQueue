@@ -21,7 +21,6 @@ $dq->config()
 	->setManagerPlugin(new RedisManager(['prefix' => 'dq.performance.test']))
 	->setSerializer((new JsonSerializer())->add(new PrimitiveSerializer()));
 
-
 $result = $tester->test($dq, 255);
 
 var_dump($result);
