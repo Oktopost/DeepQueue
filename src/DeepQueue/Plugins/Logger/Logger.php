@@ -2,12 +2,14 @@
 namespace DeepQueue\Plugins\Logger;
 
 
-use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Plugins\Logger\Log\LogEntry;
 use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Plugins\Logger\Base\ILogProvider;
 use DeepQueue\Plugins\Logger\Enum\LogLevel;
 use DeepQueue\Plugins\Logger\Enum\LogLevelName;
+use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
+
+use Objection\LiteObject;
 
 
 /**
@@ -21,9 +23,27 @@ class Logger implements ILogger
 	
 	/** @var ILogProvider[]|array */
 	private $providers = [];
+
+
+	private function formatData($data): string
+	{
+		if ($data instanceof LiteObject)
+		{
+			$data = $data->toArray();
+		}
+
+		if (is_array($data) || is_object($data))
+		{
+			$data = json_encode($data);
+		}
+
+		return $data;
+	}
 	
-	
-	private function buildRecord(int $level, string $message, $data, $parentId): array 
+	/**
+	 * @param mixed $data
+	 */
+	private function buildRecord(int $level, string $message, $data = null, $parentId = null): array 
 	{
 		$logEntry = new LogEntry();
 		
@@ -31,13 +51,16 @@ class Logger implements ILogger
 		$logEntry->Level = LogLevelName::MAP[$level];
 		$logEntry->Time = time();
 		$logEntry->Message = $message;
-		$logEntry->Data = $data;
+		$logEntry->Data = $this->formatData($data);
 		$logEntry->ParentId = $parentId;
 			
 		return $logEntry->toArray();
 	}
 	
 	
+	/**
+	 * @param mixed $data
+	 */
 	public function log(int $level, string $message, $data = null, $parentId = null): void
 	{
 		$record = $this->buildRecord($level, $message, $data, $parentId);
@@ -51,16 +74,25 @@ class Logger implements ILogger
 		}
 	}
 
+	/**
+	 * @param mixed $data
+	 */
 	public function error(string $message, $data = null, $parentId = null): void
 	{
 		$this->log(LogLevel::ERROR, $message, $data, $parentId);
 	}
 
+	/**
+	 * @param mixed $data
+	 */
 	public function warning(string $message, $data = null, $parentId = null): void
 	{
 		$this->log(LogLevel::WARNING, $message, $data, $parentId);
 	}
 
+	/**
+	 * @param mixed $data
+	 */
 	public function info(string $message, $data = null, $parentId = null): void
 	{
 		$this->log(LogLevel::INFO, $message, $data, $parentId);

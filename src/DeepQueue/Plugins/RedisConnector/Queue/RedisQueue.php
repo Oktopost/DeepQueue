@@ -60,7 +60,10 @@ class RedisQueue implements IRemoteQueue
 		
 		$payloads = $dequeuer->dequeue($count, round($waitSeconds));
 		
-		$this->log($payloads, 'dequeue');
+		if ($payloads)
+		{
+			$this->log($payloads, 'dequeue');
+		}
 		
 		return $this->converter->getWorkloads($payloads);
 	}
@@ -75,7 +78,10 @@ class RedisQueue implements IRemoteQueue
 		
 		$ids = $this->dao->enqueue($this->name, $prepared);
 		
-		$this->log(array_intersect_key($prepared['keyValue'], array_flip($ids)), 'enqueue');
+		if ($ids && isset($prepared['keyValue']))
+		{
+			$this->log(array_intersect_key($prepared['keyValue'], array_flip($ids)), 'enqueue');
+		}
 		
 		return $ids;
 	}
