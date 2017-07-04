@@ -43,7 +43,7 @@ class Logger implements ILogger
 	/**
 	 * @param mixed $data
 	 */
-	private function buildRecord(int $level, string $message, $data = null, $parentId = null): array 
+	private function buildRecord(int $level, string $message, $data = null, ?string $parentId = null): array 
 	{
 		$logEntry = new LogEntry();
 		
@@ -61,7 +61,7 @@ class Logger implements ILogger
 	/**
 	 * @param mixed $data
 	 */
-	public function log(int $level, string $message, $data = null, $parentId = null): void
+	public function log(int $level, string $message, $data = null, ?string $parentId = null): void
 	{
 		$record = $this->buildRecord($level, $message, $data, $parentId);
 		
@@ -77,7 +77,7 @@ class Logger implements ILogger
 	/**
 	 * @param mixed $data
 	 */
-	public function error(string $message, $data = null, $parentId = null): void
+	public function error(string $message, $data = null, ?string $parentId = null): void
 	{
 		$this->log(LogLevel::ERROR, $message, $data, $parentId);
 	}
@@ -85,7 +85,7 @@ class Logger implements ILogger
 	/**
 	 * @param mixed $data
 	 */
-	public function warning(string $message, $data = null, $parentId = null): void
+	public function warning(string $message, $data = null, ?string $parentId = null): void
 	{
 		$this->log(LogLevel::WARNING, $message, $data, $parentId);
 	}
@@ -93,7 +93,7 @@ class Logger implements ILogger
 	/**
 	 * @param mixed $data
 	 */
-	public function info(string $message, $data = null, $parentId = null): void
+	public function info(string $message, $data = null, ?string $parentId = null): void
 	{
 		$this->log(LogLevel::INFO, $message, $data, $parentId);
 	}

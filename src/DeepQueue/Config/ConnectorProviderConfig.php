@@ -38,8 +38,6 @@ class ConnectorProviderConfig implements IConnectorProviderConfig
 		{
 			throw new InvalidUsageException('Loader builder must be setted up');
 		}
-		
-		
 	}
 	
 	private function createConnectorBuilder(): IConnectorBuilder

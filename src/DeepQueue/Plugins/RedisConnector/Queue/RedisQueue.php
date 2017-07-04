@@ -28,11 +28,14 @@ class RedisQueue implements IRemoteQueue
 	
 	private function log(array $data, $operation): void
 	{
-		$message = ucfirst($operation) . ' payload with id: ';
+		$message = ucfirst($operation) . " in {$this->name} queue payload with id: ";
 		
 		foreach ($data as $key => $payload)
 		{
-			$this->logger->info($message . $key, $payload, $key);
+			$this->logger->info($message . $key, [
+				'payload' 	=> $payload,
+				'queue'		=> $this->name
+			], $key);
 		}
 	}
 	
