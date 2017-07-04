@@ -10,7 +10,7 @@ use DeepQueue\Base\Config\IRedisConfig;
  */
 interface IRedisQueueDAO
 {
-	public function initClient(IRedisConfig $config);
+	public function initClient(IRedisConfig $config): void;
 	public function enqueue(string $queueName, array $payloads): array;
 	public function dequeueInitialKey($queueName, $waitSeconds): ?string;
 	public function dequeueAll(string $queueName, int $count, ?string $initialKey = null): array;

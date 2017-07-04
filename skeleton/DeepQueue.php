@@ -20,6 +20,8 @@ use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Config\ConnectorProviderConfig;
 use DeepQueue\Config\QueueLoaderConfig;
 
+use DeepQueue\Plugins\MySQLConnector\DAO\MySQLQueueDAO;
+use DeepQueue\Plugins\MySQLManager\DAO\Connector\MySQLManagerConnector;
 use DeepQueue\Plugins\RedisConnector\DAO\RedisQueueDAO;
 use DeepQueue\Plugins\RedisManager\DAO\RedisManagerDAO;
 
@@ -50,6 +52,7 @@ $this->set(Plugins\InMemoryConnector\Base\IInMemoryQueueDAO::class, InMemoryQueu
 $this->set(Plugins\RedisManager\Base\IRedisManagerDAO::class, RedisManagerDAO::class);
 $this->set(Plugins\RedisConnector\Base\IRedisQueueDAO::class, RedisQueueDAO::class);
 
-$this->set(Plugins\MySQLManager\Base\IMySQLManagerDAO::class, MySQLManagerDAO::class);
+$this->set(Plugins\MySQLManager\Base\DAO\IMySQLManagerDAO::class, MySQLManagerDAO::class);
+$this->set(Plugins\MySQLManager\Base\DAO\Connector\IMySQLManagerConnector::class, MySQLManagerConnector::class);
 
-//$this->set(Plugins\Logger\Base\ILogger::class, Logger::class);
+$this->set(Plugins\MySQLConnector\Base\DAO\IMySQLQueueDAO::class, MySQLQueueDAO::class);

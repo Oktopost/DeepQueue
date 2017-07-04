@@ -13,8 +13,7 @@ use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 use DeepQueue\Plugins\MySQLManager\Base\IMySQLManager;
-use DeepQueue\Plugins\MySQLManager\Base\IMySQLManagerDAO;
-use Squid\MySql;
+use DeepQueue\Plugins\MySQLManager\Base\DAO\IMySQLManagerDAO;
 
 
 class MySQLManager implements IMySQLManager
@@ -72,13 +71,8 @@ class MySQLManager implements IMySQLManager
 	
 	public function __construct(array $config)
 	{
-		$sql = new MySql();
-		$sql->config()->setConfig($config);
-		
-		$connector = $sql->getConnector();
-		
 		$this->dao = Scope::skeleton(IMySQLManagerDAO::class);
-		$this->dao->setConnector($connector);
+		$this->dao->initConnector($config);
 	}
 
 
@@ -108,9 +102,9 @@ class MySQLManager implements IMySQLManager
 	{
 		$this->validate($object);
 		
-		$queueObject = $this->dao->upsert($object);
+		$this->dao->upsert($object);
 		
-		return $this->prepare($queueObject);
+		return $this->prepare($object);
 	}
 
 	public function update(IQueueObject $object): IQueueObject
@@ -119,7 +113,7 @@ class MySQLManager implements IMySQLManager
 		
 		if ($this->dao->loadByName($object->Name))
 		{
-			$object = $this->dao->upsert($object);
+			$this->dao->upsert($object);
 		}
 		
 		return $this->prepare($object);
@@ -132,7 +126,7 @@ class MySQLManager implements IMySQLManager
 			$object = $object->Id;
 		}
 		
-		$queueObject = $this->dao->loadById($object);
+		$queueObject = $this->dao->load($object);
 		
 		if (!$queueObject)
 			return;

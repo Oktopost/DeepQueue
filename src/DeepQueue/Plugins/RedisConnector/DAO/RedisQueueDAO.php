@@ -108,7 +108,7 @@ class RedisQueueDAO implements IRedisQueueDAO
 	}
 
 	
-	public function initClient(IRedisConfig $config)
+	public function initClient(IRedisConfig $config): void
 	{
 		$this->client = new Client($config->getParameters(), $config->getOptions());
 	}

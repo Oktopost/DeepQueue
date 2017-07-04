@@ -5,6 +5,7 @@ namespace DeepQueue\Plugins\Logger\Providers;
 use DeepQueue\Plugins\Logger\Base\ILogProvider;
 use DeepQueue\Plugins\Logger\Enum\LogLevel;
 use DeepQueue\Utils\RedisConfigParser;
+use Objection\LiteObject;
 use Predis\Client;
 
 
@@ -18,6 +19,22 @@ class RedisLogProvider implements ILogProvider
 	
 	/** @var Client */
 	private $client;
+
+
+	/**
+	 * @param mixed $data
+	 * @return mixed
+	 */
+	private function formatData($data)
+	{
+		if ($data instanceof LiteObject)
+		{
+			$data = $data->toArray();
+		}
+
+		return $data;
+	}
+	
 	
 	
 	public function __construct($options = [], $level = LogLevel::ERROR)
@@ -32,7 +49,8 @@ class RedisLogProvider implements ILogProvider
 
 	public function write(array $record): void
 	{
-		//TODO:: fix it
+		$record['Data'] = $this->formatData($record['Data']);
+		
 		$this->client->hmset(self::KEY, [$record['Id'] => json_encode($record)]);
 	}
 

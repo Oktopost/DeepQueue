@@ -25,21 +25,6 @@ class Logger implements ILogger
 	private $providers = [];
 
 
-	private function formatData($data): string
-	{
-		if ($data instanceof LiteObject)
-		{
-			$data = $data->toArray();
-		}
-
-		if (is_array($data) || is_object($data))
-		{
-			$data = json_encode($data);
-		}
-
-		return $data;
-	}
-	
 	/**
 	 * @param mixed $data
 	 */
@@ -51,7 +36,7 @@ class Logger implements ILogger
 		$logEntry->Level = LogLevelName::MAP[$level];
 		$logEntry->Time = time();
 		$logEntry->Message = $message;
-		$logEntry->Data = $this->formatData($data);
+		$logEntry->Data = $data;
 		$logEntry->ParentId = $parentId;
 			
 		return $logEntry->toArray();

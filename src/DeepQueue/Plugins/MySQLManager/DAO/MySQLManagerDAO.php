@@ -2,36 +2,44 @@
 namespace DeepQueue\Plugins\MySQLManager\DAO;
 
 
+use DeepQueue\Scope;
 use DeepQueue\Base\IQueueObject;
-use DeepQueue\Plugins\MySQLManager\Base\IMySQLManagerDAO;
-use Squid\MySql\IMySqlConnector;
+use DeepQueue\Enums\QueueState;
+use DeepQueue\Plugins\MySQLManager\Base\DAO\IMySQLManagerDAO;
+use DeepQueue\Plugins\MySQLManager\Base\DAO\Connector\IMySQLManagerConnector;
 
 
 class MySQLManagerDAO implements IMySQLManagerDAO
 {
-	/**
-	 * @var IMySqlConnector
-	 */
+	/** @var IMySQLManagerConnector */
 	private $connector = null;
 	
 	
-	public function setConnector(IMySqlConnector $connector)
+	public function initConnector(array $config): void
 	{
-		$this->connector = $connector;
+		$sql = \Squid::MySql();
+		$sql->config()->setConfig($config);
+
+		$this->connector = Scope::skeleton(IMySQLManagerConnector::class);
+		$this->connector->setMySQL($sql->getConnector());
 	}
 
-	public function upsert(IQueueObject $queue): IQueueObject
+	public function upsert(IQueueObject $queue): void
 	{
-
+		$this->connector->upsert($queue);
 	}
 
-	public function loadById(string $id): ?IQueueObject
+	public function load(string $id): ?IQueueObject
 	{
-		// TODO: Implement loadById() method.
+		return $this->connector->loadById($id);
 	}
 
 	public function loadByName(string $queueName): ?IQueueObject
 	{
-		// TODO: Implement loadByName() method.
+		return $this->connector
+			->selectFirstObjectByFields([
+				'Name' 	=> $queueName,
+				'State'	=> QueueState::EXISTING
+			]);
 	}
 }

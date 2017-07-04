@@ -26,4 +26,11 @@ class QueueState
 	 * Queue can not be started again.
 	 */
 	public const DELETED	= 'deleted';
+	
+	
+	public const EXISTING = [
+		self::RUNNING,
+		self::PAUSED,
+		self::STOPPED
+	];
 }

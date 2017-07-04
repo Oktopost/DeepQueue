@@ -98,7 +98,7 @@ class FallbackConnectorTest extends TestCase
 		
 		$leftInFallback = $client->lrange(RedisNameBuilder::getNowKey(self::QUEUE_NAME), 0, 255);
 		
-		self::assertTrue($errorsCounter > 200);
+		self::assertTrue($errorsCounter > 0);
 		self::assertEquals(2000, $loadedCounter + $meta->Enqueued + sizeof($leftInFallback));
 	}
 	
