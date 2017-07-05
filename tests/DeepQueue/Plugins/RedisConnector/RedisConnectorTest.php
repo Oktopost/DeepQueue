@@ -2,20 +2,18 @@
 namespace DeepQueue\Plugins\RedisConnector;
 
 
-use DeepQueue\Base\IDeepQueueConfig;
+use DeepQueue\DeepQueue;
 use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\DeepQueue;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
-use DeepQueue\Plugins\RedisConnector\Base\IRedisConnector;
 
-use DeepQueue\Plugins\RedisManager\RedisManager;
 use PHPUnit\Framework\TestCase;
+
+use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
-use Serialization\Serializers\JsonSerializer;
 
 
 class RedisConnectorTest extends TestCase

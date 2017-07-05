@@ -36,10 +36,12 @@ class MySQLManagerDAO implements IMySQLManagerDAO
 
 	public function loadByName(string $queueName): ?IQueueObject
 	{
-		return $this->connector
+		$queue = $this->connector
 			->selectFirstObjectByFields([
 				'Name' 	=> $queueName,
 				'State'	=> QueueState::EXISTING
 			]);
+				
+		return $queue;
 	}
 }

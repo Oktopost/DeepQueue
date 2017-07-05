@@ -17,6 +17,41 @@ class MySQLQueueDAO implements IMySQLQueueDAO
 	private $connector = null;
 	
 	
+	private function getIds(string $queueName, int $count): array 
+	{
+		$now = date('Y-m-d H:i:s');
+
+		$ids = $this->connector
+			->select()
+			->from(self::ENQUEUE_TABLE)
+			->column('Id')
+			->byField('QueueName', $queueName)
+			->where('DequeueTime <= ?', $now)
+			->orderBy('DequeueTime')
+			->limit(0, $count)
+			->queryColumn();
+		
+		return $ids ?: [];
+	}
+
+	private function delete(string $queueName, array $payloadIds): bool
+	{
+		$this->connector
+			->delete()
+			->from(self::ENQUEUE_TABLE)
+			->byFields(['Id' => $payloadIds, 'QueueName' => $queueName])
+			->executeDml();
+
+		$this->connector
+			->delete()
+			->from(self::PAYLOAD_TABLE)
+			->byFields(['Id' => $payloadIds, 'QueueName' => $queueName])
+			->executeDml();
+
+		return true;
+	}
+
+	
 	public function initConnector(array $config): void
 	{
 		$sql = \Squid::MySql();
@@ -27,27 +62,46 @@ class MySQLQueueDAO implements IMySQLQueueDAO
 
 	public function enqueue(string $queueName, array $payloads): array
 	{
-		// TODO: Implement enqueue() method.
+		if (!$payloads)
+			return [];
+		
+		$payloadInsert = $this->connector
+			->upsert()
+			->into(self::PAYLOAD_TABLE)
+			->valuesBulk($payloads['payloads'])
+			->setDuplicateKeys('Id');
+		
+		$enqueueInsert = $this->connector
+			->upsert()
+			->into(self::ENQUEUE_TABLE)
+			->valuesBulk($payloads['enqueue'])
+			->setDuplicateKeys(['Id', 'DequeueTime']);
+		
+		$this->connector
+			->bulk()
+			->add($payloadInsert)
+			->add($enqueueInsert)
+			->executeAll();
+
+		return array_map(create_function('$o', 'return $o["Id"];'), $payloads['enqueue']);
 	}
 
 	public function dequeue(string $queueName, int $count = 1): array
 	{
-		// TODO: Implement dequeue() method.
-	}
-
-	public function delete(string $queueName, string $payloadId): bool
-	{
-		$this->connector
-			->delete()
-			->from(self::ENQUEUE_TABLE)
-			->byFields(['Id' => $payloadId, 'QueueName' => $queueName]);
+		$ids = $this->getIds($queueName, $count);
 		
-		$this->connector
-			->delete()
+		if (!$ids)
+			return [];
+		
+		$result = $this->connector
+			->select()
 			->from(self::PAYLOAD_TABLE)
-			->byFields(['Id' => $payloadId, 'QueueName' => $queueName]);
+			->byFields(['Id' => $ids, 'QueueName' => $queueName])
+			->queryAll(true);
 		
-		return true;
+		$this->delete($queueName, $ids);
+				
+		return $result ?: [];
 	}
 
 	public function countEnqueued(string $queueName): int
@@ -61,11 +115,13 @@ class MySQLQueueDAO implements IMySQLQueueDAO
 
 	public function countDelayed(string $queueName): int
 	{
+		$now = date('Y-m-d H:i:s');
+		
 		return $this->connector
 			->select()
 			->from(self::ENQUEUE_TABLE)
 			->byField('QueueName', $queueName)
-			->where('DequeueTime <= ?', time())
+			->where('DequeueTime > ?', $now)
 			->queryCount();
 	}
 }

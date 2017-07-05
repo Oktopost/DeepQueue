@@ -5,16 +5,19 @@ namespace DeepQueue\Plugins\MySQLConnector\Queue;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\Utils\TimeGenerator;
 use DeepQueue\Utils\PayloadConverter;
 use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Plugins\MySQLConnector\Base\DAO\IMySQLQueueDAO;
+use DeepQueue\Plugins\MySQLConnector\Converter\MySQLPayloadConverter;
 
 use Serialization\Base\ISerializer;
 
 
 class MySQLQueue implements IRemoteQueue
 {
+	private const MAX_SLEEP_TIME = 5;
+	
+	
 	private $name;
 
 	/** @var IMySQLQueueDAO */
@@ -34,13 +37,11 @@ class MySQLQueue implements IRemoteQueue
 	
 	private function getPayloadsWithWaiting(int $count, float $waitSeconds)
 	{
-		//TODO:: waiting for MySQL with sleep
-		$endTime = TimeGenerator::getMs($waitSeconds);
-		$nowTime = TimeGenerator::getMs();
+		$waitSeconds = (int)floor($waitSeconds);
 
 		$payloads = [];
 
-		while ($nowTime < $endTime)
+		while ($waitSeconds > 0)
 		{
 			$payloads = $this->getPayloads($count);
 			
@@ -49,7 +50,11 @@ class MySQLQueue implements IRemoteQueue
 				break;
 			}
 			
-			$nowTime = TimeGenerator::getMs();
+			$sleepTime = min($waitSeconds, self::MAX_SLEEP_TIME);
+			
+			sleep($sleepTime);
+			
+			$waitSeconds -= $sleepTime;
 		}
 		
 		return $payloads;
@@ -60,7 +65,7 @@ class MySQLQueue implements IRemoteQueue
 	{
 		$this->dao = $dao;
 		$this->name = $name;
-		$this->converter = new PayloadConverter($serializer);
+		$this->converter = new MySQLPayloadConverter($serializer);
 		$this->logger = $logger;
 	}
 	
@@ -88,7 +93,7 @@ class MySQLQueue implements IRemoteQueue
 	 */
 	public function enqueue(array $payload): array
 	{
-		$prepared = $this->converter->prepareAll($payload);
+		$prepared = $this->converter->prepareAll($this->name, $payload);
 		
 		return $this->dao->enqueue($this->name, $prepared);
 	}

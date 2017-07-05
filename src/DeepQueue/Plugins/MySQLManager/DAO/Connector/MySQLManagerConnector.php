@@ -23,9 +23,12 @@ class MySQLManagerConnector extends GenericIdConnector implements IMySQLManagerC
 		
 		$mapper = Mappers::simple();
 		
+		$toObject = function ($o) { return $o; };
+		$fromObject = function ($o) { return Mappers::simple()->getJson($o); };
+		
 		$mapper->setDefaultClassName(QueueObject::class)
 			->values()
-				->jsonMapper('Config', Mappers::simple(), QueueConfig::class);
+				->callback('Config', $toObject, $fromObject);
 		
 		$this
 			->setTable(self::TABLE)

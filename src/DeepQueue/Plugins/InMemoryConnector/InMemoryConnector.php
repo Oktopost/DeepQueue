@@ -39,7 +39,7 @@ class InMemoryConnector implements IInMemoryConnector
 
 	public function getMetaData(IQueueObject $queueObject): IMetaData
 	{
-		$manager = new InMemoryQueueManager($queueObject, $this->isErrorsEnabled);
+		$manager = new InMemoryQueueManager($queueObject);
 		
 		return $manager->getMetadata();
 	}

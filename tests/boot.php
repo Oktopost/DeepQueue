@@ -36,3 +36,8 @@ class UnitTestSkeletonMock
 		return Scope::skeleton()->load($class);
 	}
 }
+
+require_once 'lib/MySQLConfig.php';
+
+\lib\MySQLConfig::setup();
+

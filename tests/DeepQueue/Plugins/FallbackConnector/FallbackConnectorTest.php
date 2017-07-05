@@ -90,7 +90,7 @@ class FallbackConnectorTest extends TestCase
 	
 		}
 		
-		$meta = $this->getDQ()->getMetaData(self::QUEUE_NAME);
+		$meta = $this->getDQ()->getQueueObject(self::QUEUE_NAME)->getMetaData();
 		
 		$config = $this->getConfig();
 		
@@ -100,30 +100,5 @@ class FallbackConnectorTest extends TestCase
 		
 		self::assertTrue($errorsCounter > 0);
 		self::assertEquals(2000, $loadedCounter + $meta->Enqueued + sizeof($leftInFallback));
-	}
-	
-	public function test_GetMetaData()
-	{
-		$payload1 = new Payload();
-		$payload1->Payload = 'payloadone';
-		
-		$queue = $this->getDQ()->get(self::QUEUE_NAME);
-		$queue->enqueue($payload1);
-		
-		$metaData = $this->getDQ()->getMetaData(self::QUEUE_NAME);
-		$enqueued = $metaData->Enqueued;
-		$wasError = false;
-		
-		for ($i = 0; $i < 10; $i++)
-		{
-			$metaData = $this->getDQ()->getMetaData(self::QUEUE_NAME);
-			
-			if ($metaData->Enqueued != $enqueued)
-			{
-				$wasError = true;
-			}
-		}
-		
-		self::assertTrue($wasError);
 	}
 }

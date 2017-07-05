@@ -50,23 +50,6 @@ class PayloadConverterTest extends TestCase
 		self::assertEquals(2, sizeof($prepared['keyValue']));
 	}
 
-	public function test_deserializeAll()
-	{
-		$payload1 = new Payload([1,2,3]);
-		$payload1->Delay = 5;
-		
-		$payload2 = new Payload('a');
-		$payload2->Key = 'test';
-		
-		$prepared = $this->getSubject()->prepareAll([$payload1, $payload2]);
-		
-		$deserialized = $this->getSubject()->deserializeAll($prepared['keyValue']);
-		
-		self::assertEquals(2, sizeof($deserialized));
-		
-		self::assertEquals('a', $deserialized[$payload2->Key]->Payload);
-	}
-
 	public function test_getWorkloads()
 	{
 		$payload1 = new Payload([1,2,3]);

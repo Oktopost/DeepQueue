@@ -10,6 +10,8 @@ use DeepQueue\Module\Connector\Decorators\QueueStateDecorator;
 use DeepQueue\Module\Loader\Decorators\CachedLoaderDecorator;
 use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryConnector;
 use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
+use DeepQueue\Plugins\Logger\Base\ILogger;
+use DeepQueue\Plugins\Logger\Providers\RedisLogProvider;
 use PHPUnit\Framework\TestCase;
 use Serialization\Serializers\PHPSerializer;
 
@@ -71,6 +73,15 @@ class DeepQueueConfigTest extends TestCase
 		$dc->setSerializer(new PHPSerializer());
 		
 		self::assertInstanceOf(PHPSerializer::class, $dc->serializer());
+	}
+	
+	public function test_AddLogProvider_GetLogger()
+	{
+		$dc = $this->getSubject();
+		
+		$dc->addLogProvider(new RedisLogProvider([]));
+		
+		self::assertInstanceOf(ILogger::class, $dc->logger());
 	}
 	
 	public function test_AddConnectorBuilder_ReturnSelf()

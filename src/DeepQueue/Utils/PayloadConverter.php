@@ -41,7 +41,6 @@ class PayloadConverter implements IPayloadConverter
 	}
 	
 	
-	
 	public function __construct(ISerializer $payloadDataSerializer)
 	{
 		$this->idGenerator = Scope::skeleton(IIdGenerator::class);
@@ -78,21 +77,6 @@ class PayloadConverter implements IPayloadConverter
 		}
 	
 		return $preparedPayloads;
-	}
-
-	/**
-	 * @return Payload[]|array
-	 */
-	public function deserializeAll(array $payloads): array
-	{
-		$deserializedPayloads = [];
-		
-		foreach ($payloads as $key => $payload)
-		{
-			$deserializedPayloads[$key] = $this->serializer->deserialize($payload);
-		}
-		
-		return $deserializedPayloads;
 	}
 
 	/**

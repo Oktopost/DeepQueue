@@ -98,6 +98,8 @@ class DeepQueueTest extends TestCase
 		$payload = new Payload();
 		$payload->Key = 'nullkey';
 		
+		self::assertFalse($payload->hasPayload());
+		
 		$queue->enqueue($payload);
 		
 		$workload = $queue->dequeueWorkload(1);
