@@ -5,10 +5,10 @@ namespace DeepQueue\PreparedConfiguration\Plugins;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
-use DeepQueue\Base\PreparedConfiguration\Plugins\IPluginConfiguration;
-use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
-use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
+use DeepQueue\PreparedConfiguration\Plugins\Managers\Managers;
+use DeepQueue\PreparedConfiguration\Plugins\Connectors\Connectors;
 use DeepQueue\PreparedConfiguration\Plugins\Config\DefaultSerializer;
+use DeepQueue\Base\PreparedConfiguration\Plugins\IPluginConfiguration;
 
 use Serialization\Base\ISerializer;
 
@@ -27,12 +27,12 @@ class InMemoryConfiguration implements IPluginConfiguration
 
 	public function getManager(): IManagerPlugin
 	{
-		return new InMemoryManager();
+		return Managers::InMemory();
 	}
 
 	public function getConnector(): IConnectorPlugin
 	{
-		return new InMemoryConnector();
+		return Connectors::InMemory();
 	}
 
 	public function getNotExistsPolicy(): int

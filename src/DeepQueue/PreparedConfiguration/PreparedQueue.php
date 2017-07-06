@@ -26,14 +26,9 @@ class PreparedQueue implements IPreparedQueue
 		$deepQueue->config()
 			->setQueueNotExistsPolicy($config->getNotExistsPolicy())
 			->setManagerPlugin($config->getManager())
-			->setConnectorPlugin($config->getConnector());
-		
-		if ($config->getSerializer())
-		{
-			$deepQueue->config()
-				->setSerializer($config->getSerializer());
-		}
-		
+			->setConnectorPlugin($config->getConnector())
+			->setSerializer($config->getSerializer());
+
 		return $deepQueue;
 	}
 	

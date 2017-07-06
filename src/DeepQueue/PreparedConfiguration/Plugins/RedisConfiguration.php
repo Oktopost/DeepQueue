@@ -5,10 +5,10 @@ namespace DeepQueue\PreparedConfiguration\Plugins;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
-use DeepQueue\Base\PreparedConfiguration\Plugins\IPluginConfiguration;
-use DeepQueue\Plugins\Managers\RedisManager\RedisManager;
-use DeepQueue\Plugins\Connectors\RedisConnector\RedisConnector;
+use DeepQueue\PreparedConfiguration\Plugins\Managers\Managers;
+use DeepQueue\PreparedConfiguration\Plugins\Connectors\Connectors;
 use DeepQueue\PreparedConfiguration\Plugins\Config\DefaultSerializer;
+use DeepQueue\Base\PreparedConfiguration\Plugins\IPluginConfiguration;
 
 use Serialization\Base\ISerializer;
 
@@ -29,12 +29,12 @@ class RedisConfiguration implements IPluginConfiguration
 	
 	public function getManager(): IManagerPlugin
 	{
-		return new RedisManager($this->redisConfig);
+		return Managers::Redis($this->redisConfig);
 	}
 
 	public function getConnector(): IConnectorPlugin
 	{
-		return new RedisConnector($this->redisConfig);
+		return Connectors::Redis($this->redisConfig);
 	}
 
 	public function getNotExistsPolicy(): int

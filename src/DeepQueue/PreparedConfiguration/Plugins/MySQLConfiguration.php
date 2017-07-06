@@ -5,10 +5,10 @@ namespace DeepQueue\PreparedConfiguration\Plugins;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
-use DeepQueue\Base\PreparedConfiguration\Plugins\IPluginConfiguration;
-use DeepQueue\Plugins\Managers\MySQLManager\MySQLManager;
-use DeepQueue\Plugins\Connectors\MySQLConnector\MySQLConnector;
+use DeepQueue\PreparedConfiguration\Plugins\Managers\Managers;
+use DeepQueue\PreparedConfiguration\Plugins\Connectors\Connectors;
 use DeepQueue\PreparedConfiguration\Plugins\Config\DefaultSerializer;
+use DeepQueue\Base\PreparedConfiguration\Plugins\IPluginConfiguration;
 
 use Serialization\Base\ISerializer;
 
@@ -30,12 +30,12 @@ class MySQLConfiguration implements IPluginConfiguration
 	
 	public function getManager(): IManagerPlugin
 	{
-		return new MySQLManager($this->mysqlConfig);
+		return Managers::MySQL($this->mysqlConfig);
 	}
 
 	public function getConnector(): IConnectorPlugin
 	{
-		return new MySQLConnector($this->mysqlConfig);
+		return Connectors::MySQL($this->mysqlConfig);
 	}
 
 	public function getNotExistsPolicy(): int
