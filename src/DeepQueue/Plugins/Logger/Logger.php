@@ -28,18 +28,17 @@ class Logger implements ILogger
 	/**
 	 * @param mixed $data
 	 */
-	private function buildRecord(int $level, string $message, $data = null, ?string $parentId = null): array 
+	private function buildRecord(int $level, string $message, $data = null, ?string $parentId = null): LogEntry 
 	{
 		$logEntry = new LogEntry();
 		
 		$logEntry->Id = (new TimeBasedRandomGenerator())->get();
 		$logEntry->Level = LogLevelName::MAP[$level];
-		$logEntry->Time = time();
 		$logEntry->Message = $message;
 		$logEntry->Data = $data;
 		$logEntry->ParentId = $parentId;
 			
-		return $logEntry->toArray();
+		return $logEntry;
 	}
 	
 	

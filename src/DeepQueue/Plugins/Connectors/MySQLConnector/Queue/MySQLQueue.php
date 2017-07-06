@@ -30,6 +30,20 @@ class MySQLQueue implements IRemoteQueue
 	private $logger;
 	
 	
+	private function log(array $payloads, $operation): void
+	{
+		$message = ucfirst($operation) . " in {$this->name} queue payload with id: ";
+		
+		foreach ($payloads as $payload)
+		{
+			$this->logger->info($message . $payload['Id'], [
+				'payload' 	=> $payload['Payload'],
+				'queue'		=> $this->name
+			], $payload['Id']);
+		}
+	}
+	
+	
 	private function getPayloads(int $count): array 
 	{
 		return $this->dao->dequeue($this->name, $count);
@@ -83,6 +97,11 @@ class MySQLQueue implements IRemoteQueue
 		{
 			$payloads = $this->getPayloads($count);
 		}
+		
+		if ($payloads)
+		{
+			$this->log($payloads, 'dequeue');
+		}
 
 		return $this->converter->getWorkloads($payloads);
 	}
@@ -95,6 +114,13 @@ class MySQLQueue implements IRemoteQueue
 	{
 		$prepared = $this->converter->prepareAll($this->name, $payload);
 		
-		return $this->dao->enqueue($this->name, $prepared);
+		$ids = $this->dao->enqueue($this->name, $prepared);
+		
+		if ($ids)
+		{
+			$this->log($prepared['payloads'], 'enqueue');
+		}
+		
+		return $ids;
 	}
 }

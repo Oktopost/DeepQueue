@@ -1,11 +1,14 @@
 <?php
-namespace DeepQueue\Plugins\Logger\Providers;
+namespace DeepQueue\Plugins\Logger\Providers\Redis;
 
 
-use DeepQueue\Plugins\Logger\Base\ILogProvider;
-use DeepQueue\Plugins\Logger\Enum\LogLevel;
 use DeepQueue\Utils\RedisConfigParser;
+use DeepQueue\Plugins\Logger\Log\LogEntry;
+use DeepQueue\Plugins\Logger\Enum\LogLevel;
+use DeepQueue\Plugins\Logger\Base\ILogProvider;
+
 use Objection\LiteObject;
+
 use Predis\Client;
 
 
@@ -47,8 +50,9 @@ class RedisLogProvider implements ILogProvider
 	}
 
 
-	public function write(array $record): void
+	public function write(LogEntry $record): void
 	{
+		$record = $record->toArray();
 		$record['Data'] = $this->formatData($record['Data']);
 		
 		$this->client->hmset(self::KEY, [$record['Id'] => json_encode($record)]);

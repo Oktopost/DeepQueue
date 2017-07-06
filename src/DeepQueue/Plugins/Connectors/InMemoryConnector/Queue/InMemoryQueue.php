@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\InMemoryConnector\Queue;
 
 
+use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Scope;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
@@ -22,10 +23,26 @@ class InMemoryQueue implements IRemoteQueue
 	
 	/** @var PayloadConverter */
 	private $converter;
+	
+	/** @var ILogger */
+	private $logger;
 
 	/** @var bool */
 	private $isErrorsEnabled;
 	
+	
+	private function log(array $data, $operation): void
+	{
+		$message = ucfirst($operation) . " in {$this->name} queue payload with id: ";
+		
+		foreach ($data as $key => $payload)
+		{
+			$this->logger->info($message . $key, [
+				'payload' 	=> $payload,
+				'queue'		=> $this->name
+			], $key);
+		}
+	}
 	
 	private function getPayloads(int $count): array 
 	{
@@ -64,11 +81,12 @@ class InMemoryQueue implements IRemoteQueue
 	}
 	
 	
-	public function __construct(string $name, ISerializer $serializer, $enableErrors = false)
+	public function __construct(string $name, ISerializer $serializer, ILogger $logger, $enableErrors = false)
 	{
 		$this->dao = Scope::skeleton(IInMemoryQueueDAO::class);
 		$this->converter = new PayloadConverter($serializer);
 		$this->name = $name;
+		$this->logger = $logger;
 		$this->isErrorsEnabled = $enableErrors;
 	}
 
@@ -90,6 +108,11 @@ class InMemoryQueue implements IRemoteQueue
 		{
 			$payloads = $this->getPayloads($count);
 		}
+		
+		if ($payloads)
+		{
+			$this->log($payloads, 'dequeue');
+		}
 
 		return $this->converter->getWorkloads($payloads);
 	}
@@ -107,6 +130,13 @@ class InMemoryQueue implements IRemoteQueue
 		
 		$prepared = $this->converter->prepareAll($payload);
 		
-		return $this->dao->enqueue($this->name, $prepared['keyValue']);
+		$ids = $this->dao->enqueue($this->name, $prepared['keyValue']);
+		
+		if ($ids)
+		{
+			$this->log($prepared['keyValue'], 'enqueue');
+		}
+		
+		return $ids;
 	}
 }

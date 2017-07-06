@@ -24,6 +24,13 @@ class Queue implements IQueue
 	private $name;
 	
 	
+	private function log(\Throwable $e, string $operation, array $data): void
+	{
+		$this->logger->error("Error: Failed to {$operation} workload for {$this->name} queue. " .   
+			"Got {$e->getMessage()}, Trace: ".PHP_EOL."{$e->getTraceAsString()}", $data);
+	}
+	
+	
 	/**
 	 * @param Remote\IRemoteDequeue|Remote\IRemoteQueue $queue
 	 * @param ILogger $logger
@@ -59,9 +66,7 @@ class Queue implements IQueue
 		}
 		catch (\Throwable $e)
 		{
-			$this->logger->error("Error: Failed to dequeue workload for {$this->name} queue. " .   
-			"Got {$e->getMessage()}, Trace {$e->getTraceAsString()}", 
-			[
+			$this->log($e, 'dequeue', [
 				'queue'			=> $this->name,
 				'count'			=> $count,
 				'waitSeconds'	=> $waitSeconds
@@ -124,9 +129,7 @@ class Queue implements IQueue
 		}
 		catch (\Throwable $e)
 		{
-			$this->logger->error("Error: Failed to enqueue payload for {$this->name} queue. " .   
-			"Got {$e->getMessage()}, Trace {$e->getTraceAsString()}", 
-			[
+			$this->log($e, 'enqueue', [
 				'queue'			=> $this->name,
 				'payloadKey'	=> $key,
 				'delay'			=> $delay,
@@ -165,9 +168,7 @@ class Queue implements IQueue
 		}
 		catch (\Throwable $e)
 		{
-			$this->logger->error("Error: Failed to enqueueAll payloads for {$this->name} queue. " .   
-			"Got {$e->getMessage()}, Trace {$e->getTraceAsString()}", 
-			[
+			$this->log($e, 'enqueueAll', [
 				'queue'			=> $this->name,
 				'payloadsCount'	=> sizeof($payloads),
 				'delay'			=> $delay

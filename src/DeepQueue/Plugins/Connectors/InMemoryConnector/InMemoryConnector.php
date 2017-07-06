@@ -46,6 +46,7 @@ class InMemoryConnector implements IInMemoryConnector
 
 	public function getQueue(string $name): IRemoteQueue
 	{
-		return new InMemoryQueue($name, $this->deepConfig->serializer(), $this->isErrorsEnabled);
+		return new InMemoryQueue($name, $this->deepConfig->serializer(), 
+			$this->deepConfig->logger(), $this->isErrorsEnabled);
 	}
 }

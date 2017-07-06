@@ -2,8 +2,11 @@
 namespace DeepQueue\Plugins\Logger\Base;
 
 
+use DeepQueue\Plugins\Logger\Log\LogEntry;
+
+
 interface ILogProvider
 {
-	public function write(array $record): void;
+	public function write(LogEntry $record): void;
 	public function level(): int;
 }

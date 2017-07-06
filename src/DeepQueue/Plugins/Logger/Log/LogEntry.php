@@ -9,12 +9,12 @@ use Objection\LiteSetup;
 
 
 /**
- * @property string	Id
- * @property string	ParentId
- * @property int	Level
- * @property int	Time
- * @property string	Message
- * @property mixed	Data
+ * @property string		Id
+ * @property string		ParentId
+ * @property int		Level
+ * @property \DateTime	Created
+ * @property string		Message
+ * @property mixed		Data
  */
 class LogEntry extends LiteObject
 {
@@ -22,9 +22,9 @@ class LogEntry extends LiteObject
 	{
 		return [
 			'Id'		=> LiteSetup::createString(),
+			'Created'	=> LiteSetup::createDateTime(),
 			'ParentId'	=> LiteSetup::createString(null),
 			'Level'		=> LiteSetup::createEnum(array_values(LogLevelName::MAP)),
-			'Time'		=> LiteSetup::createInt(),
 			'Message'	=> LiteSetup::createString(),
 			'Data'		=> LiteSetup::createMixed()
 		];

@@ -8,11 +8,11 @@ use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Module\Connector\Decorators\QueueStateDecorator;
 use DeepQueue\Module\Loader\Decorators\CachedLoaderDecorator;
-use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryConnector;
-use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 use DeepQueue\Plugins\Logger\Base\ILogger;
-use DeepQueue\Plugins\Logger\Providers\RedisLogProvider;
+use DeepQueue\Plugins\Logger\Providers\Redis\RedisLogProvider;
+
 use PHPUnit\Framework\TestCase;
+
 use Serialization\Serializers\PHPSerializer;
 
 

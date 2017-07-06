@@ -3,6 +3,7 @@ namespace DeepQueue\Plugins\Connectors\InMemoryConnector\Queue;
 
 
 use DeepQueue\Payload;
+use DeepQueue\Plugins\Logger\Logger;
 use PHPUnit\Framework\TestCase;
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Serializers\JsonSerializer;
@@ -12,7 +13,7 @@ class InMemoryQueueTest extends TestCase
 {
 	private function getSubject(): InMemoryQueue
 	{
-		$queue = new InMemoryQueue('inmemory', (new JsonSerializer())->add(new ArraySerializer()));
+		$queue = new InMemoryQueue('inmemory', (new JsonSerializer())->add(new ArraySerializer()), Logger::instance());
 		return $queue;
 	}
 	
