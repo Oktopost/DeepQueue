@@ -8,7 +8,7 @@ use DeepQueue\Plugins\Logger\Logger;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\IQueue;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\PreparedConfiguration\PreparedQueueSetup;
+use DeepQueue\PreparedConfiguration\PreparedQueue;
 
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +20,7 @@ class QueueTest extends TestCase
 {
 	private function getSubject(): IQueue
 	{
-		$dq = PreparedQueueSetup::InMemory((new JsonSerializer())->add(new ArraySerializer()));
+		$dq = PreparedQueue::InMemory((new JsonSerializer())->add(new ArraySerializer()));
 
 		return $dq->get('test');
 	}

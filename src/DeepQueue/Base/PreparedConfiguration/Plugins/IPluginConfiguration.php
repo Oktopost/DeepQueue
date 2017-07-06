@@ -13,5 +13,5 @@ interface IPluginConfiguration
 	public function getManager(): IManagerPlugin;
 	public function getConnector(): IConnectorPlugin;
 	public function getNotExistsPolicy(): int;
-	public function getSerializer(): ?ISerializer;
+	public function getSerializer(): ISerializer;
 }

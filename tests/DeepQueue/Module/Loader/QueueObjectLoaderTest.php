@@ -8,7 +8,7 @@ use DeepQueue\Manager\QueueObject;
 use DeepQueue\Plugins\InMemoryConnector\Base\IInMemoryQueueStorage;
 use DeepQueue\Plugins\InMemoryConnector\Storage\InMemoryQueueStorage;
 use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
-use DeepQueue\PreparedConfiguration\PreparedQueueSetup;
+use DeepQueue\PreparedConfiguration\PreparedQueue;
 
 use DeepQueue\Scope;
 use PHPUnit\Framework\TestCase;
@@ -24,7 +24,7 @@ class QueueObjectLoaderTest extends TestCase
 {
 	private function getDeepQueue($policy): DeepQueue
 	{
-		$dq = PreparedQueueSetup::InMemory((new JsonSerializer())->add(new ArraySerializer())->add(new PrimitiveSerializer()));
+		$dq = PreparedQueue::InMemory((new JsonSerializer())->add(new ArraySerializer())->add(new PrimitiveSerializer()));
 		$dq->config()->setQueueNotExistsPolicy($policy);
 		
 		return $dq;

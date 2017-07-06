@@ -4,6 +4,13 @@ language: php
 php:
   - '7.1'
   
+services:
+  - mysql
+  - redis-server
+  
+before_install:  
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS _deepqueue_test_;'
+  
 before_script:
   - composer install --prefer-source --no-interaction
   
