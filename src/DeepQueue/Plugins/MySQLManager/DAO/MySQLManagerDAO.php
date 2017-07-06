@@ -15,12 +15,17 @@ class MySQLManagerDAO implements IMySQLManagerDAO
 	private $connector = null;
 	
 	
+	public function __construct(IMySQLManagerConnector $connector)
+	{
+		$this->connector = $connector;
+	}
+
+
 	public function initConnector(array $config): void
 	{
 		$sql = \Squid::MySql();
 		$sql->config()->setConfig($config);
-
-		$this->connector = Scope::skeleton(IMySQLManagerConnector::class);
+		
 		$this->connector->setMySQL($sql->getConnector());
 	}
 

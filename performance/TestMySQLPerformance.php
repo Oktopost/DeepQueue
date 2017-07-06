@@ -1,17 +1,24 @@
 <?php
+
 use DeepQueue\DeepQueue;
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
-use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
+use DeepQueue\Plugins\MySQLConnector\MySQLConnector;
+use DeepQueue\Plugins\MySQLManager\MySQLManager;
 
-use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
+use Serialization\Serializers\JsonSerializer;
 
 
 require '../vendor/autoload.php';
 
 require_once 'PerformanceTester.php';
 
+$config = [
+		'db'		=> 'deepqueue_test',
+		'user'		=> 'root',
+		'password'	=> '',
+		'host'		=> 'localhost'
+	];
 
 $tester = new PerformanceTester();
 
@@ -19,10 +26,9 @@ $dq = new DeepQueue();
 
 $dq->config()
 	->setQueueNotExistsPolicy(QueueLoaderPolicy::CREATE_NEW)
-	->setConnectorPlugin(new InMemoryConnector())
-	->setManagerPlugin(new InMemoryManager())
+	->setConnectorPlugin(new MySQLConnector($config))
+	->setManagerPlugin(new MySQLManager($config))
 	->setSerializer((new JsonSerializer())->add(new PrimitiveSerializer()));
-
 
 $result = $tester->test($dq, 255);
 

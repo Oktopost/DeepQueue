@@ -41,17 +41,17 @@ class MySQLQueue implements IRemoteQueue
 
 		$payloads = [];
 
-		while ($waitSeconds > 0)
+		while ($waitSeconds >= 0)
 		{
 			$payloads = $this->getPayloads($count);
 			
-			if ($payloads)
+			$sleepTime = min($waitSeconds, self::MAX_SLEEP_TIME);
+
+			if ($payloads || !$sleepTime)
 			{
 				break;
 			}
-			
-			$sleepTime = min($waitSeconds, self::MAX_SLEEP_TIME);
-			
+
 			sleep($sleepTime);
 			
 			$waitSeconds -= $sleepTime;

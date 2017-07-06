@@ -83,7 +83,9 @@ class MySQLQueueDAO implements IMySQLQueueDAO
 			->add($enqueueInsert)
 			->executeAll();
 
-		return array_map(create_function('$o', 'return $o["Id"];'), $payloads['enqueue']);
+		$mapFunction = function ($o) { return $o['Id']; };
+		
+		return array_map($mapFunction, $payloads['enqueue']);
 	}
 
 	public function dequeue(string $queueName, int $count = 1): array

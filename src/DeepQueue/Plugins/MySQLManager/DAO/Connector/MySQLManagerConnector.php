@@ -17,9 +17,9 @@ class MySQLManagerConnector extends GenericIdConnector implements IMySQLManagerC
 	private const TABLE = 'DeepQueueObject';
 	
 	
-	public function __construct($parent = null, $excludeFields = null)
+	public function __construct()
 	{
-		parent::__construct($parent, $excludeFields);
+		parent::__construct();
 		
 		$mapper = Mappers::simple();
 		

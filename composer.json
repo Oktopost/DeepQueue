@@ -15,7 +15,7 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "oktopost/squid": "dev-master#51824fa",
+        "oktopost/squid": "dev-master#caac9ef",
         "oktopost/skeleton": "^1.0",
         "oktopost/objection": "^1.0",
         "oktopost/annotation": "^1.0",
