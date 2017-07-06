@@ -10,24 +10,22 @@ use DeepQueue\Module\Validator\QueueObjectValidator;
 use DeepQueue\Module\Loader\QueueLoaderBuilder;
 use DeepQueue\Module\Connector\ConnectorBuilder;
 
-use DeepQueue\Plugins\InMemoryManager\Storage\InMemoryManagerStorage;
-use DeepQueue\Plugins\InMemoryManager\DAO\InMemoryManagerDAO;
-use DeepQueue\Plugins\InMemoryConnector\Storage\InMemoryQueueStorage;
-use DeepQueue\Plugins\InMemoryConnector\DAO\InMemoryQueueDAO;
+use DeepQueue\Plugins\Managers\InMemoryManager\Storage\InMemoryManagerStorage;
+use DeepQueue\Plugins\Managers\InMemoryManager\DAO\InMemoryManagerDAO;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\Storage\InMemoryQueueStorage;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\DAO\InMemoryQueueDAO;
 
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 
 use DeepQueue\Config\ConnectorProviderConfig;
 use DeepQueue\Config\QueueLoaderConfig;
 
-use DeepQueue\Plugins\MySQLConnector\DAO\MySQLQueueDAO;
-use DeepQueue\Plugins\MySQLManager\DAO\Connector\MySQLManagerConnector;
-use DeepQueue\Plugins\RedisConnector\DAO\RedisQueueDAO;
-use DeepQueue\Plugins\RedisManager\DAO\RedisManagerDAO;
+use DeepQueue\Plugins\Connectors\MySQLConnector\DAO\MySQLQueueDAO;
+use DeepQueue\Plugins\Managers\MySQLManager\DAO\Connector\MySQLManagerConnector;
+use DeepQueue\Plugins\Connectors\RedisConnector\DAO\RedisQueueDAO;
+use DeepQueue\Plugins\Managers\RedisManager\DAO\RedisManagerDAO;
 
-use DeepQueue\Plugins\MySQLManager\DAO\MySQLManagerDAO;
-
-use DeepQueue\Plugins\Logger\Logger;
+use DeepQueue\Plugins\Managers\MySQLManager\DAO\MySQLManagerDAO;
 
 
 $this->set(Base\Validator\IKeyValidator::class, KeyValidator::class);
@@ -43,16 +41,16 @@ $this->set(Base\Config\IConnectorProviderConfig::class, ConnectorProviderConfig:
 $this->set(Base\Config\IQueueLoaderConfig::class, QueueLoaderConfig::class);
 
 
-$this->set(Plugins\InMemoryManager\Base\IInMemoryManagerStorage::class, InMemoryManagerStorage::class);
-$this->set(Plugins\InMemoryConnector\Base\IInMemoryQueueStorage::class, InMemoryQueueStorage::class);
+$this->set(Plugins\Managers\InMemoryManager\Base\IInMemoryManagerStorage::class, InMemoryManagerStorage::class);
+$this->set(Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueStorage::class, InMemoryQueueStorage::class);
 
-$this->set(Plugins\InMemoryManager\Base\IInMemoryManagerDAO::class, InMemoryManagerDAO::class);
-$this->set(Plugins\InMemoryConnector\Base\IInMemoryQueueDAO::class, InMemoryQueueDAO::class);
+$this->set(Plugins\Managers\InMemoryManager\Base\IInMemoryManagerDAO::class, InMemoryManagerDAO::class);
+$this->set(Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueDAO::class, InMemoryQueueDAO::class);
 
-$this->set(Plugins\RedisManager\Base\IRedisManagerDAO::class, RedisManagerDAO::class);
-$this->set(Plugins\RedisConnector\Base\IRedisQueueDAO::class, RedisQueueDAO::class);
+$this->set(Plugins\Managers\RedisManager\Base\IRedisManagerDAO::class, RedisManagerDAO::class);
+$this->set(Plugins\Connectors\RedisConnector\Base\IRedisQueueDAO::class, RedisQueueDAO::class);
 
-$this->set(Plugins\MySQLManager\Base\DAO\IMySQLManagerDAO::class, MySQLManagerDAO::class);
-$this->set(Plugins\MySQLManager\Base\DAO\Connector\IMySQLManagerConnector::class, MySQLManagerConnector::class);
+$this->set(Plugins\Managers\MySQLManager\Base\DAO\IMySQLManagerDAO::class, MySQLManagerDAO::class);
+$this->set(Plugins\Managers\MySQLManager\Base\DAO\Connector\IMySQLManagerConnector::class, MySQLManagerConnector::class);
 
-$this->set(Plugins\MySQLConnector\Base\DAO\IMySQLQueueDAO::class, MySQLQueueDAO::class);
+$this->set(Plugins\Connectors\MySQLConnector\Base\DAO\IMySQLQueueDAO::class, MySQLQueueDAO::class);

@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\MySQLConnector;
+namespace DeepQueue\Plugins\Connectors\MySQLConnector;
 
 
 use DeepQueue\DeepQueue;
@@ -7,7 +7,7 @@ use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
+use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
 
 use lib\MySQLConfig;
 

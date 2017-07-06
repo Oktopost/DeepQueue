@@ -1,12 +1,12 @@
 <?php
-namespace DeepQueue\Plugins\MySQLConnector\Queue;
+namespace DeepQueue\Plugins\Connectors\MySQLConnector\Queue;
 
 
 use DeepQueue\Payload;
 use DeepQueue\Plugins\Logger\Base\ILogger;
-use DeepQueue\Plugins\MySQLConnector\Converter\MySQLPayloadConverter;
-use DeepQueue\Plugins\MySQLConnector\DAO\MySQLQueueDAO;
-use DeepQueue\Plugins\MySQLConnector\Base\DAO\IMySQLQueueDAO;
+use DeepQueue\Plugins\Connectors\MySQLConnector\Converter\MySQLPayloadConverter;
+use DeepQueue\Plugins\Connectors\MySQLConnector\DAO\MySQLQueueDAO;
+use DeepQueue\Plugins\Connectors\MySQLConnector\Base\DAO\IMySQLQueueDAO;
 
 use lib\MySQLConfig;
 

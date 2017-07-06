@@ -1,12 +1,12 @@
 <?php
-namespace DeepQueue\Plugins\RedisConnector\Queue;
+namespace DeepQueue\Plugins\Connectors\RedisConnector\Queue;
 
 
 use DeepQueue\Payload;
 use DeepQueue\Base\Config\IRedisConfig;
 use DeepQueue\Plugins\Logger\Base\ILogger;
-use DeepQueue\Plugins\RedisConnector\Base\IRedisQueueDAO;
-use DeepQueue\Plugins\RedisConnector\DAO\RedisQueueDAO;
+use DeepQueue\Plugins\Connectors\RedisConnector\Base\IRedisQueueDAO;
+use DeepQueue\Plugins\Connectors\RedisConnector\DAO\RedisQueueDAO;
 use DeepQueue\Utils\RedisConfigParser;
 
 use PHPUnit\Framework\TestCase;

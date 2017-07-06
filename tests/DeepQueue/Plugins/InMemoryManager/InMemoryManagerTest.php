@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryManager;
+namespace DeepQueue\Plugins\Managers\InMemoryManager;
 
 
 use DeepQueue\Base\Plugins\IManagerPlugin;
@@ -9,7 +9,7 @@ use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
-use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 
 use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\ArraySerializer;

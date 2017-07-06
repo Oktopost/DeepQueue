@@ -3,8 +3,8 @@ namespace DeepQueue;
 
 
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
-use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
+use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
 use PHPUnit\Framework\TestCase;
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;

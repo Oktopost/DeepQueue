@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\InMemoryConnector\Queue;
+namespace DeepQueue\Plugins\Connectors\InMemoryConnector\Queue;
 
 
 use DeepQueue\Payload;

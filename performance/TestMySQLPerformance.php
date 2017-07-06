@@ -2,14 +2,14 @@
 
 use DeepQueue\DeepQueue;
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Plugins\MySQLConnector\MySQLConnector;
-use DeepQueue\Plugins\MySQLManager\MySQLManager;
+use DeepQueue\Plugins\Connectors\MySQLConnector\MySQLConnector;
+use DeepQueue\Plugins\Managers\MySQLManager\MySQLManager;
 
 use Serialization\Json\Serializers\PrimitiveSerializer;
 use Serialization\Serializers\JsonSerializer;
 
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'PerformanceTester.php';
 

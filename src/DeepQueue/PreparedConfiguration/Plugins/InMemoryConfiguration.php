@@ -6,8 +6,8 @@ use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\PreparedConfiguration\Plugins\IPluginConfiguration;
-use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
-use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
+use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 
 use Serialization\Base\ISerializer;
 

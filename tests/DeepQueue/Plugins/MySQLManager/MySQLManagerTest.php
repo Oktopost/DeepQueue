@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\MySQLManager;
+namespace DeepQueue\Plugins\Managers\MySQLManager;
 
 use DeepQueue\Base\Plugins\IManagerPlugin;
 
@@ -9,7 +9,7 @@ use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
-use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 use lib\MySQLConfig;
 use PHPUnit\Framework\TestCase;
 use Serialization\Json\Serializers\ArraySerializer;

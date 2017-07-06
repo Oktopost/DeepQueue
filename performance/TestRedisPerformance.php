@@ -2,14 +2,14 @@
 
 use DeepQueue\DeepQueue;
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Plugins\RedisConnector\RedisConnector;
-use DeepQueue\Plugins\RedisManager\RedisManager;
+use DeepQueue\Plugins\Connectors\RedisConnector\RedisConnector;
+use DeepQueue\Plugins\Managers\RedisManager\RedisManager;
 
 use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
 
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'PerformanceTester.php';
 

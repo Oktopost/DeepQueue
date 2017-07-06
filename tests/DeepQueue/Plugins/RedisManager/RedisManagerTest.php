@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\RedisManager;
+namespace DeepQueue\Plugins\Managers\RedisManager;
 
 
 use DeepQueue\DeepQueue;
@@ -11,8 +11,8 @@ use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
-use DeepQueue\Plugins\RedisManager\Base\IRedisManager;
-use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
+use DeepQueue\Plugins\Managers\RedisManager\Base\IRedisManager;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 
 use Predis\Client;
 

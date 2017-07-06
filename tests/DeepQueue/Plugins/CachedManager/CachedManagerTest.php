@@ -1,18 +1,18 @@
 <?php
-namespace DeepQueue\Plugins\CachedManager;
+namespace DeepQueue\Plugins\Managers\CachedManager;
 
 
 use DeepQueue\DeepQueue;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Plugins\CachedManager\Base\ICachedManager;
+use DeepQueue\Plugins\Managers\CachedManager\Base\ICachedManager;
 use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
-use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
-use DeepQueue\Plugins\RedisManager\RedisManager;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
+use DeepQueue\Plugins\Managers\RedisManager\RedisManager;
 
 use PHPUnit\Framework\TestCase;
 

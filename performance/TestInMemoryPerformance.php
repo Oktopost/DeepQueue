@@ -1,14 +1,14 @@
 <?php
 use DeepQueue\DeepQueue;
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
-use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
+use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
 
 use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
 
 
-require '../vendor/autoload.php';
+require __DIR__ . '/../vendor/autoload.php';
 
 require_once 'PerformanceTester.php';
 

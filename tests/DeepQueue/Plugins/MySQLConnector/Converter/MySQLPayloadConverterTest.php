@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\MySQLConnector\Converter;
+namespace DeepQueue\Plugins\Connectors\MySQLConnector\Converter;
 
 
 use DeepQueue\Payload;

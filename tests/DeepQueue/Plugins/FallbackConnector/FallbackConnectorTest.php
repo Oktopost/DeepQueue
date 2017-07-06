@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\FallbackConnector;
+namespace DeepQueue\Plugins\Connectors\FallbackConnector;
 
 
 use DeepQueue\Payload;
@@ -7,10 +7,10 @@ use DeepQueue\DeepQueue;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Base\Config\IRedisConfig;
-use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
-use DeepQueue\Plugins\InMemoryConnector\InMemoryConnector;
-use DeepQueue\Plugins\RedisConnector\RedisConnector;
-use DeepQueue\Plugins\RedisConnector\Helper\RedisNameBuilder;
+use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
+use DeepQueue\Plugins\Connectors\RedisConnector\RedisConnector;
+use DeepQueue\Plugins\Connectors\RedisConnector\Helper\RedisNameBuilder;
 
 use PHPUnit\Framework\TestCase;
 

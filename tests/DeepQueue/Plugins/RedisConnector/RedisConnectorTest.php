@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\RedisConnector;
+namespace DeepQueue\Plugins\Connectors\RedisConnector;
 
 
 use DeepQueue\DeepQueue;
@@ -7,7 +7,7 @@ use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Plugins\InMemoryManager\InMemoryManager;
+use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
 
 use PHPUnit\Framework\TestCase;
 
