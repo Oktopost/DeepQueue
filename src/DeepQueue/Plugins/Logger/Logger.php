@@ -9,8 +9,6 @@ use DeepQueue\Plugins\Logger\Enum\LogLevel;
 use DeepQueue\Plugins\Logger\Enum\LogLevelName;
 use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
 
-use Objection\LiteObject;
-
 
 /**
  * @unique
@@ -53,9 +51,24 @@ class Logger implements ILogger
 		{
 			if ($provider->level() >= $level)
 			{
-				$provider->write($record);
+				try
+				{
+					$provider->write($record);
+				}
+				catch (\Throwable $e)
+				{
+					
+				}
 			}
 		}
+	}
+
+	/**
+	 * @param mixed $data
+	 */
+	public function logException(\Throwable $e, string $message, $data = null): void
+	{
+		$this->error("{$message} Got {$e->getMessage()}, Trace: ".PHP_EOL."{$e->getTraceAsString()}", $data);
 	}
 
 	/**

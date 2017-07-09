@@ -43,4 +43,9 @@ class InMemoryManagerStorage implements IInMemoryManagerStorage
 		
 		return $queue;
 	}
+	
+	public function getAll(): array
+	{
+		return $this->queues;
+	}
 }

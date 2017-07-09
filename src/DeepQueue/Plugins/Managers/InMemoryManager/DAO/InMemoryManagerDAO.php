@@ -19,12 +19,12 @@ class InMemoryManagerDAO implements IInMemoryManagerDAO
 	private $storage;
 	
 	
-	public function upsert(IQueueObject $queue): IQueueObject
+	public function upsert(IQueueObject $queue): void
 	{
-		return $this->storage->pushQueue($queue);
+		$this->storage->pushQueue($queue);
 	}
 
-	public function load(string $queueName): ?IQueueObject
+	public function loadByName(string $queueName): ?IQueueObject
 	{
 		$queue = $this->storage->pullQueue($queueName);
 		
@@ -36,7 +36,7 @@ class InMemoryManagerDAO implements IInMemoryManagerDAO
 		return $queue;
 	}
 	
-	public function loadById(string $queueId): ?IQueueObject
+	public function load(string $queueId): ?IQueueObject
 	{
 		$queue = $this->storage->pullQueueById($queueId);
 		
@@ -46,5 +46,10 @@ class InMemoryManagerDAO implements IInMemoryManagerDAO
 		}
 		
 		return $queue;
+	}
+	
+	public function loadAll(): array 
+	{
+		return $this->storage->getAll();
 	}
 }

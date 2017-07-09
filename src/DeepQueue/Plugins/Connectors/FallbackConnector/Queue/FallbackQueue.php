@@ -3,6 +3,7 @@ namespace DeepQueue\Plugins\Connectors\FallbackConnector\Queue;
 
 
 use DeepQueue\Payload;
+use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Plugins\Connectors\FallbackConnector\Base\IFallbackQueue;
@@ -19,6 +20,9 @@ class FallbackQueue implements IFallbackQueue
 	/** @var IRemoteQueue */
 	private $fallback;
 	
+	/** @var ILogger */
+	private $logger;
+	
 	
 	private function needToDequeueFromFallback(): bool
 	{
@@ -27,10 +31,17 @@ class FallbackQueue implements IFallbackQueue
 		 return $rand < 0.2;
 	}
 	
+	private function log(\Throwable $e, string $operation, array $data): void
+	{
+		$message = "Fallback queue error: Failed to {$operation} data for {$this->name} queue.";
+		$this->logger->logException($e, $message, $data);
+	}
 	
-	public function __construct(string $name, IRemoteQueue $main, IRemoteQueue $fallback)
+	
+	public function __construct(string $name, IRemoteQueue $main, IRemoteQueue $fallback, ILogger $logger)
 	{
 		$this->name = $name;
+		$this->logger = $logger;
 		
 		$this->main = $main;
 		$this->fallback = $fallback;
@@ -59,7 +70,12 @@ class FallbackQueue implements IFallbackQueue
 		}
 		catch (\Throwable $e)
 		{
-			//TODO:: add handler
+			$this->log($e, 'dequeueWorkload', [
+				'queue'			=> $this->name,
+				'count' 		=> $count,
+				'waitSeconds'	=> $waitSeconds
+			]);
+			
 			return $this->fallback->dequeueWorkload($count, 0);
 		}
 	}
@@ -76,7 +92,11 @@ class FallbackQueue implements IFallbackQueue
 		}
 		catch (\Throwable $e)
 		{
-			//TODO:: add handler
+			$this->log($e, 'enqueue', [
+				'queue'			=> $this->name,
+				'payloadsCount' => sizeof($payload),
+			]);
+						
 			return $this->fallback->enqueue($payload);
 		}
 	}

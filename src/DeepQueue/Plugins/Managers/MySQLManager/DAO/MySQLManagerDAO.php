@@ -2,7 +2,6 @@
 namespace DeepQueue\Plugins\Managers\MySQLManager\DAO;
 
 
-use DeepQueue\Scope;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Enums\QueueState;
 use DeepQueue\Plugins\Managers\MySQLManager\Base\DAO\IMySQLManagerDAO;
@@ -41,12 +40,16 @@ class MySQLManagerDAO implements IMySQLManagerDAO
 
 	public function loadByName(string $queueName): ?IQueueObject
 	{
-		$queue = $this->connector
+		return $this->connector
 			->selectFirstObjectByFields([
 				'Name' 	=> $queueName,
 				'State'	=> QueueState::EXISTING
 			]);
-				
-		return $queue;
+	}
+	
+	public function loadAll(): array
+	{
+		return $this->connector
+			->selectObjects();
 	}
 }

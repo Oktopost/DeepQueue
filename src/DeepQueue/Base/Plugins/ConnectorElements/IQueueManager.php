@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Base\Plugins\RemoteElements;
+namespace DeepQueue\Base\Plugins\ConnectorElements;
 
 
 use DeepQueue\Base\IMetaData;

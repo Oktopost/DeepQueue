@@ -73,4 +73,14 @@ class CachedManager implements ICachedManager
 
 		return $queueObject ?: null;
 	}
+
+	public function loadById(string $id): ?IQueueObject
+	{
+		return $this->main->loadById($id);
+	}
+
+	public function loadAll(): array
+	{
+		return $this->main->loadAll();
+	}
 }

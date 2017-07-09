@@ -13,4 +13,6 @@ interface IInMemoryManagerStorage
 	public function pushQueue(IQueueObject $queue): IQueueObject;
 	public function pullQueue(string $name): ?IQueueObject;
 	public function pullQueueById(string $id): ?IQueueObject;
+	
+	public function getAll(): array;
 }

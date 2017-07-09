@@ -62,6 +62,12 @@ class FileLogProvider implements ILogProvider
 		$message = $this->prepare($record);
 		
 		$fp = fopen($this->path, 'a');
+		
+		if (!$fp)
+		{
+			return;
+		}
+		
 		fwrite($fp, $message);
 		fclose($fp);
 	}

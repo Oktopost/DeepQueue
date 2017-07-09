@@ -2,15 +2,13 @@
 namespace DeepQueue\Plugins\Managers\InMemoryManager\Base;
 
 
-use DeepQueue\Base\IQueueObject;
+use DeepQueue\Base\Plugins\ManagerElements\IManagerDAO;
 
 
 /**
  * @skeleton
  */
-interface IInMemoryManagerDAO
+interface IInMemoryManagerDAO extends IManagerDAO
 {
-	public function upsert(IQueueObject $queue): IQueueObject;
-	public function load(string $queueName): ?IQueueObject;
-	public function loadById(string $queueId): ?IQueueObject;
+	
 }

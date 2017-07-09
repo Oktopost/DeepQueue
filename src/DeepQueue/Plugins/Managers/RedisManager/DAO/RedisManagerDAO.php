@@ -89,7 +89,7 @@ class RedisManagerDAO implements IRedisManagerDAO
 		$this->client = new Client($config->getParameters(), $config->getOptions());
 	}
 
-	public function upsert(IQueueObject $queue): IQueueObject
+	public function upsert(IQueueObject $queue): void
 	{
 		$data = $this->prepareData($queue);
 
@@ -105,20 +105,62 @@ class RedisManagerDAO implements IRedisManagerDAO
 		}
 		
 		$pipeline->execute();
-
-		return $queue;
 	}
 
-	public function load(string $queueName): ?IQueueObject
+	public function loadByName(string $queueName): ?IQueueObject
 	{
 		$data = $this->client->hgetall($this->getNameKey($queueName));
 
-		if (!$data)
+		return $data ? $this->prepareObject($data) : null;
+	}
+
+	public function load(string $id): ?IQueueObject
+	{
+		$name = $this->client->get($this->getIdKey($id));
+		
+		if (!$name)
 			return null;
 		
-		return $this->prepareObject($data);
+		$data = $this->client->hgetall($this->getNameKey($name));
+		
+		return $data ? $this->prepareObject($data) : null;
 	}
-	
+
+	public function loadAll(): array
+	{
+		$keys = $this->client->keys(self::NAME_KEY_PREFIX . ':*');
+		
+		if (!$keys)
+			return [];
+		
+		$queues = [];
+		
+		$prefix = $this->client->getOptions()->prefix->getPrefix();
+		
+		$pipeline = $this->client->pipeline();
+		
+		foreach ($keys as $key)
+		{
+			$unprefixKey = str_replace($prefix, '', $key);
+			
+			$pipeline->hgetall($unprefixKey);
+		}
+		
+		$response = $pipeline->execute();
+		
+		foreach ($response as $item)
+		{
+			if (!isset($item['Id']))
+			{
+				continue;
+			}
+			
+			$queues[] = $this->prepareObject($item);
+		}
+		
+		return $queues;
+	}
+
 	public function delete(string $queueId): void
 	{
 		$name = $this->client->get($this->getIdKey($queueId));

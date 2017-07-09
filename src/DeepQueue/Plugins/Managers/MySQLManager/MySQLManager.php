@@ -5,30 +5,25 @@ namespace DeepQueue\Plugins\Managers\MySQLManager;
 use DeepQueue\Scope;
 use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Base\IQueueObject;
-use DeepQueue\Base\IDeepQueueConfig;
-use DeepQueue\Base\Validator\IQueueObjectValidator;
+use DeepQueue\Base\Plugins\ManagerElements\IManagerDAO;
 use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueState;
 use DeepQueue\Manager\QueueConfig;
-use DeepQueue\Manager\QueueObject;
-use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
+use DeepQueue\Module\Manager\AbstractManager;
 use DeepQueue\Plugins\Managers\MySQLManager\Base\IMySQLManager;
 use DeepQueue\Plugins\Managers\MySQLManager\Base\DAO\IMySQLManagerDAO;
 
 
-class MySQLManager implements IMySQLManager
+class MySQLManager extends AbstractManager implements IMySQLManager
 {
-	/** @var IDeepQueueConfig|null */
-	private $deepConfig = null;
-	
 	/** @var IQueueConfig|null */
 	private $defaultQueueConfig = null;
 	
 	/** @var IMySQLManagerDAO */
 	private $dao;
+
 	
-	
-	private function getDefaultConfig(): IQueueConfig
+	protected function getDefaultConfig(): IQueueConfig
 	{
 		if (!$this->defaultQueueConfig)
 		{
@@ -39,85 +34,22 @@ class MySQLManager implements IMySQLManager
 			$this->defaultQueueConfig->MaximalDelay = 5;
 			$this->defaultQueueConfig->DefaultDelay = 1;
 		}
-		
-		return clone $this->defaultQueueConfig;	
+
+		return clone $this->defaultQueueConfig;
 	}
 	
-	private function prepare(IQueueObject $queueObject): IQueueObject
+	protected function getDAO(): IManagerDAO
 	{
-		$queueObject->setDeepConfig($this->deepConfig);
-		return $queueObject;
+		return $this->dao;
 	}
-	
-	private function getId(): string
-	{
-		return (new TimeBasedRandomGenerator())->get();
-	}
-	
-	private function validate(IQueueObject $queueObject): void
-	{
-		if (!$queueObject->Id)
-		{
-			$queueObject->Id = $this->getId();
-		}
-		
-		/** @var IQueueObjectValidator $validator */
-		$validator = Scope::skeleton(IQueueObjectValidator::class);
-		
-		$validator->validate($queueObject);
-	}
-	
-	
-	
+
+
 	public function __construct(array $config)
 	{
 		$this->dao = Scope::skeleton(IMySQLManagerDAO::class);
 		$this->dao->initConnector($config);
 	}
 
-
-	public function setDeepConfig(IDeepQueueConfig $config): void
-	{
-		$this->deepConfig = $config;
-	}
-
-	public function load(string $name, bool $canCreate = false): ?IQueueObject
-	{
-		$queueObject = $this->dao->loadByName($name);
-
-		if (!$queueObject && $canCreate)
-		{
-			$queueObject = new QueueObject();
-			$queueObject->Name = $name;
-			$queueObject->Id = $this->getId();
-			$queueObject->Config = $this->getDefaultConfig();
-			
-			return $this->create($queueObject);
-		}
-
-		return $queueObject ? $this->prepare($queueObject) : null;
-	}
-
-	public function create(IQueueObject $object): IQueueObject
-	{
-		$this->validate($object);
-		
-		$this->dao->upsert($object);
-		
-		return $this->prepare($object);
-	}
-
-	public function update(IQueueObject $object): IQueueObject
-	{
-		$this->validate($object);
-		
-		if ($this->dao->loadByName($object->Name))
-		{
-			$this->dao->upsert($object);
-		}
-		
-		return $this->prepare($object);
-	}
 
 	public function delete($object): void
 	{
