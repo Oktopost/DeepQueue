@@ -34,7 +34,7 @@ class FallbackQueue implements IFallbackQueue
 	private function log(\Throwable $e, string $operation, array $data): void
 	{
 		$message = "Fallback queue error: Failed to {$operation} data for {$this->name} queue.";
-		$this->logger->logException($e, $message, $data);
+		$this->logger->logException($e, $message, $data, $this->name);
 	}
 	
 	

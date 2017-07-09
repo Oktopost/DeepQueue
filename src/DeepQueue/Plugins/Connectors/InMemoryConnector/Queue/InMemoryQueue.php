@@ -40,7 +40,7 @@ class InMemoryQueue implements IRemoteQueue
 			$this->logger->info($message . $key, [
 				'payload' 	=> $payload,
 				'queue'		=> $this->name
-			], $key);
+			], $key, $this->name);
 		}
 	}
 	

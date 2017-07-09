@@ -39,7 +39,7 @@ class MySQLQueue implements IRemoteQueue
 			$this->logger->info($message . $payload['Id'], [
 				'payload' 	=> $payload['Payload'],
 				'queue'		=> $this->name
-			], $payload['Id']);
+			], $payload['Id'], $this->name);
 		}
 	}
 	

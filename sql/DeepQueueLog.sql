@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS `DeepQueueLog` (
 	`Id` 			CHAR(32) NOT NULL,
 	`Created` 		DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
-	`ParentId`		VARCHAR(244),
+	`ParentId`		VARCHAR(255),
+	`QueueName`		VARCHAR(255),
 	`Level`			VARCHAR(32),
 	`Message`		TEXT,
 	`Data`			TEXT,
@@ -10,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `DeepQueueLog` (
 	
 	INDEX `k_Created`(`Created`),
 	INDEX `k_Level` (`Level`),
-	INDEX `k_ParentId` (`ParentId`)
+	INDEX `k_ParentId` (`ParentId`),
+	INDEX `k_QueueName` (`QueueName`)
 ) 
 ENGINE=InnoDB DEFAULT CHARSET=utf8;

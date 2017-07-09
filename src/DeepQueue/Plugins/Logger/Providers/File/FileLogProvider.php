@@ -33,17 +33,23 @@ class FileLogProvider implements ILogProvider
 	
 	private function prepare(LogEntry $record): string 
 	{
-		$parentId = $record->ParentId ? $record->ParentId.' ' : '';
+		$parentId = $record->ParentId ? $record->ParentId : ' ';
+		$queueName = $record->QueueName ? $record->QueueName : ' ';
+		$messageText = str_replace(array("\r", "\n"), ' ', $record->Message);
 		
-		$message = "{$record->Created->format('Y-m-d H:i:s')} {$parentId}{$record->Level} {$record->Message}";
-		
+		$message = "[{$record->Created->format('Y-m-d H:i:s')}] ";
+		$message .= strtoupper($record->Level);
+		$message .= " <{$queueName}> ";
+		$message .= "<{$parentId}> ";
+		$message .= "\"{$messageText}\"";
+
 		if ($record->Data)
 		{
-			$message .= PHP_EOL;
-			$message .= print_r($record->Data, true);
+			$data = json_encode($record->Data);
+			
+			$message .= " '{$data}'";
 		}
 		
-		$message .= PHP_EOL;
 		$message .= PHP_EOL;
 		
 		return $message;

@@ -26,7 +26,8 @@ class Logger implements ILogger
 	/**
 	 * @param mixed $data
 	 */
-	private function buildRecord(int $level, string $message, $data = null, ?string $parentId = null): LogEntry 
+	private function buildRecord(int $level, string $message, $data = null, 
+								 ?string $parentId = null, ?string $queueName = null): LogEntry 
 	{
 		$logEntry = new LogEntry();
 		
@@ -35,6 +36,7 @@ class Logger implements ILogger
 		$logEntry->Message = $message;
 		$logEntry->Data = $data;
 		$logEntry->ParentId = $parentId;
+		$logEntry->QueueName = $queueName;
 			
 		return $logEntry;
 	}
@@ -43,22 +45,15 @@ class Logger implements ILogger
 	/**
 	 * @param mixed $data
 	 */
-	public function log(int $level, string $message, $data = null, ?string $parentId = null): void
+	public function log(int $level, string $message, $data = null, ?string $parentId = null, ?string $queueName = null): void
 	{
-		$record = $this->buildRecord($level, $message, $data, $parentId);
+		$record = $this->buildRecord($level, $message, $data, $parentId, $queueName);
 		
 		foreach ($this->providers as $provider)
 		{
 			if ($provider->level() >= $level)
 			{
-				try
-				{
-					$provider->write($record);
-				}
-				catch (\Throwable $e)
-				{
-					
-				}
+				$provider->write($record);
 			}
 		}
 	}
@@ -66,33 +61,34 @@ class Logger implements ILogger
 	/**
 	 * @param mixed $data
 	 */
-	public function logException(\Throwable $e, string $message, $data = null): void
+	public function logException(\Throwable $e, string $message, $data = null, ?string $queueName = null): void
 	{
-		$this->error("{$message} Got {$e->getMessage()}, Trace: ".PHP_EOL."{$e->getTraceAsString()}", $data);
+		$this->error("{$message} Got {$e->getMessage()}, Trace: " . PHP_EOL . "{$e->getTraceAsString()}", 
+			$data, null, $queueName);
 	}
 
 	/**
 	 * @param mixed $data
 	 */
-	public function error(string $message, $data = null, ?string $parentId = null): void
+	public function error(string $message, $data = null, ?string $parentId = null, ?string $queueName = null): void
 	{
-		$this->log(LogLevel::ERROR, $message, $data, $parentId);
+		$this->log(LogLevel::ERROR, $message, $data, $parentId, $queueName);
 	}
 
 	/**
 	 * @param mixed $data
 	 */
-	public function warning(string $message, $data = null, ?string $parentId = null): void
+	public function warning(string $message, $data = null, ?string $parentId = null, ?string $queueName = null): void
 	{
-		$this->log(LogLevel::WARNING, $message, $data, $parentId);
+		$this->log(LogLevel::WARNING, $message, $data, $parentId, $queueName);
 	}
 
 	/**
 	 * @param mixed $data
 	 */
-	public function info(string $message, $data = null, ?string $parentId = null): void
+	public function info(string $message, $data = null, ?string $parentId = null, ?string $queueName = null): void
 	{
-		$this->log(LogLevel::INFO, $message, $data, $parentId);
+		$this->log(LogLevel::INFO, $message, $data, $parentId, $queueName);
 	}
 
 	public function addProvider(ILogProvider $provider): void

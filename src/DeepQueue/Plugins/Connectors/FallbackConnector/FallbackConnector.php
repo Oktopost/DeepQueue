@@ -47,7 +47,7 @@ class FallbackConnector implements IFallbackConnector
 		catch (\Throwable $e)
 		{
 			$this->deepConfig->logger()->logException($e, 
-				"Failed to load MetaData for {$queueObject->Name} queue object");
+				"Failed to load MetaData for {$queueObject->Name} queue object", [], $queueObject->Name);
 			
 			return $this->fallback->getMetaData($queueObject);
 		}
