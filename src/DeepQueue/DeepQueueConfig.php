@@ -3,20 +3,19 @@ namespace DeepQueue;
 
 
 use DeepQueue\Base\IDeepQueueConfig;
+use DeepQueue\Base\Utils\IDecoratorBuilder;
 use DeepQueue\Base\Loader\IQueueObjectLoader;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
-use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
 use DeepQueue\Base\Config\IQueueLoaderConfig;
 use DeepQueue\Base\Config\IConnectorProviderConfig;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Base\Connector\IConnectorProvider;
-use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
 use DeepQueue\Enums\QueueLoaderPolicy;
-
+use DeepQueue\Plugins\Logger\Logger;
 use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Plugins\Logger\Base\ILogProvider;
-use DeepQueue\Plugins\Logger\Logger;
+
 use Serialization\Base\ISerializer;
 use Serialization\Base\Json\IJsonDataConstructor;
 
@@ -89,7 +88,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 	}
 	
 	/**
-	 * @param string|ILoaderDecoratorBuilder[] $builders
+	 * @param string|IDecoratorBuilder[] $builders
 	 */
 	public function addLoaderBuilder(...$builders): IDeepQueueConfig
 	{

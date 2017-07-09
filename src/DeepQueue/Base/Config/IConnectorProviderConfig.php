@@ -2,10 +2,10 @@
 namespace DeepQueue\Base\Config;
 
 
+use DeepQueue\Base\Utils\IDecoratorBuilder;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Connector\IConnectorProvider;
-use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
 
 
 interface IConnectorProviderConfig 

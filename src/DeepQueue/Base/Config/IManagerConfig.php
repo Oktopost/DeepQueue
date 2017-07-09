@@ -3,15 +3,15 @@ namespace DeepQueue\Base\Config;
 
 
 use DeepQueue\Base\IDeepQueueConfig;
-use DeepQueue\Base\Loader\IQueueObjectLoader;
-use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
 use DeepQueue\Base\Plugins\IManagerPlugin;
+use DeepQueue\Base\Loader\IQueueObjectLoader;
+use DeepQueue\Base\Utils\IDecoratorBuilder;
 
 
 interface IManagerConfig
 {
 	/**
-	 * @param string|ILoaderDecoratorBuilder[] $builder
+	 * @param string|IDecoratorBuilder[] $builder
 	 */
 	public function addLoaderBuilder(...$builders): IDeepQueueConfig;
 	

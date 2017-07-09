@@ -2,14 +2,14 @@
 namespace DeepQueue\Config;
 
 
-use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Scope;
-use DeepQueue\Base\Config\IQueueLoaderConfig;
-use DeepQueue\Base\Loader\IQueueLoaderBuilder;
-use DeepQueue\Base\Loader\IQueueObjectLoader;
-use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
 use DeepQueue\Base\Plugins\IManagerPlugin;
-use DeepQueue\Module\Loader\Builder\LoaderClassNameBuilder;
+use DeepQueue\Base\Utils\IDecoratorBuilder;
+use DeepQueue\Base\Config\IQueueLoaderConfig;
+use DeepQueue\Base\Loader\IQueueObjectLoader;
+use DeepQueue\Base\Loader\IQueueLoaderBuilder;
+use DeepQueue\Utils\ClassNameBuilder;
+use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Module\Loader\Decorators\CachedLoaderDecorator;
 use DeepQueue\Exceptions\InvalidUsageException;
 
@@ -65,7 +65,7 @@ class QueueLoaderConfig implements IQueueLoaderConfig
 	}
 
 	/**
-	 * @param string|ILoaderDecoratorBuilder[] $builders
+	 * @param string|IDecoratorBuilder[] $builders
 	 */
 	public function addLoaderBuilder(...$builders): IQueueLoaderConfig
 	{
@@ -82,15 +82,15 @@ class QueueLoaderConfig implements IQueueLoaderConfig
 			}
 			else if (is_string($builder))
 			{
-				$this->loaderBuilder->addBuilder(new LoaderClassNameBuilder($builder));
+				$this->loaderBuilder->addBuilder(new ClassNameBuilder($builder));
 			}
-			else if ($builder instanceof ILoaderDecoratorBuilder)
+			else if ($builder instanceof IDecoratorBuilder)
 			{
 				$this->loaderBuilder->addBuilder($builder); 
 			}
 			else
 			{
-				throw new InvalidUsageException('Parameter must be string, array or ILoaderDecoratorBuilder instance!');
+				throw new InvalidUsageException('Parameter must be string, array or IDecoratorBuilder instance!');
 			}
 		}
 		

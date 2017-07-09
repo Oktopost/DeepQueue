@@ -2,13 +2,13 @@
 namespace DeepQueue\Config;
 
 
-use DeepQueue\Base\Config\IQueueLoaderConfig;
-use DeepQueue\Base\Loader\IQueueLoaderBuilder;
-use DeepQueue\Base\Loader\IQueueObjectLoader;
-use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Module\Loader\Builder\LoaderClassNameBuilder;
+use DeepQueue\Base\Plugins\IManagerPlugin;
+use DeepQueue\Base\Config\IQueueLoaderConfig;
+use DeepQueue\Base\Loader\IQueueObjectLoader;
+use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Module\Loader\Decorators\CachedLoaderDecorator;
+use DeepQueue\Utils\ClassNameBuilder;
 
 use PHPUnit\Framework\TestCase;
 
@@ -95,7 +95,7 @@ class QueueLoaderConfigTest extends TestCase
 		$config->setManager($this->mockManager());
 		
 		self::assertNotNull($config
-			->addLoaderBuilder(new LoaderClassNameBuilder(CachedLoaderDecorator::class)));
+			->addLoaderBuilder(new ClassNameBuilder(CachedLoaderDecorator::class)));
 	}
 	
 	public function test_addConnectorBuilder_PassArray()
@@ -104,7 +104,7 @@ class QueueLoaderConfigTest extends TestCase
 		$config->setManager($this->mockManager());
 		
 		self::assertNotNull($config
-			->addLoaderBuilder([new LoaderClassNameBuilder(CachedLoaderDecorator::class), 
+			->addLoaderBuilder([new ClassNameBuilder(CachedLoaderDecorator::class), 
 				CachedLoaderDecorator::class]));
 	}
 	

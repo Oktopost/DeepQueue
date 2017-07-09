@@ -3,10 +3,10 @@ namespace DeepQueue\Module\Loader;
 
 
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Base\Loader\IQueueLoaderBuilder;
+use DeepQueue\Base\Utils\IDecoratorBuilder;
 use DeepQueue\Base\Loader\IQueueObjectLoader;
+use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Loader\Remote\IRemoteQueueObjectLoader;
-use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
 
 
 /**
@@ -14,7 +14,7 @@ use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
  */
 class QueueLoaderBuilder implements IQueueLoaderBuilder
 {
-	/** @var ILoaderDecoratorBuilder[] */
+	/** @var IDecoratorBuilder[] */
 	private $builders = [];
 	
 	/** @var IRemoteQueueObjectLoader */
@@ -30,7 +30,7 @@ class QueueLoaderBuilder implements IQueueLoaderBuilder
 		
 		for ($i = count($this->builders) - 1; $i >= 0; $i--)
 		{
-			$decorator = $this->builders[$i]->build();
+			$decorator = $this->builders[$i]->buildForLoader();
 			$decorator->setChildLoader($last);
 			$last = $decorator;
 		}
@@ -43,7 +43,7 @@ class QueueLoaderBuilder implements IQueueLoaderBuilder
 		return new QueueObjectLoader($this->remoteLoader, $name, $this->newQueuePolicy);
 	}
 	
-	public function addBuilder(ILoaderDecoratorBuilder $builder): void
+	public function addBuilder(IDecoratorBuilder $builder): void
 	{
 		$this->builders[] = $builder;
 	}

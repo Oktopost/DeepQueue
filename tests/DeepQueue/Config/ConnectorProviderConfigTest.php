@@ -2,11 +2,11 @@
 namespace DeepQueue\Config;
 
 
-use DeepQueue\Base\Config\IConnectorProviderConfig;
-use DeepQueue\Base\Connector\IConnectorProvider;
-use DeepQueue\Base\Loader\IQueueLoaderBuilder;
+use DeepQueue\Utils\ClassNameBuilder;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
-use DeepQueue\Module\Connector\Builder\ClassNameBuilder;
+use DeepQueue\Base\Loader\IQueueLoaderBuilder;
+use DeepQueue\Base\Connector\IConnectorProvider;
+use DeepQueue\Base\Config\IConnectorProviderConfig;
 use DeepQueue\Module\Connector\Decorators\QueueStateDecorator;
 
 use PHPUnit\Framework\TestCase;

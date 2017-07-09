@@ -9,7 +9,7 @@ use DeepQueue\Base\Plugins\ManagerElements\IManagerDAO;
 use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueState;
 use DeepQueue\Manager\QueueConfig;
-use DeepQueue\Module\Manager\AbstractManager;
+use DeepQueue\Plugins\Managers\AbstractManager;
 use DeepQueue\Plugins\Managers\MySQLManager\Base\IMySQLManager;
 use DeepQueue\Plugins\Managers\MySQLManager\Base\DAO\IMySQLManagerDAO;
 

@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Module\Manager;
+namespace DeepQueue\Plugins\Managers;
 
 
 use DeepQueue\Scope;
@@ -9,7 +9,7 @@ use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Base\Plugins\ManagerElements\IManagerDAO;
 use DeepQueue\Base\Validator\IQueueObjectValidator;
-use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
+use DeepQueue\Utils\TimeBasedRandomIdGenerator;
 use DeepQueue\Manager\QueueObject;
 
 
@@ -27,7 +27,7 @@ abstract class AbstractManager implements IManagerPlugin
 	
 	private function getId(): string
 	{
-		return (new TimeBasedRandomGenerator())->get();
+		return (new TimeBasedRandomIdGenerator())->get();
 	}
 	
 	private function validate(IQueueObject $queueObject): void

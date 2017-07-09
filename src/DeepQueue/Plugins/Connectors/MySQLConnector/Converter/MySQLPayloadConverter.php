@@ -5,7 +5,7 @@ namespace DeepQueue\Plugins\Connectors\MySQLConnector\Converter;
 use DeepQueue\Scope;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
-use DeepQueue\Base\Ids\IIdGenerator;
+use DeepQueue\Base\Utils\IIdGenerator;
 use DeepQueue\Exceptions\InvalidUsageException;
 use DeepQueue\Module\Serialization\PayloadSerializer;
 use DeepQueue\Plugins\Connectors\MySQLConnector\Base\Converter\IMySQLPayloadConverter;

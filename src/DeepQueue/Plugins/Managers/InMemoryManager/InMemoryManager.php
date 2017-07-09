@@ -9,7 +9,7 @@ use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\Plugins\ManagerElements\IManagerDAO;
 use DeepQueue\Manager\QueueConfig;
-use DeepQueue\Module\Manager\AbstractManager;
+use DeepQueue\Plugins\Managers\AbstractManager;
 use DeepQueue\Plugins\Managers\InMemoryManager\Base\IInMemoryManager;
 use DeepQueue\Plugins\Managers\InMemoryManager\Base\IInMemoryManagerStorage;
 use DeepQueue\Plugins\Managers\InMemoryManager\Base\IInMemoryManagerDAO;

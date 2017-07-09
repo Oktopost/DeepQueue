@@ -15,7 +15,7 @@ use DeepQueue\Plugins\Managers\InMemoryManager\DAO\InMemoryManagerDAO;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\Storage\InMemoryQueueStorage;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\DAO\InMemoryQueueDAO;
 
-use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
+use DeepQueue\Utils\TimeBasedRandomIdGenerator;
 
 use DeepQueue\Config\ConnectorProviderConfig;
 use DeepQueue\Config\QueueLoaderConfig;
@@ -35,7 +35,7 @@ $this->set(Base\Validator\IQueueObjectValidator::class, QueueObjectValidator::cl
 $this->set(Base\Connector\IConnectorBuilder::class, ConnectorBuilder::class);
 $this->set(Base\Loader\IQueueLoaderBuilder::class, QueueLoaderBuilder::class);
 
-$this->set(Base\Ids\IIdGenerator::class, TimeBasedRandomGenerator::class);
+$this->set(Base\Utils\IIdGenerator::class, TimeBasedRandomIdGenerator::class);
 
 $this->set(Base\Config\IConnectorProviderConfig::class, ConnectorProviderConfig::class);
 $this->set(Base\Config\IQueueLoaderConfig::class, QueueLoaderConfig::class);

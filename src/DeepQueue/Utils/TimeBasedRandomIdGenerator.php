@@ -1,15 +1,12 @@
 <?php
-namespace DeepQueue\Module\Ids;
+namespace DeepQueue\Utils;
 
 
-use DeepQueue\Base\Ids\IIdGenerator;
+use DeepQueue\Base\Utils\IIdGenerator;
 
 
-class TimeBasedRandomGenerator implements IIdGenerator
+class TimeBasedRandomIdGenerator implements IIdGenerator
 {
-	use \DeepQueue\Base\Ids\TIdGenerator;
-	
-	
 	public function get(): string
 	{
 		$str = base_convert(bin2hex(random_bytes(15)), 16, 36);

@@ -2,10 +2,10 @@
 namespace DeepQueue\Module\Connector;
 
 
+use DeepQueue\Base\Utils\IDecoratorBuilder;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Connector\IConnectorBuilder;
-use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
 use DeepQueue\Base\Connector\Remote\IRemoteQueueProvider;
 
 
@@ -30,7 +30,7 @@ class ConnectorBuilder implements IConnectorBuilder
 		
 		for ($i = count($this->builders) - 1; $i >= 0; $i--)
 		{
-			$decorator = $this->builders[$i]->build();
+			$decorator = $this->builders[$i]->buildForConnector();
 			$decorator->setRemoteQueue($last);
 			$decorator->setQueueLoader($this->loaderBuilder->getRemoteLoader($name));
 			$last = $decorator;

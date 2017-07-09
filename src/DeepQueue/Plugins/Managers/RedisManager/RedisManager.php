@@ -10,7 +10,7 @@ use DeepQueue\Base\Config\IRedisConfig;
 use DeepQueue\Base\Plugins\ManagerElements\IManagerDAO;
 use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Manager\QueueConfig;
-use DeepQueue\Module\Manager\AbstractManager;
+use DeepQueue\Plugins\Managers\AbstractManager;
 use DeepQueue\Plugins\Managers\RedisManager\Base\IRedisManager;
 use DeepQueue\Plugins\Managers\RedisManager\Base\IRedisManagerDAO;
 

@@ -1,13 +1,14 @@
 <?php
-namespace DeepQueue\Module\Loader\Builder;
+namespace DeepQueue\Utils;
 
 
-use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
+use DeepQueue\Base\Utils\IDecoratorBuilder;
 use DeepQueue\Base\Loader\Decorator\IQueueLoaderDecorator;
+use DeepQueue\Base\Connector\Decorator\IRemoteQueueDecorator;
 use DeepQueue\Exceptions\DecoratorNotExistsException;
 
 
-class LoaderClassNameBuilder implements ILoaderDecoratorBuilder
+class ClassNameBuilder implements IDecoratorBuilder
 {
 	private $className;
 	
@@ -20,7 +21,13 @@ class LoaderClassNameBuilder implements ILoaderDecoratorBuilder
 		$this->className = $className;
 	}
 	
-	public function build(): IQueueLoaderDecorator
+	
+	public function buildForConnector(): IRemoteQueueDecorator
+	{
+		return new $this->className;
+	}
+
+	public function buildForLoader(): IQueueLoaderDecorator
 	{
 		return new $this->className;
 	}

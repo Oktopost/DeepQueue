@@ -2,17 +2,17 @@
 namespace DeepQueue\Config;
 
 
-use DeepQueue\Module\Connector\Decorators\Validator;
 use DeepQueue\Scope;
+use DeepQueue\Base\Utils\IDecoratorBuilder;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Config\IConnectorProviderConfig;
 use DeepQueue\Base\Connector\IConnectorBuilder;
 use DeepQueue\Base\Connector\IConnectorProvider;
-use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
-use DeepQueue\Module\Connector\Builder\ClassNameBuilder;
+use DeepQueue\Module\Connector\Decorators\Validator;
 use DeepQueue\Module\Connector\Decorators\QueueStateDecorator;
 use DeepQueue\Exceptions\InvalidUsageException;
+use DeepQueue\Utils\ClassNameBuilder;
 
 
 class ConnectorProviderConfig implements IConnectorProviderConfig
@@ -98,7 +98,7 @@ class ConnectorProviderConfig implements IConnectorProviderConfig
 			}
 			else
 			{
-				throw new InvalidUsageException('Parameter must be string, array or IConnectorBuilder instance!');
+				throw new InvalidUsageException('Parameter must be string, array or IDecoratorBuilder instance!');
 			}
 		}
 		

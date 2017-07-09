@@ -10,7 +10,7 @@ use DeepQueue\Plugins\Managers\CachedManager\Base\ICachedManager;
 use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
-use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
+use DeepQueue\Utils\TimeBasedRandomIdGenerator;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 use DeepQueue\Plugins\Managers\RedisManager\RedisManager;
 
@@ -122,7 +122,7 @@ class CachedManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'created';
 		
 		$objectConfig = new QueueConfig();
@@ -145,7 +145,7 @@ class CachedManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'updated';
 		
 		$objectConfig = new QueueConfig();
@@ -173,7 +173,7 @@ class CachedManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'updated';
 		
 		$objectConfig = new QueueConfig();
@@ -203,7 +203,7 @@ class CachedManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'deleted1';
 		
 		$objectConfig = new QueueConfig();
@@ -235,7 +235,7 @@ class CachedManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'deleted2';
 		
 		$objectConfig = new QueueConfig();
@@ -268,7 +268,7 @@ class CachedManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'ttltest';
 		
 		$objectConfig = new QueueConfig();

@@ -8,7 +8,7 @@ use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
-use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
+use DeepQueue\Utils\TimeBasedRandomIdGenerator;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 use lib\MySQLConfig;
 use PHPUnit\Framework\TestCase;
@@ -84,7 +84,7 @@ class MySQLManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'created';
 		
 		$objectConfig = new QueueConfig();
@@ -104,7 +104,7 @@ class MySQLManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'updated';
 		
 		$objectConfig = new QueueConfig();
@@ -124,7 +124,7 @@ class MySQLManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'updated';
 		
 		$objectConfig = new QueueConfig();
@@ -146,7 +146,7 @@ class MySQLManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'deleted1';
 		
 		$objectConfig = new QueueConfig();
@@ -168,7 +168,7 @@ class MySQLManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'deleted2';
 		
 		$objectConfig = new QueueConfig();
@@ -190,7 +190,7 @@ class MySQLManagerTest extends TestCase
 		$manager = $this->getSubject();
 		
 		$object = new QueueObject();
-		$object->Id = (new TimeBasedRandomGenerator())->get();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
 		$object->Name = 'deleted3';
 		
 		$objectConfig = new QueueConfig();

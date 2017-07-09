@@ -2,10 +2,10 @@
 namespace DeepQueue\Base\Config;
 
 
-use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Loader\IQueueObjectLoader;
-use DeepQueue\Base\Loader\Decorator\ILoaderDecoratorBuilder;
+use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Plugins\IManagerPlugin;
+use DeepQueue\Base\Utils\IDecoratorBuilder;
 
 
 interface IQueueLoaderConfig
@@ -14,7 +14,7 @@ interface IQueueLoaderConfig
 	public function setQueueNotExistsPolicy(int $queueNotExistsPolicy): IQueueLoaderConfig;
 
 	/**
-	 * @param string|ILoaderDecoratorBuilder[] $builders
+	 * @param string|IDecoratorBuilder[] $builders
 	 */
 	public function addLoaderBuilder(...$builders): IQueueLoaderConfig;
 	

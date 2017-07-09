@@ -2,9 +2,9 @@
 namespace DeepQueue\Base\Connector;
 
 
+use DeepQueue\Base\Utils\IDecoratorBuilder;
 use DeepQueue\Base\Loader\IQueueLoaderBuilder;
 use DeepQueue\Base\Connector\Remote\IRemoteQueueProvider;
-use DeepQueue\Base\Connector\Decorator\IDecoratorBuilder;
 
 
 /**

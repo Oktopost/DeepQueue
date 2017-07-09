@@ -7,7 +7,7 @@ use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Plugins\Logger\Base\ILogProvider;
 use DeepQueue\Plugins\Logger\Enum\LogLevel;
 use DeepQueue\Plugins\Logger\Enum\LogLevelName;
-use DeepQueue\Module\Ids\TimeBasedRandomGenerator;
+use DeepQueue\Utils\TimeBasedRandomIdGenerator;
 
 
 /**
@@ -30,7 +30,7 @@ class Logger implements ILogger
 	{
 		$logEntry = new LogEntry();
 		
-		$logEntry->Id = (new TimeBasedRandomGenerator())->get();
+		$logEntry->Id = (new TimeBasedRandomIdGenerator())->get();
 		$logEntry->Level = LogLevelName::MAP[$level];
 		$logEntry->Message = $message;
 		$logEntry->Data = $data;

@@ -7,7 +7,7 @@ use DeepQueue\Scope;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
 use DeepQueue\Base\Utils\IPayloadConverter;
-use DeepQueue\Base\Ids\IIdGenerator;
+use DeepQueue\Base\Utils\IIdGenerator;
 use DeepQueue\Module\Serialization\PayloadSerializer;
 
 use Serialization\Base\ISerializer;
