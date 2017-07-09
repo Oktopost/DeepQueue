@@ -12,20 +12,6 @@ class InMemoryQueueDAO implements IInMemoryQueueDAO
 	private $storage;
 	
 	
-	private function getAvailable(string $queueName, array $payloads): array 
-	{
-		foreach ($payloads as $key => $payload)
-		{
-			if (!$this->delete($queueName, $key))
-			{
-				unset($payloads[$key]);
-			}
-		}
-		
-		return $payloads;
-	}
-	
-	
 	public function __construct(IInMemoryQueueStorage $storage)
 	{
 		$this->storage = $storage;
@@ -39,14 +25,7 @@ class InMemoryQueueDAO implements IInMemoryQueueDAO
 
 	public function dequeue(string $queueName, int $count = 1): array
 	{
-		$payloads = $this->storage->pullPayloads($queueName, $count);
-		
-		return $this->getAvailable($queueName, $payloads);
-	}
-	
-	public function delete(string $queueName, string $payloadId): bool
-	{
-		return $this->storage->deletePayload($queueName, $payloadId);
+		return $this->storage->pullPayloads($queueName, $count);
 	}
 	
 	public function countEnqueued(string $queueName): int 

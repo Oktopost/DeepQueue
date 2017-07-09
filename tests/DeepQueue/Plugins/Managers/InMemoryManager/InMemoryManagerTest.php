@@ -1,33 +1,37 @@
 <?php
-namespace DeepQueue\Plugins\Managers\MySQLManager;
+namespace DeepQueue\Plugins\Managers\InMemoryManager;
 
+
+use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\Plugins\IManagerPlugin;
-
 use DeepQueue\DeepQueue;
 use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
+use DeepQueue\Plugins\Managers\InMemoryManager\Base\IInMemoryManagerStorage;
+use DeepQueue\Plugins\Managers\InMemoryManager\Storage\InMemoryManagerStorage;
+use DeepQueue\Scope;
 use DeepQueue\Utils\TimeBasedRandomIdGenerator;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
-use lib\MySQLConfig;
-use PHPUnit\Framework\TestCase;
+
+use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
-use Serialization\Serializers\JsonSerializer;
+
+use PHPUnit\Framework\TestCase;
+use Skeleton\Skeleton;
+use Skeleton\Type;
 
 
-class MySQLManagerTest extends TestCase
+class InMemoryManagerTest extends TestCase
 {
-	private const TABLENAME = 'DeepQueueObject';
-	
-	
 	private function getSubject(): IManagerPlugin
 	{
 		$dq = new DeepQueue();
 		
 		$dq->config()
-			->setManagerPlugin(new MySQLManager(MySQLConfig::get()))
+			->setManagerPlugin(new InMemoryManager())
 			->setQueueNotExistsPolicy(QueueLoaderPolicy::CREATE_NEW)
 			->setConnectorPlugin(new InMemoryConnector())
 			->setSerializer((new JsonSerializer())->add(new ArraySerializer())->add(new PrimitiveSerializer()));
@@ -38,10 +42,9 @@ class MySQLManagerTest extends TestCase
 	
 	protected function setUp()
 	{
-		MySQLConfig::connector()->delete()
-			->where('1 = 1')
-			->from(self::TABLENAME)
-			->executeDml();
+		/** @var Skeleton $skeleton */
+		$skeleton = Scope::skeleton();
+		$skeleton->override(IInMemoryManagerStorage::class, InMemoryManagerStorage::class, Type::Instance);
 	}
 
 
@@ -53,7 +56,7 @@ class MySQLManagerTest extends TestCase
 		$objectConfig = new QueueConfig();
 		$objectConfig->UniqueKeyPolicy = Policy::ALLOWED;
 		$objectConfig->DelayPolicy = Policy::IGNORED;
-		$objectConfig->MaxBulkSize = 111;
+		$objectConfig->MaxBulkSize = 256;
 		
 		$object->Config = $objectConfig;
 		
@@ -62,7 +65,6 @@ class MySQLManagerTest extends TestCase
 		$savedObject = $this->getSubject()->load($object->Name);
 		
 		self::assertEquals($object->Name, $savedObject->Name);
-		self::assertEquals(111, $object->Config->MaxBulkSize);
 	}
 	
 	public function test_loadQueueObject_notExistsCantCreate_ReturnNull()
@@ -97,6 +99,46 @@ class MySQLManagerTest extends TestCase
 		$this->getSubject()->create($object);
 		
 		self::assertEquals($object->Id, $manager->load('created')->Id);
+	}
+	
+		public function test_loadById_notExits_ReturnNull()
+	{
+		self::assertNull($this->getSubject()->loadById('not-existing-id'));
+	}
+	
+	public function test_loadById_Exists_ReturnQueueObject()
+	{
+		$object = new QueueObject();
+		$object->Id = 'test-id';
+		$object->Name = 'created';
+		$object->Config = new QueueConfig();
+		
+		$this->getSubject()->create($object);
+		
+		$loadedObject = $this->getSubject()->loadById($object->Id);
+		
+		self::assertInstanceOf(IQueueObject::class, $loadedObject);
+		self::assertEquals($object->Id, $loadedObject->Id);
+	}
+	
+	public function test_loadAll_NoQueues_ReturnEmptyArray()
+	{
+		self::assertEmpty($this->getSubject()->loadAll());
+	}
+	
+	public function test_loadAll_QueuesExist_ReturnArray()
+	{
+		$object = new QueueObject();
+		$object->Id = 'test-id';
+		$object->Name = 'created';
+		$object->Config = new QueueConfig();
+		
+		$this->getSubject()->create($object);
+		
+		$queues = $this->getSubject()->loadAll();
+		
+		self::assertNotEmpty($queues);
+		self::assertEquals($object->Id, $queues[0]->Id);
 	}
 	
 	public function test_update_notExists_ReturnQueueObject()

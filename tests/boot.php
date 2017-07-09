@@ -37,6 +37,8 @@ class UnitTestSkeletonMock
 	}
 }
 
+require_once 'lib/TestLogProvider.php';
+require_once 'lib/ThrowableQueueDecorator.php';
 require_once 'lib/MySQLConfig.php';
 
 \lib\MySQLConfig::setup();

@@ -5,6 +5,7 @@ namespace DeepQueue\Plugins\Managers\RedisManager;
 use DeepQueue\DeepQueue;
 use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueLoaderPolicy;
+use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\Config\IRedisConfig;
 use DeepQueue\Base\Plugins\IManagerPlugin;
 use DeepQueue\Utils\RedisConfigParser;
@@ -46,14 +47,17 @@ class RedisManagerTest extends TestCase
 		return $dq->config()->manager();
 	}
 	
-	
-	public function setUp()
+	private function getClient(): Client
 	{
 		$config = $this->getConfig();
 		
-		$client = new Client($config->getParameters(), $config->getOptions());
-
-		$client->eval("return redis.call('del', 'defaultKey', unpack(redis.call('keys', ARGV[1])))", 
+		return new Client($config->getParameters(), $config->getOptions());
+	}
+	
+	
+	public function setUp()
+	{
+		$this->getClient()->eval("return redis.call('del', 'defaultKey', unpack(redis.call('keys', ARGV[1])))", 
 			0, 'test.manager.deepqueue:*');
 	}
 
@@ -109,6 +113,46 @@ class RedisManagerTest extends TestCase
 		$this->getSubject()->create($object);
 		
 		self::assertEquals($object->Id, $manager->load('created')->Id);
+	}
+	
+	public function test_loadById_notExits_ReturnNull()
+	{
+		self::assertNull($this->getSubject()->loadById('not-existing-id'));
+	}
+	
+	public function test_loadById_Exists_ReturnQueueObject()
+	{
+		$object = new QueueObject();
+		$object->Id = 'test-id';
+		$object->Name = 'created';
+		$object->Config = new QueueConfig();
+		
+		$this->getSubject()->create($object);
+		
+		$loadedObject = $this->getSubject()->loadById($object->Id);
+		
+		self::assertInstanceOf(IQueueObject::class, $loadedObject);
+		self::assertEquals($object->Id, $loadedObject->Id);
+	}
+	
+	public function test_loadAll_NoQueues_ReturnEmptyArray()
+	{
+		self::assertEmpty($this->getSubject()->loadAll());
+	}
+	
+	public function test_loadAll_QueuesExist_ReturnArray()
+	{
+		$object = new QueueObject();
+		$object->Id = 'test-id';
+		$object->Name = 'created';
+		$object->Config = new QueueConfig();
+		
+		$this->getSubject()->create($object);
+		
+		$queues = $this->getSubject()->loadAll();
+		
+		self::assertNotEmpty($queues);
+		self::assertEquals($object->Id, $queues[0]->Id);
 	}
 	
 	public function test_update_notExists_ReturnQueueObject()

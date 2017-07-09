@@ -150,11 +150,6 @@ class RedisManagerDAO implements IRedisManagerDAO
 		
 		foreach ($response as $item)
 		{
-			if (!isset($item['Id']))
-			{
-				continue;
-			}
-			
 			$queues[] = $this->prepareObject($item);
 		}
 		

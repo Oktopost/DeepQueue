@@ -137,7 +137,7 @@ class Queue implements IQueue
 			]);
 		}
 		
-		return null;
+		return '';
 	}
 
 	/**

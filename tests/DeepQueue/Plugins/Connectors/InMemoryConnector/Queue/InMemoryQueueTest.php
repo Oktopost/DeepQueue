@@ -2,9 +2,13 @@
 namespace DeepQueue\Plugins\Connectors\InMemoryConnector\Queue;
 
 
+use DeepQueue\Scope;
 use DeepQueue\Payload;
 use DeepQueue\Plugins\Logger\Logger;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueStorage;
+
 use PHPUnit\Framework\TestCase;
+
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Serializers\JsonSerializer;
 
@@ -13,7 +17,8 @@ class InMemoryQueueTest extends TestCase
 {
 	private function getSubject(): InMemoryQueue
 	{
-		$queue = new InMemoryQueue('inmemory', (new JsonSerializer())->add(new ArraySerializer()), Logger::instance());
+		$queue = new InMemoryQueue('inmemory', 
+			(new JsonSerializer())->add(new ArraySerializer()), Logger::instance());
 		return $queue;
 	}
 	
@@ -79,6 +84,24 @@ class InMemoryQueueTest extends TestCase
 		$queue = $this->getSubject();
 
 		$workloads = $queue->dequeueWorkload(2, 1);
+		
+		self::assertEmpty($workloads);
+	}
+	
+	public function test_dequeueAlreadyDequeuedWorkload_GetEmptyArray()
+	{
+		$queue = $this->getSubject();
+		
+		$payload1 = new Payload([1,2,3]);
+		$payload1->Key = 'pay1';
+		
+		$queue->enqueue([$payload1]);
+		
+		/** @var IInMemoryQueueStorage $storage */
+		$storage = Scope::skeleton(IInMemoryQueueStorage::class);
+		$storage->deletePayload('inmemory', $payload1->Key);
+		
+		$workloads = $queue->dequeueWorkload(1);
 		
 		self::assertEmpty($workloads);
 	}

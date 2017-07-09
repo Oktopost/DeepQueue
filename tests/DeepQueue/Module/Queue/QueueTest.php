@@ -3,12 +3,14 @@ namespace DeepQueue\Module\Queue;
 
 
 use DeepQueue\Payload;
-use DeepQueue\Plugins\Logger\Base\ILogger;
-use DeepQueue\Plugins\Logger\Logger;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\IQueue;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
+use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\PreparedConfiguration\PreparedQueue;
+
+use lib\TestLogProvider;
+use lib\ThrowableQueueDecorator;
 
 use PHPUnit\Framework\TestCase;
 
@@ -18,11 +20,31 @@ use Serialization\Serializers\JsonSerializer;
 
 class QueueTest extends TestCase
 {
+	private const QUEUE_NAME = 'test';
+	
+	
+	/** @var TestLogProvider */
+	private $dummyLogProvider = null;
+	
+	
 	private function getSubject(): IQueue
 	{
 		$dq = PreparedQueue::InMemory((new JsonSerializer())->add(new ArraySerializer()));
 
-		return $dq->get('test');
+		return $dq->get(self::QUEUE_NAME);
+	}
+	
+	private function getThrowableQueue(?string $name = null): IQueue
+	{
+		$dq = PreparedQueue::InMemory((new JsonSerializer())->add(new ArraySerializer()));
+		
+		$dq->config()->addConnectorBuilder(ThrowableQueueDecorator::class);
+		
+		$this->dummyLogProvider = new TestLogProvider();
+		
+		$dq->config()->addLogProvider($this->dummyLogProvider);
+		
+		return $dq->get($name ?: self::QUEUE_NAME);
 	}
 	
 	/**
@@ -48,7 +70,7 @@ class QueueTest extends TestCase
 	{
 		$remoteQueue = $this->getRemoteMock();
 
-		$queue = new Queue('test', $remoteQueue, $this->getLoggerMock());
+		$queue = new Queue(self::QUEUE_NAME, $remoteQueue, $this->getLoggerMock());
 
 		self::assertInstanceOf(IQueue::class, $queue);
 	}
@@ -60,7 +82,7 @@ class QueueTest extends TestCase
 	{
 		$remote = new \stdClass();
 
-		$queue = new Queue('test', $remote, $this->getLoggerMock());
+		$queue = new Queue(self::QUEUE_NAME, $remote, $this->getLoggerMock());
 
 		self::assertInstanceOf(IQueue::class, $queue);
 	}
@@ -74,7 +96,7 @@ class QueueTest extends TestCase
 
 		$enqueue = $this->getRemoteMock();
 
-		$queue = new Queue('test', $remote, $this->getLoggerMock(), $enqueue);
+		$queue = new Queue(self::QUEUE_NAME, $remote, $this->getLoggerMock(), $enqueue);
 
 		self::assertInstanceOf(IQueue::class, $queue);
 	}
@@ -306,5 +328,23 @@ class QueueTest extends TestCase
 		
 		self::assertEquals($ids[0], $workloads[0]->Id);
 		self::assertEquals($ids[1], $workloads[1]->Id);
+	}
+	
+	public function test_Enqueue_ThrowError_LogError()
+	{
+		$this->getThrowableQueue()->enqueue(new Payload('testdata'));
+		self::assertEquals(self::QUEUE_NAME, $this->dummyLogProvider->logEntry->QueueName);
+	}
+	
+	public function test_EnqueueAll_ThrowError_LogError()
+	{
+		$this->getThrowableQueue('test2')->enqueueAll([new Payload('testdata2')]);
+		self::assertEquals('test2', $this->dummyLogProvider->logEntry->QueueName);
+	}
+	
+	public function test_DequeueWorkload_ThrowError_LogError()
+	{
+		$this->getThrowableQueue('test3')->dequeueWorkload(128);
+		self::assertEquals('test3', $this->dummyLogProvider->logEntry->QueueName);
 	}
 }

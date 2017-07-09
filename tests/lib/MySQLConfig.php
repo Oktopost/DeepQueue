@@ -10,10 +10,11 @@ class MySQLConfig
 	use \Objection\TStaticClass;
 	
 	
-	const TABLES = [
+	private const TABLES = [
 		'DeepQueueObject',
 		'DeepQueueEnqueue',
-		'DeepQueuePayload'
+		'DeepQueuePayload',
+		'DeepQueueLog'
 	];
 	
 	
@@ -35,9 +36,11 @@ class MySQLConfig
 	{
 		$objectTable = file_get_contents(__DIR__ . '/../../sql/DeepQueue.sql');
 		$queueTables = file_get_contents(__DIR__ .  '/../../sql/DeepQueueObject.sql');
+		$logTables = file_get_contents(__DIR__ . '/../../sql/DeepQueueLog.sql');
 		
 		self::$mysql->getConnector()->direct($objectTable)->executeDml();
 		self::$mysql->getConnector()->direct($queueTables)->executeDml();
+		self::$mysql->getConnector()->direct($logTables)->executeDml();
 	}
 
 	/**

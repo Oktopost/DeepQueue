@@ -8,6 +8,9 @@ use DeepQueue\Base\IQueueObject;
 
 interface IAdminPlugin
 {
+	/**
+	 * @return IQueueObject[]|array
+	 */
 	public function getQueues(): array;
 	public function getQueue(string $id): ?IQueueObject;
 	public function getMetaData(string $queueId): ?IMetaData;

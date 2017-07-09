@@ -25,7 +25,7 @@ class FileLogProvider implements ILogProvider
 		
 		if (!file_exists($dir))
 		{
-			mkdir($dir, 0644, true);
+			mkdir($dir, 0755, true);
 		}
 		
 		$this->path = $dir . DIRECTORY_SEPARATOR . self::FILENAME . '_' . date('Y-m-d') . self::EXT;

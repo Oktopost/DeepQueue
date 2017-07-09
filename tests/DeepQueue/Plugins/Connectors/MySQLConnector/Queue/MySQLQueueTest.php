@@ -257,7 +257,7 @@ class MySQLQueueTest extends TestCase
 		
 		$payload2 = new Payload();
 		$payload2->Key = 'd2';
-		$payload2->Delay = 2;
+		$payload2->Delay = 5;
 		
 		$prepared = $this->preparePayloads([$payload1, $payload2]);
 		$this->getDAO()->enqueue(self::TEST_QUEUE_NAME, $prepared);
