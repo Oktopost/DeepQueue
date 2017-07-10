@@ -43,7 +43,6 @@ class MySQLQueue implements IRemoteQueue
 		}
 	}
 	
-	
 	private function getPayloads(int $count): array 
 	{
 		return $this->dao->dequeue($this->name, $count);

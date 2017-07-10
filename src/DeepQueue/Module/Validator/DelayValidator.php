@@ -82,6 +82,7 @@ class DelayValidator implements IDelayValidator
 		}
 	}
 	
+	
 	public function validate(array $payload, IQueueObject $queue): void
 	{
 		switch ($queue->Config->DelayPolicy)

@@ -3,9 +3,9 @@ namespace DeepQueue\Plugins\Connectors\FallbackConnector\Queue;
 
 
 use DeepQueue\Payload;
-use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
+use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Plugins\Connectors\FallbackConnector\Base\IFallbackQueue;
 
 
@@ -47,6 +47,7 @@ class FallbackQueue implements IFallbackQueue
 		$this->fallback = $fallback;
 	}
 
+	
 	/**
 	 * @return Workload[]|array
 	 */

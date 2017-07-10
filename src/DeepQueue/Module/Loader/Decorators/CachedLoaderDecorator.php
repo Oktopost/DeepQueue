@@ -33,11 +33,11 @@ class CachedLoaderDecorator implements IQueueLoaderDecorator
 		$this->timeoutSec = $timeoutSec;
 	}
 
+	
 	public function setChildLoader(IQueueObjectLoader $loader): void
 	{
 		$this->loader = $loader;
 	}
-
 
 	public function load(): ?IQueueObject
 	{

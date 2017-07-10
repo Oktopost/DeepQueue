@@ -90,6 +90,7 @@ class InMemoryQueue implements IRemoteQueue
 		$this->isErrorsEnabled = $enableErrors;
 	}
 
+	
 	/**
 	 * @return Workload[]
 	 */

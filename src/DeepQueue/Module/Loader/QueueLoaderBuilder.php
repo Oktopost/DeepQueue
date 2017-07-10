@@ -43,6 +43,7 @@ class QueueLoaderBuilder implements IQueueLoaderBuilder
 		return new QueueObjectLoader($this->remoteLoader, $name, $this->newQueuePolicy);
 	}
 	
+	
 	public function addBuilder(IDecoratorBuilder $builder): void
 	{
 		$this->builders[] = $builder;
