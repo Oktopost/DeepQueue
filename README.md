@@ -18,7 +18,7 @@ or inside *composer.json*
 ### Basic configuration
 
 ```php
-deepQueue = new DeepQueue();
+$deepQueue = new DeepQueue();
 
 $deepQueue->config()
 		->setConnectorPlugin(Connectors::Redis(['prefix' => 'demo.queue']))
