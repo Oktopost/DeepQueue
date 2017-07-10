@@ -1,5 +1,8 @@
+[![Build Status](https://travis-ci.org/Oktopost/DeepQueue.svg?branch=master)](https://travis-ci.org/Oktopost/DeepQueue)
+
+
 # DeepQueue
-DeepQueue is a queueing library
+DeepQueue is a messaging library
 
 ## Installation
 
