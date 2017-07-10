@@ -21,11 +21,6 @@ trait TRemoteQueueDecorator
 		return $this->_queue;
 	}
 	
-	private function getQueue(): ?IQueueObject
-	{
-		return $this->_loader->load();
-	}
-	
 	private function requireQueue(): IQueueObject
 	{
 		return $this->_loader->require();

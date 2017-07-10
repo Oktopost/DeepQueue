@@ -13,9 +13,9 @@ class FileLogProviderTest extends TestCase
 	private const DIR = __DIR__ . '/log';
 	
 	
-	private function getSubject($level = LogLevel::INFO): FileLogProvider
+	private function getSubject($level = LogLevel::INFO, $path = self::DIR): FileLogProvider
 	{
-		return new FileLogProvider(self::DIR, $level);
+		return new FileLogProvider($path, $level);
 	}
 	
 	private function getMessage(): string
@@ -62,7 +62,7 @@ class FileLogProviderTest extends TestCase
 		self::assertEquals(LogLevel::WARNING, $provider->level());
 	}
 	
-	public function test_write_gotDocumentInCouchDB()
+	public function test_write_gotRowInFileLog()
 	{
 		$log = new LogEntry();
 		$log->Id = 'provider-test';
@@ -71,6 +71,24 @@ class FileLogProviderTest extends TestCase
 		$log->Data->Message = 'test';
 		
 		$this->getSubject()->write($log);
+
+		$logMessage = $this->getMessage();
+		
+		self::assertEquals($log->Message, $logMessage);
+	}
+
+	/**
+	 * @expectedException \DeepQueue\Exceptions\UnexpectedDeepQueueException
+	 */
+	public function test_write_impossibleDir()
+	{
+		$log = new LogEntry();
+		$log->Id = 'provider-test';
+		$log->Message = 'test-message';
+		$log->Data = new LogEntry();
+		$log->Data->Message = 'test';
+		
+		$this->getSubject(LogLevel::INFO,  '/var/log')->write($log);
 
 		$logMessage = $this->getMessage();
 		

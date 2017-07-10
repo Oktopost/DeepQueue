@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Logger\Providers\File;
 
 
+use DeepQueue\Exceptions\UnexpectedDeepQueueException;
 use DeepQueue\Plugins\Logger\Log\LogEntry;
 use DeepQueue\Plugins\Logger\Enum\LogLevel;
 use DeepQueue\Plugins\Logger\Base\ILogProvider;
@@ -27,6 +28,12 @@ class FileLogProvider implements ILogProvider
 		{
 			mkdir($dir, 0755, true);
 		}
+		
+		if (!is_writable($dir))
+		{
+			throw new UnexpectedDeepQueueException("File log provider: path: {$this->path} is not writable");
+		}
+		
 		
 		$this->path = $dir . DIRECTORY_SEPARATOR . self::FILENAME . '_' . date('Y-m-d') . self::EXT;
 	}
@@ -68,12 +75,7 @@ class FileLogProvider implements ILogProvider
 		$message = $this->prepare($record);
 		
 		$fp = fopen($this->path, 'a');
-		
-		if (!$fp)
-		{
-			return;
-		}
-		
+
 		fwrite($fp, $message);
 		fclose($fp);
 	}
