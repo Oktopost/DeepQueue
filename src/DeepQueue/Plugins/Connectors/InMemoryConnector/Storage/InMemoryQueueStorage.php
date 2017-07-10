@@ -34,12 +34,7 @@ class InMemoryQueueStorage implements IInMemoryQueueStorage
 			return [];
 		}
 		
-		$payloads = array_slice($this->payloads[$queueName], 0, $count);
-		
-		foreach ($payloads as $key => $payload)
-		{
-			unset($this->payloads[$queueName][$key]);
-		}
+		$payloads = array_splice($this->payloads[$queueName], 0, $count);
 		
 		return $payloads;
 	}
