@@ -31,7 +31,11 @@ class CouchDBLogProviderTest extends TestCase
 	protected function setUp()
 	{
 		$client = $this->getClient();
-		$client->deleteDatabase();
+		
+		if ($client->databaseExists())
+		{
+			$client->deleteDatabase();
+		}
 	}
 	
 	
