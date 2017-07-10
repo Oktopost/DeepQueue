@@ -35,11 +35,6 @@ class InMemoryConfiguration implements IPluginConfiguration
 		return Connectors::InMemory();
 	}
 
-	public function getNotExistsPolicy(): int
-	{
-		return QueueLoaderPolicy::CREATE_NEW;
-	}
-	
 	public function getSerializer(): ISerializer
 	{
 		return $this->serializer;

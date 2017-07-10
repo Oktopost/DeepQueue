@@ -2,14 +2,17 @@
 namespace DeepQueue\Module\Connector\Decorators;
 
 
+use DeepQueue\Payload;
 use DeepQueue\DeepQueue;
 use DeepQueue\Enums\Policy;
-use DeepQueue\Payload;
+use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\PreparedConfiguration\PreparedQueue;
+
 use PHPUnit\Framework\TestCase;
+
+use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
-use Serialization\Serializers\JsonSerializer;
 
 
 class ValidatorTest extends TestCase
@@ -17,6 +20,10 @@ class ValidatorTest extends TestCase
 	private function getDeepQueue(): DeepQueue
 	{
 		$dq = PreparedQueue::InMemory((new JsonSerializer())->add(new ArraySerializer())->add(new PrimitiveSerializer()));
+		
+		$dq->config()
+			->setQueueNotExistsPolicy(QueueLoaderPolicy::CREATE_NEW);
+		
 		return $dq;
 	}
 	

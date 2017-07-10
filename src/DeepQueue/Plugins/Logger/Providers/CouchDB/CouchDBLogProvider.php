@@ -30,11 +30,11 @@ class CouchDBLogProvider implements ILogProvider
 	}
 	
 	
-	public function __construct($options = [], $level = LogLevel::ERROR)
+	public function __construct($dsn, $database, $level = LogLevel::ERROR)
 	{
 		$this->logLevel = $level;
 
-		$this->connector = new CouchDBLogConnector($options);
+		$this->connector = new CouchDBLogConnector($dsn, $database);
 	}
 	
 	

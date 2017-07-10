@@ -40,11 +40,6 @@ class RedisMySQLConfiguration implements IPluginConfiguration
 		return Connectors::Redis($this->redisConfig);
 	}
 
-	public function getNotExistsPolicy(): int
-	{
-		return QueueLoaderPolicy::CREATE_NEW;
-	}
-
 	public function getSerializer(): ISerializer
 	{
 		return $this->serializer;

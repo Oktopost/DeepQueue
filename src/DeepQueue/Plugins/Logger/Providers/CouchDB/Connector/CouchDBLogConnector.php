@@ -11,9 +11,9 @@ class CouchDBLogConnector
 	private $client;
 	
 	
-	public function __construct(array $config)
+	public function __construct($dsn, $database)
 	{
-		$this->client = new CouchClient($config['dsn'], $config['db']);
+		$this->client = new CouchClient($dsn, $database);
 		
 		if (!$this->client->databaseExists())
 		{

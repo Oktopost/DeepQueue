@@ -37,12 +37,7 @@ class MySQLConfiguration implements IPluginConfiguration
 	{
 		return Connectors::MySQL($this->mysqlConfig);
 	}
-
-	public function getNotExistsPolicy(): int
-	{
-		return QueueLoaderPolicy::CREATE_NEW;
-	}
-
+	
 	public function getSerializer(): ISerializer
 	{
 		return $this->serializer;

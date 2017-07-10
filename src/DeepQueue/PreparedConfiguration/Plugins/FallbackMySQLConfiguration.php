@@ -40,11 +40,6 @@ class FallbackMySQLConfiguration implements IPluginConfiguration
 		return Connectors::Fallback(Connectors::Redis($this->redisConfig), Connectors::MySQL($this->mysqlConfig));
 	}
 
-	public function getNotExistsPolicy(): int
-	{
-		return QueueLoaderPolicy::CREATE_NEW;
-	}
-
 	public function getSerializer(): ISerializer
 	{
 		return $this->serializer;

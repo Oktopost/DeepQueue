@@ -18,7 +18,7 @@ class CouchDBLogProviderTest extends TestCase
 	
 	private function getSubject($level = LogLevel::INFO): CouchDBLogProvider
 	{
-		return new CouchDBLogProvider(['dsn' => self::DSN, 'db' => self::DATABASE], $level);
+		return new CouchDBLogProvider(self::DSN, self::DATABASE, $level);
 	}
 	
 	private function getClient(): CouchClient

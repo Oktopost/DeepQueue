@@ -38,7 +38,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 	private $payloadDataSerializer = null;
 	
 	/** @var int */
-	private $queueNotExistsPolicy = QueueLoaderPolicy::CREATE_NEW;
+	private $queueNotExistsPolicy = QueueLoaderPolicy::FORBIDDEN;
 	
 	/** @var ILogger */
 	private $loggerPlugin;
