@@ -87,22 +87,4 @@ class InMemoryQueueTest extends TestCase
 		
 		self::assertEmpty($workloads);
 	}
-	
-	public function test_dequeueAlreadyDequeuedWorkload_GetEmptyArray()
-	{
-		$queue = $this->getSubject();
-		
-		$payload1 = new Payload([1,2,3]);
-		$payload1->Key = 'pay1';
-		
-		$queue->enqueue([$payload1]);
-		
-		/** @var IInMemoryQueueStorage $storage */
-		$storage = Scope::skeleton(IInMemoryQueueStorage::class);
-		$storage->deletePayload('inmemory', $payload1->Key);
-		
-		$workloads = $queue->dequeueWorkload(1);
-		
-		self::assertEmpty($workloads);
-	}
 }

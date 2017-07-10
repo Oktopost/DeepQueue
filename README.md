@@ -27,7 +27,8 @@ $deepQueue->config()
 		->addLogProvider(new FileLogProvider(__DIR__));
 
 //or using prepared configuration
-$deepQueue = PreparedQueue::RedisMySQL(['prefix' => 'demo.queue'], ['user' => 'root', 'db' => 'demo_queue']);
+$deepQueue = PreparedQueue::RedisMySQL(['prefix' => 'demo.queue'], 
+    ['user' => 'root', 'db' => 'demo_queue']);
 
 $deepQueue->config()
 		->addLogProvider(new FileLogProvider(__DIR__));

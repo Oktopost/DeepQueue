@@ -4,9 +4,11 @@ namespace DeepQueue\Plugins\Connectors\FallbackConnector;
 
 use DeepQueue\Payload;
 use DeepQueue\DeepQueue;
+use DeepQueue\Base\IMetaData;
+use DeepQueue\Base\Config\IRedisConfig;
+use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Utils\RedisConfigParser;
-use DeepQueue\Base\Config\IRedisConfig;
 use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 use DeepQueue\Plugins\Connectors\RedisConnector\RedisConnector;
@@ -48,6 +50,16 @@ class FallbackConnectorTest extends TestCase
 			->setConnectorPlugin($fallbackConnector);
 		
 		return $dq;
+	}
+	
+	/**
+	 * @return \PHPUnit_Framework_MockObject_MockObject|IConnectorPlugin
+	 */
+	private function getThrowableConnector(): IConnectorPlugin
+	{
+		$throwableConnector = $this->createMock(IConnectorPlugin::class);
+		$throwableConnector->method('getMetaData')->willThrowException(new \Exception());
+		return $throwableConnector;
 	}
 	
 	
@@ -100,5 +112,14 @@ class FallbackConnectorTest extends TestCase
 		
 		self::assertTrue($errorsCounter > 0);
 		self::assertEquals(2000, $loadedCounter + $meta->Enqueued + sizeof($leftInFallback));
+	}
+	
+	public function test_getMetaData_ExceptionThrowed_GetFallbackMetaData()
+	{	
+		$fallback = new FallbackConnector($this->getThrowableConnector(), new InMemoryConnector());
+		$fallback->setDeepConfig($this->getDQ()->config());
+		
+		self::assertInstanceOf(IMetaData::class, $fallback
+			->getMetaData($this->getDQ()->getQueueObject('test')));
 	}
 }
