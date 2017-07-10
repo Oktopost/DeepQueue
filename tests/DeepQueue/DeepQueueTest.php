@@ -2,10 +2,17 @@
 namespace DeepQueue;
 
 
+use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueLoaderPolicy;
-use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
+use DeepQueue\Plugins\Connectors\RedisConnector\RedisConnector;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
+
+use DeepQueue\Utils\RedisConfigParser;
 use PHPUnit\Framework\TestCase;
+
+use Predis\Client;
+
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
 use Serialization\Serializers\JsonSerializer;
@@ -13,6 +20,21 @@ use Serialization\Serializers\JsonSerializer;
 
 class DeepQueueTest extends TestCase
 {
+	private function getRedisClient(): Client
+	{
+		$config = RedisConfigParser::parse(['prefix' => 'sanity.test']);
+		
+		return new Client($config->getParameters(), $config->getOptions());
+	}
+	
+	
+	public function setUp()
+	{
+		$this->getRedisClient()->eval("return redis.call('del', 'defaultKey', unpack(redis.call('keys', ARGV[1])))", 
+			0, 'sanity.test:*');
+	}
+	
+	
 	public function test_sanity()
 	{
 		$dq = new DeepQueue();
@@ -106,5 +128,46 @@ class DeepQueueTest extends TestCase
 		
 		self::assertEquals($payload->Key, $workload[0]->Id);
 		self::assertNull($workload[0]->Payload);
+	}
+	
+	public function test_sanity_WithRedisAndWaiting()
+	{
+		$dq = new DeepQueue();
+		
+		$dq->config()
+			->setManagerPlugin(new InMemoryManager())
+			->setQueueNotExistsPolicy(QueueLoaderPolicy::CREATE_NEW)
+			->setConnectorPlugin(new RedisConnector(['prefix' => 'sanity.test']))
+			->setSerializer((new JsonSerializer())->add(new ArraySerializer())->add(new PrimitiveSerializer()));
+		
+		$queueObject = $dq->getQueueObject('redis.test.queue');
+		$queueObject->Config->DelayPolicy = Policy::ALLOWED;
+		$queueObject->Config->MaximalDelay = 30;
+		
+		$dq->config()->manager()->update($queueObject);
+		
+		$queue = $dq->get('redis.test.queue');
+		
+		$payload = new Payload([1,2,3]);
+		$payload->Key = 'un-delayed-payload';
+		
+		$delayedPayload = new Payload('payload-data');
+		$delayedPayload->Delay = 5;
+		
+		$longDelayedPayload = new Payload();
+		$longDelayedPayload->Key = 'long-delayed-payload';
+		$longDelayedPayload->Delay = 15;
+		
+		$queue->enqueueAll([$payload, $delayedPayload, $longDelayedPayload]);
+		
+		$workloads = $queue->dequeueWorkload(255, 5);
+		
+		self::assertEquals(1, sizeof($workloads));
+		self::assertEquals($payload->Key, $workloads[0]->Id);
+		
+		$payloads = $queue->dequeue(255, 5);
+		
+		self::assertEquals(1, sizeof($payloads));
+		self::assertEquals($delayedPayload->Payload, $payloads[0]);
 	}
 }
