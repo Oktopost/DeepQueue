@@ -3,10 +3,10 @@ namespace DeepQueue\Plugins\Connectors\RedisConnector\Queue;
 
 
 use DeepQueue\Payload;
-use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Workload;
-use DeepQueue\Utils\PayloadConverter;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
+use DeepQueue\Utils\PayloadConverter;
+use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Plugins\Connectors\RedisConnector\Base\IRedisQueueDAO;
 
 use Serialization\Base\ISerializer;

@@ -39,7 +39,6 @@ class RedisLogProvider implements ILogProvider
 	}
 	
 	
-	
 	public function __construct($options = [], $level = LogLevel::ERROR)
 	{
 		$this->logLevel = $level;

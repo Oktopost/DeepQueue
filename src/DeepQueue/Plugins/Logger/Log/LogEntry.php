@@ -4,8 +4,8 @@ namespace DeepQueue\Plugins\Logger\Log;
 
 use DeepQueue\Plugins\Logger\Enum\LogLevelName;
 
-use Objection\LiteObject;
 use Objection\LiteSetup;
+use Objection\LiteObject;
 
 
 /**

@@ -13,6 +13,7 @@ class Scope
 	/** @var Skeleton */
 	private static $skeleton;
 	
+	
 	/**
 	 * @return mixed
 	 * @return mixed|Skeleton

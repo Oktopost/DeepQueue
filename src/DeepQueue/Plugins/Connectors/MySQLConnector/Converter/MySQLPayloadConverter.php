@@ -44,6 +44,7 @@ class MySQLPayloadConverter implements IMySQLPayloadConverter
 			->add(new PayloadSerializer($payloadDataSerializer));
 	}
 	
+	
 	public function prepareAll(string $queueName, array $payloads): array
 	{
 		$prepared = [];

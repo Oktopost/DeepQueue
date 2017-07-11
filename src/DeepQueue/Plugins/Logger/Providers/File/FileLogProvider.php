@@ -2,10 +2,10 @@
 namespace DeepQueue\Plugins\Logger\Providers\File;
 
 
-use DeepQueue\Exceptions\UnexpectedDeepQueueException;
 use DeepQueue\Plugins\Logger\Log\LogEntry;
 use DeepQueue\Plugins\Logger\Enum\LogLevel;
 use DeepQueue\Plugins\Logger\Base\ILogProvider;
+use DeepQueue\Exceptions\UnexpectedDeepQueueException;
 
 
 class FileLogProvider implements ILogProvider

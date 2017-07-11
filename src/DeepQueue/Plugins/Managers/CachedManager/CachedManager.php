@@ -4,8 +4,8 @@ namespace DeepQueue\Plugins\Managers\CachedManager;
 
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\IDeepQueueConfig;
-use DeepQueue\Base\Plugins\ICacheableManager;
 use DeepQueue\Base\Plugins\IManagerPlugin;
+use DeepQueue\Base\Plugins\ICacheableManager;
 use DeepQueue\Plugins\Managers\CachedManager\Base\ICachedManager;
 
 

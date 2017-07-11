@@ -4,8 +4,8 @@ namespace DeepQueue\Plugins\Connectors\RedisConnector\DAO;
 
 use DeepQueue\Utils\TimeGenerator;
 use DeepQueue\Base\Config\IRedisConfig;
-use DeepQueue\Plugins\Connectors\RedisConnector\Helper\RedisNameBuilder;
 use DeepQueue\Plugins\Connectors\RedisConnector\Base\IRedisQueueDAO;
+use DeepQueue\Plugins\Connectors\RedisConnector\Helper\RedisNameBuilder;
 
 use Predis\Client;
 use Predis\Pipeline\Pipeline;

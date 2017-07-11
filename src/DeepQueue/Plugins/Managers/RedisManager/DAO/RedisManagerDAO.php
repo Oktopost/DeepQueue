@@ -84,7 +84,7 @@ class RedisManagerDAO implements IRedisManagerDAO
 		$this->ttl = $seconds;
 	}
 
-	public function initClient(IRedisConfig $config)
+	public function initClient(IRedisConfig $config): void
 	{
 		$this->client = new Client($config->getParameters(), $config->getOptions());
 	}

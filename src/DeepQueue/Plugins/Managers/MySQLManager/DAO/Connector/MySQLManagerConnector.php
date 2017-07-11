@@ -2,7 +2,6 @@
 namespace DeepQueue\Plugins\Managers\MySQLManager\DAO\Connector;
 
 
-use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
 use DeepQueue\Plugins\Managers\MySQLManager\Base\DAO\Connector\IMySQLManagerConnector;
 

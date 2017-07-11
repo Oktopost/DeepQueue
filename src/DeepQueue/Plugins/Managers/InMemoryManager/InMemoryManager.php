@@ -11,8 +11,8 @@ use DeepQueue\Base\Plugins\ManagerElements\IManagerDAO;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Plugins\Managers\AbstractManager;
 use DeepQueue\Plugins\Managers\InMemoryManager\Base\IInMemoryManager;
-use DeepQueue\Plugins\Managers\InMemoryManager\Base\IInMemoryManagerStorage;
 use DeepQueue\Plugins\Managers\InMemoryManager\Base\IInMemoryManagerDAO;
+use DeepQueue\Plugins\Managers\InMemoryManager\Base\IInMemoryManagerStorage;
 
 
 class InMemoryManager extends AbstractManager implements IInMemoryManager

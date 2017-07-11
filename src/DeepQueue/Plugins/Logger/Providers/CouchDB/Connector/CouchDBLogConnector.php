@@ -5,6 +5,7 @@ namespace DeepQueue\Plugins\Logger\Providers\CouchDB\Connector;
 use PHPOnCouch\CouchClient;
 use PHPOnCouch\CouchDocument;
 
+
 class CouchDBLogConnector
 {	
 	/** @var CouchClient */
@@ -20,6 +21,7 @@ class CouchDBLogConnector
 			$this->client->createDatabase();
 		}
 	}
+	
 	
 	public function create(array $documentData): void
 	{

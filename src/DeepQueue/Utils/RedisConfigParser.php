@@ -29,9 +29,13 @@ class RedisConfigParser
 		'ssl'		=> [],
 		'prefix'	=> 'deepqueue'	
 	];
-	
-	
-	private static function getValue($default, $sectionName, array $config)
+
+
+	/**
+	 * @param mixed $default
+	 * @return mixed
+	 */
+	private static function getValue($default, string $sectionName, array $config)
 	{
 		foreach (self::MAP[$sectionName] as $option)
 		{
@@ -57,6 +61,7 @@ class RedisConfigParser
 		return $object;
 	}
 
+	
 	/**
 	 * @param IRedisConfig|array $config
 	 */

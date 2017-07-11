@@ -2,8 +2,8 @@
 namespace DeepQueue\Plugins\Connectors\InMemoryConnector\DAO;
 
 
-use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueStorage;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueDAO;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueStorage;
 
 
 class InMemoryQueueDAO implements IInMemoryQueueDAO

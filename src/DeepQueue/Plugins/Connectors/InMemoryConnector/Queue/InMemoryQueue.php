@@ -2,13 +2,13 @@
 namespace DeepQueue\Plugins\Connectors\InMemoryConnector\Queue;
 
 
-use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Scope;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
+use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Utils\TimeGenerator;
 use DeepQueue\Utils\PayloadConverter;
-use DeepQueue\Base\Queue\Remote\IRemoteQueue;
+use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueDAO;
 
 use Serialization\Base\ISerializer;

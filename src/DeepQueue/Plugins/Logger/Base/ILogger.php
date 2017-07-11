@@ -2,9 +2,6 @@
 namespace DeepQueue\Plugins\Logger\Base;
 
 
-/**
- * @skeleton
- */
 interface ILogger
 {
 	public function log(int $level, string $message, $data = null, ?string $parentId = null, ?string $queueName = null): void;

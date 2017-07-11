@@ -2,12 +2,12 @@
 namespace DeepQueue\Utils;
 
 
-use DeepQueue\Exceptions\InvalidUsageException;
 use DeepQueue\Scope;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
-use DeepQueue\Base\Utils\IPayloadConverter;
 use DeepQueue\Base\Utils\IIdGenerator;
+use DeepQueue\Base\Utils\IPayloadConverter;
+use DeepQueue\Exceptions\InvalidUsageException;
 use DeepQueue\Module\Serialization\PayloadSerializer;
 
 use Serialization\Base\ISerializer;
@@ -27,7 +27,7 @@ class PayloadConverter implements IPayloadConverter
 	private $idGenerator;
 	
 	
-	private function createKey()
+	private function createKey(): string
 	{
 		return self::UNIQUE_PREFIX . $this->idGenerator->get();
 	}
