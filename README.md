@@ -42,6 +42,7 @@ $deepQueue->config()
 //creating and setting up new queue object
 $queueObject = new QueueObject();
 $queueObject->Name = 'demo.queue';
+$queueObject->Config = new QueueConfig();
 $queueObject->Config->DelayPolicy = Policy::ALLOWED;
 
 $deepQueue->config()

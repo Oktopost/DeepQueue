@@ -21,7 +21,7 @@ class FallbackMySQLConfiguration implements IPluginConfiguration
 	private $redisConfig = [];
 	
 	
-	public function __construct(array $mysqlConfig, array $redisConfig, ?ISerializer $serializer = null)
+	public function __construct(array $redisConfig, array $mysqlConfig, ?ISerializer $serializer = null)
 	{
 		$this->mysqlConfig = $mysqlConfig;
 		$this->redisConfig = $redisConfig;

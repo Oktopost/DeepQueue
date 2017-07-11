@@ -36,19 +36,19 @@ class PreparedQueue implements IPreparedQueue
 		return self::setup(new InMemoryConfiguration($serializer));
 	}
 	
-	public static function RedisMySQL(array $mysqlConfig, array $redisConfig, ?ISerializer $serializer = null): DeepQueue
+	public static function RedisMySQL(array $redisConfig, array $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
 	{
-		return self::setup(new RedisMySQLConfiguration($mysqlConfig, $redisConfig, $serializer));
+		return self::setup(new RedisMySQLConfiguration($redisConfig, $mysqlConfig, $serializer));
 	}
 	
-	public static function FallbackCached(array $mysqlConfig, array $redisConfig, ?ISerializer $serializer = null): DeepQueue
+	public static function FallbackCached(array $redisConfig, array $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
 	{
-		return self::setup(new FallbackCachedConfiguration($mysqlConfig, $redisConfig, $serializer));
+		return self::setup(new FallbackCachedConfiguration($redisConfig, $mysqlConfig, $serializer));
 	}
 	
-	public static function FallbackMySQL(array $mysqlConfig, array $redisConfig, ?ISerializer $serializer = null): DeepQueue
+	public static function FallbackMySQL(array $redisConfig, array $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
 	{
-		return self::setup(new FallbackMySQLConfiguration($mysqlConfig, $redisConfig, $serializer));
+		return self::setup(new FallbackMySQLConfiguration($redisConfig, $mysqlConfig, $serializer));
 	} 
 	
 	public static function MySQL(array $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
