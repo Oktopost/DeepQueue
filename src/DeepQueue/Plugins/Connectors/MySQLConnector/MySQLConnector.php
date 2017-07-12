@@ -20,9 +20,12 @@ class MySQLConnector implements IMySQLConnector
 
 	/** @var IMySQLQueueDAO */
 	private $dao;
-	
-	
-	public function __construct(array $config)
+
+
+	/**
+	 * @param array|\Squid\MySql\IMySqlConnector $config
+	 */
+	public function __construct($config)
 	{
 		$this->dao = Scope::skeleton(IMySQLQueueDAO::class);
 		$this->dao->initConnector($config);

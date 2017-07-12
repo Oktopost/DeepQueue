@@ -15,6 +15,9 @@ use Serialization\Json\Serializers\LiteObjectSerializer;
 use Predis\Client;
 
 
+/**
+ * @autoload
+ */
 class RedisManagerDAO implements IRedisManagerDAO
 {
 	private const ID_KEY_PREFIX		= 'queue.key';

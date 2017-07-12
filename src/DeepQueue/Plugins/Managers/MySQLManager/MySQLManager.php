@@ -13,6 +13,8 @@ use DeepQueue\Plugins\Managers\AbstractManager;
 use DeepQueue\Plugins\Managers\MySQLManager\Base\IMySQLManager;
 use DeepQueue\Plugins\Managers\MySQLManager\Base\DAO\IMySQLManagerDAO;
 
+use Squid\MySql\IMySqlConnector;
+
 
 class MySQLManager extends AbstractManager implements IMySQLManager
 {
@@ -43,8 +45,10 @@ class MySQLManager extends AbstractManager implements IMySQLManager
 		return $this->dao;
 	}
 
-
-	public function __construct(array $config)
+	/**
+	 * @param array|IMySqlConnector $config
+	 */
+	public function __construct($config)
 	{
 		$this->dao = Scope::skeleton(IMySQLManagerDAO::class);
 		$this->dao->initConnector($config);

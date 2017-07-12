@@ -11,6 +11,8 @@ use DeepQueue\PreparedConfiguration\Plugins\Config\DefaultSerializer;
 
 use Serialization\Base\ISerializer;
 
+use Squid\MySql\IMySqlConnector;
+
 
 class RedisMySQLConfiguration implements IPluginConfiguration
 {
@@ -21,7 +23,10 @@ class RedisMySQLConfiguration implements IPluginConfiguration
 	private $redisConfig = [];
 	
 	
-	public function __construct(array $redisConfig, array $mysqlConfig, ?ISerializer $serializer = null)
+	/**
+	 * @param array|IMySqlConnector $mysqlConfig
+	 */
+	public function __construct(array $redisConfig, $mysqlConfig, ?ISerializer $serializer = null)
 	{
 		$this->mysqlConfig = $mysqlConfig;
 		$this->redisConfig = $redisConfig;

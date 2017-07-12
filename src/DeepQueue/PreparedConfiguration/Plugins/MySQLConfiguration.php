@@ -11,6 +11,8 @@ use DeepQueue\PreparedConfiguration\Plugins\Config\DefaultSerializer;
 
 use Serialization\Base\ISerializer;
 
+use Squid\MySql\IMySqlConnector;
+
 
 class MySQLConfiguration implements IPluginConfiguration
 {
@@ -20,7 +22,10 @@ class MySQLConfiguration implements IPluginConfiguration
 	private $mysqlConfig = [];
 	
 	
-	public function __construct(array $mysqlConfig, ?ISerializer $serializer = null)
+	/**
+	 * @param array|IMySqlConnector $mysqlConfig
+	 */
+	public function __construct($mysqlConfig, ?ISerializer $serializer = null)
 	{
 		$this->mysqlConfig = $mysqlConfig;
 		$this->serializer = $serializer ?: DefaultSerializer::get();

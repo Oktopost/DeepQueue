@@ -8,6 +8,8 @@ use DeepQueue\Plugins\Connectors\MySQLConnector\MySQLConnector;
 use DeepQueue\Plugins\Connectors\FallbackConnector\FallbackConnector;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 
+use Squid\MySql\IMySqlConnector;
+
 
 class Connectors
 {
@@ -24,7 +26,10 @@ class Connectors
 		return new InMemoryConnector($emulateErrors);
 	}
 	
-	public static function MySQL(array $config): IConnectorPlugin
+	/**
+	 * @param array|IMySqlConnector $mysqlConfig
+	 */
+	public static function MySQL($config): IConnectorPlugin
 	{
 		return new MySQLConnector($config);
 	}

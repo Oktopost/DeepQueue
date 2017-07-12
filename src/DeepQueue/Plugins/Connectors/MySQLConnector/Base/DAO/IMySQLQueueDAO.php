@@ -2,9 +2,18 @@
 namespace DeepQueue\Plugins\Connectors\MySQLConnector\Base\DAO;
 
 
+use Squid\MySql\IMySqlConnector;
+
+
+/**
+ * @skeleton
+ */
 interface IMySQLQueueDAO
 {
-	public function initConnector(array $config): void;
+	/**
+	 * @param array|IMySqlConnector $config
+	 */
+	public function initConnector($config): void;
 	
 	public function enqueue(string $queueName, array $payloads): array;
 	public function dequeue(string $queueName, int $count = 1): array;

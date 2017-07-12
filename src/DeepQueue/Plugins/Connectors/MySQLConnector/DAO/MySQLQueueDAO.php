@@ -7,6 +7,9 @@ use DeepQueue\Plugins\Connectors\MySQLConnector\Base\DAO\IMySQLQueueDAO;
 use Squid\MySql\IMySqlConnector;
 
 
+/**
+ * @autoload
+ */
 class MySQLQueueDAO implements IMySQLQueueDAO
 {
 	private const PAYLOAD_TABLE = 'DeepQueuePayload';
@@ -51,13 +54,21 @@ class MySQLQueueDAO implements IMySQLQueueDAO
 		return true;
 	}
 
-	
-	public function initConnector(array $config): void
+
+	/**
+	 * @param array|IMySqlConnector $config
+	 */
+	public function initConnector($config): void
 	{
-		$sql = \Squid::MySql();
-		$sql->config()->setConfig($config);
-		
-		$this->connector = $sql->getConnector();
+		if (is_array($config))
+		{
+			$sql = \Squid::MySql();
+			$sql->config()->setConfig($config);
+			
+			$config = $sql->getConnector();
+		}
+
+		$this->connector = $config;
 	}
 
 	public function enqueue(string $queueName, array $payloads): array

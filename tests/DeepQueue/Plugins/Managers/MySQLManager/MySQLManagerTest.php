@@ -47,6 +47,26 @@ class MySQLManagerTest extends TestCase
 			->executeDml();
 	}
 
+	
+	public function test_initManager_withIMySQLConnectorInstance()
+	{
+		$config = MySQLConfig::get();
+		
+		$sql = \Squid::MySql();
+		$sql->config()->setConfig($config);
+
+		$dq = new DeepQueue();
+		
+		$dq->config()
+			->setManagerPlugin(new MySQLManager($sql->getConnector('main')))
+			->setQueueNotExistsPolicy(QueueLoaderPolicy::CREATE_NEW)
+			->setConnectorPlugin(new InMemoryConnector())
+			->setSerializer((new JsonSerializer())->add(new ArraySerializer())->add(new PrimitiveSerializer()));
+		
+		$manager = $dq->config()->manager();
+		
+		self::assertNull($manager->load('notexist', false));
+	}
 
 	public function test_createQueueObject_returnQueueObject()
 	{

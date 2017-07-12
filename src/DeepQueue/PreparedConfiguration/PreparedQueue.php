@@ -14,6 +14,8 @@ use DeepQueue\PreparedConfiguration\Plugins\FallbackCachedConfiguration;
 
 use Serialization\Base\ISerializer;
 
+use Squid\MySql\IMySqlConnector;
+
 
 class PreparedQueue implements IPreparedQueue
 {
@@ -36,22 +38,34 @@ class PreparedQueue implements IPreparedQueue
 		return self::setup(new InMemoryConfiguration($serializer));
 	}
 	
-	public static function RedisMySQL(array $redisConfig, array $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
+	/**
+	 * @param array|IMySqlConnector $mysqlConfig
+	 */
+	public static function RedisMySQL(array $redisConfig, $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
 	{
 		return self::setup(new RedisMySQLConfiguration($redisConfig, $mysqlConfig, $serializer));
 	}
 	
-	public static function FallbackCached(array $redisConfig, array $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
+	/**
+	 * @param array|IMySqlConnector $mysqlConfig
+	 */
+	public static function FallbackCached(array $redisConfig, $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
 	{
 		return self::setup(new FallbackCachedConfiguration($redisConfig, $mysqlConfig, $serializer));
 	}
 	
-	public static function FallbackMySQL(array $redisConfig, array $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
+	/**
+	 * @param array|IMySqlConnector $mysqlConfig
+	 */
+	public static function FallbackMySQL(array $redisConfig, $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
 	{
 		return self::setup(new FallbackMySQLConfiguration($redisConfig, $mysqlConfig, $serializer));
 	} 
 	
-	public static function MySQL(array $mysqlConfig, ?ISerializer $serializer = null): DeepQueue
+	/**
+	 * @param array|IMySqlConnector $mysqlConfig
+	 */
+	public static function MySQL($mysqlConfig, ?ISerializer $serializer = null): DeepQueue
 	{
 		return self::setup(new MySQLConfiguration($mysqlConfig, $serializer));
 	}

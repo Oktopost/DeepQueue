@@ -13,6 +13,7 @@ use PHPUnit\Framework\TestCase;
 use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
+use Squid\MySql;
 
 
 class MySQLQueueDAOTest extends TestCase
@@ -70,6 +71,21 @@ class MySQLQueueDAOTest extends TestCase
 			->executeDml();
 	}
 	
+	
+	public function test_initConnector_withIMySQLConnectorInstance()
+	{
+		$config = MySQLConfig::get();
+		
+		$sql = \Squid::MySql();
+		$sql->config()->setConfig($config);
+
+		$dao = new MySQLQueueDAO();
+		$dao->initConnector($sql->getConnector());
+		
+		$payloads = $dao->dequeue(self::TEST_QUEUE_NAME, 255);
+		
+		self::assertEmpty($payloads);
+	}
 	
 	public function test_enqueue_EmptyPayloads_ReturnEmptyArray()
 	{

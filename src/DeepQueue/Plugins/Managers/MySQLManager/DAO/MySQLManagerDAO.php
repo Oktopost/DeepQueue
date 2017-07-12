@@ -7,7 +7,12 @@ use DeepQueue\Enums\QueueState;
 use DeepQueue\Plugins\Managers\MySQLManager\Base\DAO\IMySQLManagerDAO;
 use DeepQueue\Plugins\Managers\MySQLManager\Base\DAO\Connector\IMySQLManagerConnector;
 
+use Squid\MySql\IMySqlConnector;
 
+
+/**
+ * @autoload
+ */
 class MySQLManagerDAO implements IMySQLManagerDAO
 {
 	/** @var IMySQLManagerConnector */
@@ -20,12 +25,20 @@ class MySQLManagerDAO implements IMySQLManagerDAO
 	}
 
 
-	public function initConnector(array $config): void
+	/**
+	 * @param array|IMySqlConnector $config
+	 */
+	public function initConnector($config): void
 	{
-		$sql = \Squid::MySql();
-		$sql->config()->setConfig($config);
+		if (is_array($config))
+		{
+			$sql = \Squid::MySql();
+			$sql->config()->setConfig($config);
+			
+			$config = $sql->getConnector();
+		}
 		
-		$this->connector->setMySQL($sql->getConnector());
+		$this->connector->setMySQL($config);
 	}
 
 	public function upsert(IQueueObject $queue): void

@@ -11,6 +11,9 @@ use Predis\Client;
 use Predis\Pipeline\Pipeline;
 
 
+/**
+ * @autoload
+ */
 class RedisQueueDAO implements IRedisQueueDAO
 {
 	/** @var Client	*/
