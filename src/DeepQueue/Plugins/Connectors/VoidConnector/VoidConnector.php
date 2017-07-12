@@ -8,6 +8,7 @@ use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Manager\MetaData;
 use DeepQueue\Plugins\Connectors\VoidConnector\Queue\VoidQueue;
+use DeepQueue\Plugins\Connectors\VoidConnector\Base\IVoidConnector;
 
 
 /**

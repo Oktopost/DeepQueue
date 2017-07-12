@@ -1,5 +1,5 @@
 <?php
-namespace DeepQueue\Plugins\Connectors\VoidConnector;
+namespace DeepQueue\Plugins\Connectors\VoidConnector\Base;
 
 
 use DeepQueue\Base\Plugins\IConnectorPlugin;
