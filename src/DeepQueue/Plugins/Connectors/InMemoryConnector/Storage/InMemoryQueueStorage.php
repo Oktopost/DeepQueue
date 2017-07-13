@@ -43,4 +43,14 @@ class InMemoryQueueStorage implements IInMemoryQueueStorage
 	{
 		return isset($this->payloads[$queueName]) ? sizeof($this->payloads[$queueName]) : 0;
 	}
+	
+	public function cache(): array
+	{
+		return $this->payloads;
+	}
+
+	public function flushCache()
+	{
+		$this->payloads = [];
+	}
 }

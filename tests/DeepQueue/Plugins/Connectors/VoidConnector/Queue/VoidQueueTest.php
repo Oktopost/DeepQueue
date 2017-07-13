@@ -17,7 +17,10 @@ class VoidQueueTest extends TestCase
 	
 	public function test_enqueue()
 	{
-		self::assertEmpty($this->getSubject()->enqueue([new Payload('test')]));
+		$payload = new Payload('test');
+		$payload->Key = 'testk';
+		
+		self::assertEquals($payload->Key, $this->getSubject()->enqueue([$payload])[0]);
 	}
 	
 	public function test_dequeueWorkload()

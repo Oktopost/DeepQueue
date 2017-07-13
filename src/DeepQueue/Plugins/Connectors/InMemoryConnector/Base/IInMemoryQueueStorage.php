@@ -14,4 +14,7 @@ interface IInMemoryQueueStorage
 	public function pullPayloads(string $queueName, int $count): array;
 
 	public function countEnqueued(string $queueName): int;
+	
+	public function cache(): array;
+	public function flushCache();
 }
