@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\InMemoryConnector\Queue;
 
 
+use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Scope;
 use DeepQueue\Payload;
 use DeepQueue\Plugins\Logger\Logger;
@@ -18,7 +19,7 @@ class InMemoryQueueTest extends TestCase
 	private function getSubject(): InMemoryQueue
 	{
 		$queue = new InMemoryQueue('inmemory', 
-			(new JsonSerializer())->add(new ArraySerializer()), Logger::instance());
+			(new JsonSerializer())->add(new ArraySerializer()), Scope::skeleton(ILogger::class));
 		return $queue;
 	}
 	

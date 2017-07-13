@@ -10,6 +10,7 @@ use DeepQueue\Module\Validator\QueueObjectValidator;
 use DeepQueue\Module\Loader\QueueLoaderBuilder;
 use DeepQueue\Module\Connector\ConnectorBuilder;
 
+use DeepQueue\Plugins\Logger\Logger;
 use DeepQueue\Plugins\Managers\InMemoryManager\Storage\InMemoryManagerStorage;
 use DeepQueue\Plugins\Managers\InMemoryManager\DAO\InMemoryManagerDAO;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\Storage\InMemoryQueueStorage;
@@ -54,3 +55,5 @@ $this->set(Plugins\Managers\MySQLManager\Base\DAO\IMySQLManagerDAO::class, MySQL
 $this->set(Plugins\Managers\MySQLManager\Base\DAO\Connector\IMySQLManagerConnector::class, MySQLManagerConnector::class);
 
 $this->set(Plugins\Connectors\MySQLConnector\Base\DAO\IMySQLQueueDAO::class, MySQLQueueDAO::class);
+
+$this->set(Plugins\Logger\Base\ILogger::class, Logger::class);

@@ -188,11 +188,11 @@ class MySQLQueueTest extends TestCase
 		$payload1 = new Payload();
 		$payload1->Key = 'd1';
 		$payload1->Payload = 'payload1';
-		$payload1->Delay = 1;
+		$payload1->Delay = 2;
 		
 		$payload2 = new Payload();
 		$payload2->Key = 'd2';
-		$payload2->Delay = 2;
+		$payload2->Delay = 3;
 		
 		$payload3 = new Payload();
 		$payload3->Key = 'd3';
@@ -200,12 +200,12 @@ class MySQLQueueTest extends TestCase
 		
 		$payload4 = new Payload();
 		$payload4->Key = 'd4';
-		$payload4->Delay = 5;
+		$payload4->Delay = 10;
 		
 		$prepared = $this->preparePayloads([$payload1, $payload2, $payload3, $payload4]);
 		$this->getDAO()->enqueue(self::TEST_QUEUE_NAME, $prepared);
 		
-		$workloads = $this->getSubject()->dequeueWorkload(3, 3);
+		$workloads = $this->getSubject()->dequeueWorkload(3, 5);
 		
 		self::assertEquals(3, sizeof($workloads));
 		self::assertEquals($payload1->Key, $workloads[0]->Id);

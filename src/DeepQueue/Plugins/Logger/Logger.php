@@ -10,11 +10,12 @@ use DeepQueue\Plugins\Logger\Enum\LogLevelName;
 use DeepQueue\Utils\TimeBasedRandomIdGenerator;
 
 
+/**
+ * @unique
+ * @autoload
+ */
 class Logger implements ILogger
 {
-	use \Objection\TSingleton;
-	
-	
 	/** @var ILogProvider[]|array */
 	private $providers = [];
 

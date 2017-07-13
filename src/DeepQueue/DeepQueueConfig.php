@@ -49,7 +49,7 @@ class DeepQueueConfig implements IDeepQueueConfig
 		$this->connectorConfig = Scope::skeleton(IConnectorProviderConfig::class);
 		$this->loaderConfig = Scope::skeleton(IQueueLoaderConfig::class);
 		
-		$this->loggerPlugin = Logger::instance();
+		$this->loggerPlugin = Scope::skeleton(ILogger::class);
 	}
 
 

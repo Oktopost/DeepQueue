@@ -5,6 +5,7 @@ namespace DeepQueue\Plugins\Logger;
 use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Plugins\Logger\Enum\LogLevel;
 use DeepQueue\Plugins\Logger\Enum\LogLevelName;
+use DeepQueue\Scope;
 use lib\TestLogProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -19,7 +20,7 @@ class LoggerTest extends TestCase
 	{
 		$this->dummyLogProvider = new TestLogProvider();
 		
-		$logger = Logger::instance();
+		$logger = Scope::skeleton(ILogger::class);
 		$logger->addProvider($this->dummyLogProvider);
 		
 		return $logger;
