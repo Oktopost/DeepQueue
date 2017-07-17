@@ -39,7 +39,7 @@ class QueueStateDecorator implements IRemoteQueueDecorator
 			$sleepMS = min($remainingMS, $this->sleepTimeMS);
 			$remainingMS -= $sleepMS;
 			
-			usleep($sleepMS);
+			usleep($sleepMS * 1000);
 			
 			$queue = $this->requireQueue();
 		}
