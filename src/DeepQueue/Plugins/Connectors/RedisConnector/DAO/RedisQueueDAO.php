@@ -8,7 +8,7 @@ use DeepQueue\Plugins\Connectors\RedisConnector\Base\IRedisQueueDAO;
 use DeepQueue\Plugins\Connectors\RedisConnector\Helper\RedisNameBuilder;
 
 use Predis\Client;
-use Predis\Pipeline\Pipeline;
+use Predis\Transaction\MultiExec;
 
 
 /**
@@ -20,17 +20,17 @@ class RedisQueueDAO implements IRedisQueueDAO
 	private $client;
 	
 	
-	private function prepareNow(string $queueName, Pipeline $pipeline, $payloads): void
+	private function prepareNow(string $queueName, MultiExec $transaction, $payloads): void
 	{
-		$pipeline->rpush(RedisNameBuilder::getNowKey($queueName), $payloads);
+		$transaction->rpush(RedisNameBuilder::getNowKey($queueName), $payloads);
 	}
 	
-	private function preparePayloads(string $queueName, Pipeline $pipeline, $payloads): void 
+	private function preparePayloads(string $queueName, MultiExec $transaction, $payloads): void 
 	{
-		$pipeline->hmset(RedisNameBuilder::getPayloadsKey($queueName), $payloads['keyValue']);
+		$transaction->hmset(RedisNameBuilder::getPayloadsKey($queueName), $payloads['keyValue']);
 	}
 	
-	private function prepareDelayed(string $queueName, Pipeline $pipeline, $payloads): void
+	private function prepareDelayed(string $queueName, MultiExec $transaction, $payloads): void
 	{
 		$delayed = [];
 		
@@ -39,29 +39,29 @@ class RedisQueueDAO implements IRedisQueueDAO
 			$delayed[$key] = TimeGenerator::getMs($delay);
 		}
 		
-		$pipeline->zadd(RedisNameBuilder::getDelayedKey($queueName), 'NX', $delayed);
+		$transaction->zadd(RedisNameBuilder::getDelayedKey($queueName), 'NX', $delayed);
 	}
 	
-	private function setupEnqueuePipeline(string $queueName, $payloads): Pipeline
+	private function setupEnqueueTransaction(string $queueName, $payloads): MultiExec
 	{
-		$pipeline = $this->client->pipeline();
+		$transaction = $this->client->transaction();
 
 		if (isset($payloads['keyValue']))
 		{
-			$this->preparePayloads($queueName, $pipeline, $payloads);
+			$this->preparePayloads($queueName, $transaction, $payloads);
 		}
 		
 		if (isset($payloads['now']))
 		{
-			$this->prepareNow($queueName, $pipeline, $payloads['now']);
+			$this->prepareNow($queueName, $transaction, $payloads['now']);
 		}
 
 		if (isset($payloads['delayed']))
 		{
-			$this->prepareDelayed($queueName, $pipeline, $payloads['delayed']);
+			$this->prepareDelayed($queueName, $transaction, $payloads['delayed']);
 		}
 
-		return $pipeline;
+		return $transaction;
 	}
 	
 	private function addZeroKeyIfEmpty(string $queueName): void
@@ -86,12 +86,12 @@ class RedisQueueDAO implements IRedisQueueDAO
 			return $dequeuingKeys;
 		}
 
-		$pipeline = $this->client->pipeline();
+		$transaction = $this->client->transaction();
 		
-		$pipeline->lrange(RedisNameBuilder::getNowKey($queueName), 0, $count - 1);
-		$pipeline->ltrim(RedisNameBuilder::getNowKey($queueName), $count, -1);
+		$transaction->lrange(RedisNameBuilder::getNowKey($queueName), 0, $count - 1);
+		$transaction->ltrim(RedisNameBuilder::getNowKey($queueName), $count, -1);
 		
-		$response = $pipeline->execute();
+		$response = $transaction->execute();
 
 		$dequeuingKeys = array_merge($dequeuingKeys, $response[0]);
 		
@@ -103,12 +103,12 @@ class RedisQueueDAO implements IRedisQueueDAO
 		if (!$keys)
 			return [];
 		
-		$pipeline = $this->client->pipeline();
+		$transaction = $this->client->transaction();
 		
-		$pipeline->hmget(RedisNameBuilder::getPayloadsKey($queueName), $keys);
-		$pipeline->hdel(RedisNameBuilder::getPayloadsKey($queueName), $keys);
+		$transaction->hmget(RedisNameBuilder::getPayloadsKey($queueName), $keys);
+		$transaction->hdel(RedisNameBuilder::getPayloadsKey($queueName), $keys);
 		
-		$response = $pipeline->execute();
+		$response = $transaction->execute();
 		
 		$payloads = $response[0];
 
@@ -126,9 +126,9 @@ class RedisQueueDAO implements IRedisQueueDAO
 		if (!$payloads)
 			return [];
 		
-		$pipeline = $this->setupEnqueuePipeline($queueName, $payloads);
+		$transaction = $this->setupEnqueueTransaction($queueName, $payloads);
 		
-		$pipeline->execute();
+		$transaction->execute();
 		
 		$now_keys = isset($payloads['now']) ? $payloads['now'] : [];
 		$delayed_keys = isset($payloads['delayed']) ? array_keys($payloads['delayed']) : [];
@@ -178,13 +178,13 @@ class RedisQueueDAO implements IRedisQueueDAO
 			return;
 		}
 		
-		$pipeline = $this->client->pipeline();
+		$transaction = $this->client->transaction();
 		
-		$this->prepareNow($queueName, $pipeline, $delayed);
+		$this->prepareNow($queueName, $transaction, $delayed);
 		
-		$pipeline->zrem(RedisNameBuilder::getDelayedKey($queueName), $delayed);
+		$transaction->zrem(RedisNameBuilder::getDelayedKey($queueName), $delayed);
 		
-		$pipeline->execute();
+		$transaction->execute();
 	}
 	
 	public function getFirstDelayed(string $queueName): array 

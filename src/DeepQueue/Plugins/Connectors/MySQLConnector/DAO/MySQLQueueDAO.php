@@ -101,6 +101,11 @@ class MySQLQueueDAO implements IMySQLQueueDAO
 
 	public function dequeue(string $queueName, int $count = 1): array
 	{
+		if ($count <= 0)
+		{
+			return [];
+		}
+		
 		$ids = $this->getIds($queueName, $count);
 		
 		if (!$ids)

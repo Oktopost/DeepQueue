@@ -25,6 +25,11 @@ class InMemoryQueueDAO implements IInMemoryQueueDAO
 
 	public function dequeue(string $queueName, int $count = 1): array
 	{
+		if ($count <= 0)
+		{
+			return [];
+		}
+		
 		return $this->storage->pullPayloads($queueName, $count);
 	}
 	

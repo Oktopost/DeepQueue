@@ -62,6 +62,50 @@ class InMemoryQueueTest extends TestCase
 		self::assertEquals(1, $workloads[0]->Payload[0]);
 	}
 	
+	public function test_dequeueWorkload_CountZero()
+	{
+		$queue = $this->getSubject();
+		
+		$payload1 = new Payload([1,2,3]);
+		$payload1->Key = 'pay1';
+		
+		$payload2 = new Payload(['a', 'b', 'c']);
+		$payload2->Key = 'pay2';
+		
+		$queue->enqueue([$payload1, $payload2]);
+		
+		$workloads = $queue->dequeueWorkload(0);
+		
+		self::assertEquals(0, sizeof($workloads));
+		
+		$workloads = $queue->dequeueWorkload(2);
+		
+		self::assertEquals(2, sizeof($workloads));
+		self::assertEquals($payload1->Key, $workloads[0]->Id);
+	}
+	
+	public function test_dequeueWorkload_CountBelowZero()
+	{
+				$queue = $this->getSubject();
+		
+		$payload1 = new Payload([1,2,3]);
+		$payload1->Key = 'pay1';
+		
+		$payload2 = new Payload(['a', 'b', 'c']);
+		$payload2->Key = 'pay2';
+		
+		$queue->enqueue([$payload1, $payload2]);
+		
+		$workloads = $queue->dequeueWorkload(-1);
+		
+		self::assertEquals(0, sizeof($workloads));
+		
+		$workloads = $queue->dequeueWorkload(2);
+		
+		self::assertEquals(2, sizeof($workloads));
+		self::assertEquals($payload1->Key, $workloads[0]->Id);
+	}
+	
 	public function test_dequeueWorkload_WithWait()
 	{
 		$queue = $this->getSubject();
