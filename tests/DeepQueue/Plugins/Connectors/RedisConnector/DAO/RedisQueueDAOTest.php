@@ -441,4 +441,89 @@ class RedisQueueDAOTest extends TestCase
 		self::assertNotEmpty($payloads);
 		self::assertEquals($payload1->Key, array_keys($payloads)[0]);
 	}
+	
+	public function test_DequeueAll_GetOnePayloadManyEnqueued_GetOneOtherExistsAfter()
+	{
+		$payload1 = new Payload();
+		$payload1->Key = 'n1';
+		$payload1->Delay = 0;
+		
+		$payload2 = new Payload();
+		$payload2->Key = 'n2';
+		$payload2->Delay = 0;
+		
+		$payload3 = new Payload();
+		$payload3->Key = 'n3';
+		$payload3->Delay = 0;
+		
+		$payloads = $this->preparePayloads([$payload1, $payload2, $payload3]);
+		
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		$workload = $this->getSubject()->dequeueAll(self::QUEUE_NAME, 1);
+		
+		self::assertEquals(1, sizeof($workload));
+		self::assertEquals($payload1->Key, array_keys($workload)[0]);
+		
+		$workloads = $this->getSubject()->dequeueAll(self::QUEUE_NAME, 2);
+		
+		self::assertEquals(2, sizeof($workloads));
+		
+		self::assertEquals($payload2->Key, array_keys($workloads)[0]);
+		self::assertEquals($payload3->Key, array_keys($workloads)[1]);
+	}
+	
+	public function test_DequeueAll_CountZero_GetEmptyArray_OtherPayloadsStayInPlace()
+	{
+		$payload1 = new Payload();
+		$payload1->Key = 'n1';
+		$payload1->Delay = 0;
+		
+		$payload2 = new Payload();
+		$payload2->Key = 'n2';
+		$payload2->Delay = 0;
+		
+		$payload3 = new Payload();
+		$payload3->Key = 'n3';
+		$payload3->Delay = 0;
+		
+		$payloads = $this->preparePayloads([$payload1, $payload2, $payload3]);
+		
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		$workloads = $this->getSubject()->dequeueAll(self::QUEUE_NAME, 0);
+		
+		self::assertEmpty($workloads);
+		
+		$workloads = $this->getSubject()->dequeueAll(self::QUEUE_NAME, 255);
+		
+		self::assertEquals(3, sizeof($workloads));
+	}
+	
+	public function test_DequeueAll_CountBelowZero_GetEmptyArray_OtherPayloadsStayInPlace()
+	{
+		$payload1 = new Payload();
+		$payload1->Key = 'n1';
+		$payload1->Delay = 0;
+		
+		$payload2 = new Payload();
+		$payload2->Key = 'n2';
+		$payload2->Delay = 0;
+		
+		$payload3 = new Payload();
+		$payload3->Key = 'n3';
+		$payload3->Delay = 0;
+		
+		$payloads = $this->preparePayloads([$payload1, $payload2, $payload3]);
+		
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		$workloads = $this->getSubject()->dequeueAll(self::QUEUE_NAME, -1);
+		
+		self::assertEmpty($workloads);
+		
+		$workloads = $this->getSubject()->dequeueAll(self::QUEUE_NAME, 255);
+		
+		self::assertEquals(3, sizeof($workloads));
+	}
 }

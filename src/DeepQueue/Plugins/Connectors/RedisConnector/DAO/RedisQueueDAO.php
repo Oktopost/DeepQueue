@@ -45,22 +45,22 @@ class RedisQueueDAO implements IRedisQueueDAO
 	private function setupEnqueuePipeline(string $queueName, $payloads): Pipeline
 	{
 		$pipeline = $this->client->pipeline();
-		
-		if (isset($payloads['now']))
-		{
-			$this->prepareNow($queueName, $pipeline, $payloads['now']);
-		}
-		
-		if (isset($payloads['delayed']))
-		{
-			$this->prepareDelayed($queueName, $pipeline, $payloads['delayed']);
-		}
-		
+
 		if (isset($payloads['keyValue']))
 		{
 			$this->preparePayloads($queueName, $pipeline, $payloads);
 		}
 		
+		if (isset($payloads['now']))
+		{
+			$this->prepareNow($queueName, $pipeline, $payloads['now']);
+		}
+
+		if (isset($payloads['delayed']))
+		{
+			$this->prepareDelayed($queueName, $pipeline, $payloads['delayed']);
+		}
+
 		return $pipeline;
 	}
 	
@@ -79,6 +79,11 @@ class RedisQueueDAO implements IRedisQueueDAO
 		if ($initialKey)
 		{
 			$dequeuingKeys[] = $initialKey;
+		}
+		
+		if ($count <= 0)
+		{
+			return $dequeuingKeys;
 		}
 
 		$pipeline = $this->client->pipeline();
