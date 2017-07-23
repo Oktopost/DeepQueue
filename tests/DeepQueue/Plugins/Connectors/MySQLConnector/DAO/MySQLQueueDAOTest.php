@@ -231,6 +231,9 @@ class MySQLQueueDAOTest extends TestCase
 		$payload1->Key = 'n1';
 		$payload1->Delay = 0;
 		
+		$payloads = $this->preparePayloads([$payload1]);
+		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
+		
 		sleep(1);
 		
 		$payload2 = new Payload();
@@ -241,7 +244,7 @@ class MySQLQueueDAOTest extends TestCase
 		$payload3->Key = 'n3';
 		$payload3->Delay = 0;
 		
-		$payloads = $this->preparePayloads([$payload1, $payload2, $payload3]);
+		$payloads = $this->preparePayloads([$payload2, $payload3]);
 		
 		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
 		
