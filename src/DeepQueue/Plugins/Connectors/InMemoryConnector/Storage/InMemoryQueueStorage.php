@@ -44,6 +44,14 @@ class InMemoryQueueStorage implements IInMemoryQueueStorage
 		return isset($this->payloads[$queueName]) ? sizeof($this->payloads[$queueName]) : 0;
 	}
 	
+	public function clearQueue(string $queueName): void
+	{
+		if (isset($this->payloads[$queueName]))
+		{
+			unset($this->payloads[$queueName]);
+		}
+	}
+
 	public function cache(): array
 	{
 		return $this->payloads;

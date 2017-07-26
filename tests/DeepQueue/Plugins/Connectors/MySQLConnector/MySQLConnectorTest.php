@@ -3,8 +3,8 @@ namespace DeepQueue\Plugins\Connectors\MySQLConnector;
 
 
 use DeepQueue\DeepQueue;
-use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
@@ -39,12 +39,11 @@ class MySQLConnectorTest extends TestCase
 	}
 	
 	
-	public function test_getMetaDate_returnIMetaData()
+	public function test_manager_returnManager()
 	{
 		$manager = $this->getSubject();
 		
-		self::assertInstanceOf(IMetaData::class, $manager->getMetaData($this->getDeepQueue()
-			->getQueueObject('conntest')));
+		self::assertInstanceOf(IQueueManager::class, $manager->manager('conntest'));
 	}
 	
 	public function test_getQueue_returnIRemoteQueue()

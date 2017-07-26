@@ -204,4 +204,17 @@ class RedisQueueDAO implements IRedisQueueDAO
 	{
 		return $this->client->zcard(RedisNameBuilder::getDelayedKey($queueName));
 	}
+
+	public function clearQueue(string $queueName): void
+	{
+		$transaction = $this->client->transaction();
+		
+		$transaction->del([
+			RedisNameBuilder::getDelayedKey($queueName),
+			RedisNameBuilder::getNowKey($queueName),
+			RedisNameBuilder::getPayloadsKey($queueName)
+		]);
+		
+		$transaction->execute();
+	}
 }

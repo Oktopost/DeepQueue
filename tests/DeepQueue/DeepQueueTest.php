@@ -2,6 +2,7 @@
 namespace DeepQueue;
 
 
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 use DeepQueue\Enums\Policy;
 use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
@@ -103,6 +104,14 @@ class DeepQueueTest extends TestCase
 		$queue->enqueue($testPayload);
 		
 		self::assertEquals('777', $queueObject->getStream()->dequeue(1)[0]);
+		
+		$queue->enqueue($testPayload);
+		
+		self::assertInstanceOf(IQueueManager::class, $dq->manager($queueObject->Name));
+		
+		$dq->manager($queueObject->Name)->clearQueue();
+		
+		self::assertFalse($dq->manager($queueObject->Name)->getMetaData()->hasEnqueued());
 	}
 	
 	public function test_sanity_withNullPayload()

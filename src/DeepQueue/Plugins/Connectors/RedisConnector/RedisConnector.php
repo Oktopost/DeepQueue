@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\RedisConnector;
 
 
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 use DeepQueue\Scope;
 use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\IQueueObject;
@@ -20,6 +21,9 @@ class RedisConnector implements IRedisConnector
 	/** @var IDeepQueueConfig|null */
 	private $deepConfig = null;
 
+	/** @var RedisQueueManager */
+	private $manager;
+	
 	/** @var IRedisQueueDAO */
 	private $dao;
 	
@@ -33,6 +37,8 @@ class RedisConnector implements IRedisConnector
 		
 		$this->dao = Scope::skeleton(IRedisQueueDAO::class);
 		$this->dao->initClient($redisConfig);
+		
+		$this->manager = new RedisQueueManager($this->dao);
 	}
 	
 	
@@ -41,11 +47,10 @@ class RedisConnector implements IRedisConnector
 		$this->deepConfig = $config;
 	}
 
-	public function getMetaData(IQueueObject $queueObject): IMetaData
+	public function manager(string $queueName): IQueueManager
 	{
-		$manager = new RedisQueueManager($queueObject, $this->dao);
-		
-		return $manager->getMetadata();
+		$this->manager->setQueueName($queueName);
+		return $this->manager;
 	}
 
 	public function getQueue(string $name): IRemoteQueue

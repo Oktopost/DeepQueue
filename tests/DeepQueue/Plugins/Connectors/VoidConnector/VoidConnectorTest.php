@@ -3,9 +3,8 @@ namespace DeepQueue\Plugins\Connectors\VoidConnector;
 
 
 use DeepQueue\DeepQueueConfig;
-use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\Manager\QueueObject;
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 
 use PHPUnit\Framework\TestCase;
 
@@ -21,13 +20,11 @@ class VoidConnectorTest extends TestCase
 	}
 	
 	
-	public function test_getMetaData()
+	public function test_manager_returnManager()
 	{
-		$metaData = $this->getSubject()->getMetaData(new QueueObject());
+		$manager = $this->getSubject();
 		
-		self::assertInstanceOf(IMetaData::class, $metaData);
-		self::assertEquals(0, $metaData->Delayed);
-		self::assertEquals(0, $metaData->Enqueued);
+		self::assertInstanceOf(IQueueManager::class, $manager->manager('conntest'));
 	}
 	
 	public function test_getQueue()

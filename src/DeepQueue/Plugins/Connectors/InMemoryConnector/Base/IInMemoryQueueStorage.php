@@ -15,6 +15,8 @@ interface IInMemoryQueueStorage
 
 	public function countEnqueued(string $queueName): int;
 	
+	public function clearQueue(string $queueName): void;
+	
 	public function cache(): array;
 	public function flushCache();
 }

@@ -37,4 +37,9 @@ class InMemoryQueueDAO implements IInMemoryQueueDAO
 	{
 		return $this->storage->countEnqueued($queueName);
 	}
+	
+	public function clearQueue(string $queueName): void
+	{
+		$this->storage->clearQueue($queueName);
+	}
 }

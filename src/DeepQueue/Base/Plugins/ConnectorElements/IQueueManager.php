@@ -7,5 +7,8 @@ use DeepQueue\Base\IMetaData;
 
 interface IQueueManager
 {
-	public function getMetadata(): IMetaData;
+	public function setQueueName(string $queueName): void;
+	
+	public function getMetaData(): IMetaData;
+	public function clearQueue(): void;
 }

@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\FallbackConnector;
 
 
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 use DeepQueue\Payload;
 use DeepQueue\DeepQueue;
 use DeepQueue\Base\IMetaData;
@@ -58,7 +59,7 @@ class FallbackConnectorTest extends TestCase
 	private function getThrowableConnector(): IConnectorPlugin
 	{
 		$throwableConnector = $this->createMock(IConnectorPlugin::class);
-		$throwableConnector->method('getMetaData')->willThrowException(new \Exception());
+		$throwableConnector->method('manager')->willThrowException(new \Exception());
 		return $throwableConnector;
 	}
 	
@@ -114,12 +115,12 @@ class FallbackConnectorTest extends TestCase
 		self::assertEquals(2000, $loadedCounter + $meta->Enqueued + sizeof($leftInFallback));
 	}
 	
-	public function test_getMetaData_ExceptionThrowed_GetFallbackMetaData()
+	public function test_getManager_ExceptionThrowed_GetFallbackManager()
 	{	
 		$fallback = new FallbackConnector($this->getThrowableConnector(), new InMemoryConnector());
 		$fallback->setDeepConfig($this->getDQ()->config());
 		
-		self::assertInstanceOf(IMetaData::class, $fallback
-			->getMetaData($this->getDQ()->getQueueObject('test')));
+		self::assertInstanceOf(IQueueManager::class, $fallback
+			->manager('test'));
 	}
 }

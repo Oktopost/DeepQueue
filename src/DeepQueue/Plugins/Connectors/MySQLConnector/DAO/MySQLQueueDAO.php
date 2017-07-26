@@ -142,4 +142,19 @@ class MySQLQueueDAO implements IMySQLQueueDAO
 			->where('DequeueTime > ?', $now)
 			->queryCount();
 	}
+
+	public function clearQueue(string $queueName): void
+	{
+		$this->connector
+			->delete()
+			->from(self::ENQUEUE_TABLE)
+			->byField('QueueName', $queueName)
+			->executeDml();
+
+		$this->connector
+			->delete()
+			->from(self::PAYLOAD_TABLE)
+			->byField('QueueName', $queueName)
+			->executeDml();
+	}
 }

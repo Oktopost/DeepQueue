@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\MySQLConnector;
 
 
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 use DeepQueue\Scope;
 use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\IQueueObject;
@@ -18,6 +19,9 @@ class MySQLConnector implements IMySQLConnector
 	/** @var IDeepQueueConfig|null */
 	private $deepConfig = null;
 
+	/** @var MySQLQueueManager */
+	private $manager;
+	
 	/** @var IMySQLQueueDAO */
 	private $dao;
 
@@ -29,6 +33,8 @@ class MySQLConnector implements IMySQLConnector
 	{
 		$this->dao = Scope::skeleton(IMySQLQueueDAO::class);
 		$this->dao->initConnector($config);
+		
+		$this->manager = new MySQLQueueManager($this->dao);
 	}
 	
 	
@@ -37,13 +43,12 @@ class MySQLConnector implements IMySQLConnector
 		$this->deepConfig = $config;
 	}
 
-	public function getMetaData(IQueueObject $queueObject): IMetaData
+	public function manager(string $queueName): IQueueManager
 	{
-		$manager = new MySQLQueueManager($queueObject, $this->dao);
-		
-		return $manager->getMetadata();
+		$this->manager->setQueueName($queueName);
+		return $this->manager;
 	}
-
+	
 	public function getQueue(string $name): IRemoteQueue
 	{
 		return new MySQLQueue($name, $this->dao, $this->deepConfig->serializer(), $this->deepConfig->logger());

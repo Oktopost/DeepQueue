@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\InMemoryConnector;
 
 
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 use DeepQueue\Scope;
 use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\IQueueObject;
@@ -21,6 +22,9 @@ class InMemoryConnector implements IInMemoryConnector
 	/** @var IInMemoryQueueStorage */
 	private $storage;
 	
+	/** @var InMemoryQueueManager */
+	private $manager;
+	
 	/** @var bool */
 	private $isErrorsEnabled;
 	
@@ -28,6 +32,8 @@ class InMemoryConnector implements IInMemoryConnector
 	public function __construct($enableErrorThrowing = false)
 	{
 		$this->storage = Scope::skeleton(IInMemoryQueueStorage::class);
+		$this->manager = new InMemoryQueueManager();
+		
 		$this->isErrorsEnabled = $enableErrorThrowing;
 	}
 	
@@ -36,12 +42,11 @@ class InMemoryConnector implements IInMemoryConnector
 	{
 		$this->deepConfig = $config;
 	}
-
-	public function getMetaData(IQueueObject $queueObject): IMetaData
+	
+	public function manager(string $queueName): IQueueManager
 	{
-		$manager = new InMemoryQueueManager($queueObject);
-		
-		return $manager->getMetadata();
+		$this->manager->setQueueName($queueName);
+		return $this->manager;
 	}
 
 	public function getQueue(string $name): IRemoteQueue

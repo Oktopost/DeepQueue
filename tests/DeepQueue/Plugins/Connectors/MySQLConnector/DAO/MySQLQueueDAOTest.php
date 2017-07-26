@@ -314,4 +314,31 @@ class MySQLQueueDAOTest extends TestCase
 		
 		self::assertEquals(3, sizeof($workloads));
 	}
+	
+	public function test_ClearQueue_EmptyQueue_StillEmpty()
+	{
+		$this->getSubject()->clearQueue(self::TEST_QUEUE_NAME);
+		
+		self::assertEquals(0, $this->getSubject()->countEnqueued(self::TEST_QUEUE_NAME));
+	}
+	
+	public function test_ClearQueue_NotEmptyQueue_NowEmpty()
+	{
+		$payload1 = new Payload();
+		$payload1->Key = 'n1';
+		$payload1->Delay = 0;
+		
+		$payload2 = new Payload();
+		$payload2->Key = 'n2';
+		$payload2->Delay = 5;
+		
+		$payloads = $this->preparePayloads([$payload1, $payload2]);
+		
+		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
+		
+		$this->getSubject()->clearQueue(self::TEST_QUEUE_NAME);
+		
+		self::assertEmpty($this->getEnqueuedIds());
+		self::assertEmpty($this->getPayloads());
+	}
 }

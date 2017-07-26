@@ -5,6 +5,7 @@ namespace DeepQueue\Plugins\Connectors\FallbackConnector;
 use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\IDeepQueueConfig;
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Plugins\Connectors\FallbackConnector\Queue\FallbackQueue;
@@ -38,18 +39,18 @@ class FallbackConnector implements IFallbackConnector
 		$this->fallback->setDeepConfig($config);
 	}
 
-	public function getMetaData(IQueueObject $queueObject): IMetaData
+	public function manager(string $queueName): IQueueManager
 	{
 		try
 		{
-			return $this->main->getMetaData($queueObject);
+			return $this->main->manager($queueName);
 		}
 		catch (\Throwable $e)
 		{
 			$this->deepConfig->logger()->logException($e, 
-				"Failed to load MetaData for {$queueObject->Name} queue object", [], $queueObject->Name);
+				"Failed to load manager for {$queueName} queue object", [], $queueName);
 			
-			return $this->fallback->getMetaData($queueObject);
+			return $this->fallback->manager($queueName);
 		}
 	}
 

@@ -5,6 +5,7 @@ namespace DeepQueue;
 use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\IDeepQueueConfig;
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 use DeepQueue\Base\Queue\IQueue;
 use DeepQueue\Module\Queue\Queue;
 
@@ -37,10 +38,17 @@ class DeepQueue
 		$loader = $this->config->getQueueLoader($name);
 		return $loader->load();
 	}
-	
+
+	/**
+	 * @deprecated
+	 */
 	public function getMetaData(string $name): ?IMetaData
 	{
-		$queueObject = $this->getQueueObject($name);
-		return $queueObject ? $this->config()->connector()->getMetaData($queueObject) : null;
+		return $this->config()->connector()->manager($name)->getMetaData();
+	}
+	
+	public function manager(string $name): IQueueManager
+	{
+		return $this->config()->connector()->manager($name);
 	}
 }

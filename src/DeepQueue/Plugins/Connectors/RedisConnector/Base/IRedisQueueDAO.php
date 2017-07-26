@@ -19,4 +19,6 @@ interface IRedisQueueDAO
 		
 	public function countEnqueued(string $queueName): int;
 	public function countDelayed(string $queueName): int;
+	
+	public function clearQueue(string $queueName): void;
 }

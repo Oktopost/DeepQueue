@@ -44,6 +44,6 @@ class QueueObject extends LiteObject implements IQueueObject
 
 	public function getMetaData(): IMetaData
 	{
-		return $this->deepConfig->connector()->getMetaData($this);
+		return $this->deepConfig->connector()->manager($this->Name)->getMetaData();
 	}
 }
