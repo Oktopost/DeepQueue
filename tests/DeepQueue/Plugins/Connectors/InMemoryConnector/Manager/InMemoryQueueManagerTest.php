@@ -3,32 +3,33 @@ namespace DeepQueue\Plugins\Connectors\MySQLConnector\Manager;
 
 
 use DeepQueue\Base\IMetaData;
-use DeepQueue\Base\Plugins\ConnectorElements\IQueueManagerDAO;
-use DeepQueue\Plugins\Connectors\MySQLConnector\Base\IMySQLQueueManager;
-
+use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueDAO;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueManager;
+use DeepQueue\Plugins\Connectors\InMemoryConnector\Manager\InMemoryQueueManager;
 
 use PHPUnit\Framework\TestCase;
 
 
-class MySQLQueueManagerTest extends TestCase
+class InMemoryQueueManagerTest extends TestCase
 {
 	private const QUEUE_NAME = 'testqueueobj';
 	
 	/**
-	 * @return \PHPUnit_Framework_MockObject_MockObject|IQueueManagerDAO
+	 * @return \PHPUnit_Framework_MockObject_MockObject|IInMemoryQueueDAO
 	 */
-	private function getDAOMock(): IQueueManagerDAO
+	private function getDAOMock(): IInMemoryQueueDAO
 	{
-		$mysqlDAO = $this->createMock(IQueueManagerDAO::class);
-		$mysqlDAO->method('countEnqueued')->willReturn(0);
-		$mysqlDAO->method('countDelayed')->willReturn(0);
+		$memoryDAO = $this->createMock(IInMemoryQueueDAO::class);
+		$memoryDAO->method('countEnqueued')->willReturn(0);
 		
-		return $mysqlDAO;
+
+		return $memoryDAO;
 	}
 
-	private function getSubject(?string $name = null, IQueueManagerDAO $dao): IMySQLQueueManager
+	private function getSubject(?string $name = null, IInMemoryQueueDAO $dao): IInMemoryQueueManager
 	{
-		$manager = new MySQLQueueManager($dao);
+		$manager = new InMemoryQueueManager($dao);
+		$manager->flushDelayed();
 		
 		if ($name)
 		{
@@ -69,5 +70,20 @@ class MySQLQueueManagerTest extends TestCase
 		$dao->expects($this->once())->method('clearQueue');
 		
 		$this->getSubject(self::QUEUE_NAME, $dao)->clearQueue();
+	}
+	
+	public function test_getWaitingTime_NoElements_GotNull()
+	{
+		self::assertNull($this->getSubject(self::QUEUE_NAME, 
+			$this->getDAOMock())->getWaitingTime());
+	}
+	
+	public function test_getWaitingTime_ElementsExists_GotZero()
+	{
+		$dao = $this->getDAOMock();
+		$dao->method('countEnqueued')->willReturn(1);
+		
+		self::assertEquals(0, $this->getSubject(self::QUEUE_NAME, 
+			$this->getDAOMock())->getWaitingTime());
 	}
 }

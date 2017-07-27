@@ -3,7 +3,7 @@ namespace DeepQueue\Plugins\Connectors\RedisConnector\Manager;
 
 
 use DeepQueue\Base\IMetaData;
-use DeepQueue\Plugins\Connectors\RedisConnector\Base\IRedisQueueDAO;
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManagerDAO;
 use DeepQueue\Plugins\Connectors\RedisConnector\Base\IRedisQueueManager;
 
 use PHPUnit\Framework\TestCase;
@@ -14,18 +14,18 @@ class RedisQueueManagerTest extends TestCase
 	private const QUEUE_NAME = 'testqueueobj';
 
 	/**
-	 * @return \PHPUnit_Framework_MockObject_MockObject|IRedisQueueDAO
+	 * @return \PHPUnit_Framework_MockObject_MockObject|IQueueManagerDAO
 	 */
-	private function getDAOMock(): IRedisQueueDAO
+	private function getDAOMock(): IQueueManagerDAO
 	{
-		$redisDAO = $this->createMock(IRedisQueueDAO::class);
+		$redisDAO = $this->createMock(IQueueManagerDAO::class);
 		$redisDAO->method('countEnqueued')->willReturn(0);
 		$redisDAO->method('countDelayed')->willReturn(0);
 		
 		return $redisDAO;
 	}
 
-	private function getSubject(?string $name = null, IRedisQueueDAO $dao): IRedisQueueManager
+	private function getSubject(?string $name = null, IQueueManagerDAO $dao): IRedisQueueManager
 	{
 		$manager = new RedisQueueManager($dao);
 		
@@ -37,10 +37,12 @@ class RedisQueueManagerTest extends TestCase
 		return $manager;
 	}
 	
-	
-	public function test_getMetaData_NotQueueNameSettedUp_MetaDataReturned()
+	/**
+	 * @expectedException \DeepQueue\Exceptions\InvalidUsageException
+	 */
+	public function test_getMetaData_NotQueueNameSettedUp_ExceptionThrowed()
 	{
-		self::assertInstanceOf(IMetaData::class, $this->getSubject(null, $this->getDAOMock())->getMetaData());
+		$this->getSubject(null, $this->getDAOMock())->getMetaData();
 	}
 	
 	public function test_getMetaData_NameSettedup_MetaDataReturned()

@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\MySQLConnector\DAO;
 
 
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManagerDAO;
 use DeepQueue\Plugins\Connectors\MySQLConnector\Base\DAO\IMySQLQueueDAO;
 
 use Squid\MySql\IMySqlConnector;
@@ -10,7 +11,7 @@ use Squid\MySql\IMySqlConnector;
 /**
  * @autoload
  */
-class MySQLQueueDAO implements IMySQLQueueDAO
+class MySQLQueueDAO implements IMySQLQueueDAO, IQueueManagerDAO
 {
 	private const PAYLOAD_TABLE = 'DeepQueuePayload';
 	private const ENQUEUE_TABLE = 'DeepQueueEnqueue';
@@ -52,6 +53,11 @@ class MySQLQueueDAO implements IMySQLQueueDAO
 			->executeDml();
 
 		return true;
+	}
+	
+	private function prepareResponse(array $element): array 
+	{
+		return [$element['Id'] => strtotime($element['DequeueTime']) * 1000];
 	}
 
 
@@ -155,6 +161,67 @@ class MySQLQueueDAO implements IMySQLQueueDAO
 			->delete()
 			->from(self::PAYLOAD_TABLE)
 			->byField('QueueName', $queueName)
+			->executeDml();
+	}
+
+	public function countNotDelayed(string $queueName): int
+	{
+		$now = date('Y-m-d H:i:s');
+		
+		return $this->connector
+			->select()
+			->from(self::ENQUEUE_TABLE)
+			->byField('QueueName', $queueName)
+			->where('DequeueTime <= ?', $now)
+			->queryCount();
+	}
+
+	public function countDelayedReadyToDequeue(string $queueName): int
+	{
+		return $this->countNotDelayed($queueName);
+	}
+
+	public function getFirstDelayed(string $queueName): array
+	{
+		$now = date('Y-m-d H:i:s');
+
+		$firstElement = $this->connector
+			->select()
+			->from(self::ENQUEUE_TABLE)
+			->column('Id', 'DequeueTime')
+			->byField('QueueName', $queueName)
+			->where('DequeueTime > ?', $now)
+			->orderBy('DequeueTime')
+			->limit(0, 1)
+			->queryRow(true, false);
+		
+		return $firstElement ? $this->prepareResponse($firstElement) : [];
+	}
+
+	public function getDelayedElementByIndex(string $queueName, int $index): array
+	{
+		$element = $this->connector
+			->select()
+			->from(self::ENQUEUE_TABLE)
+			->column('Id', 'DequeueTime')
+			->byField('QueueName', $queueName)
+			->orderBy('DequeueTime')
+			->limit($index, 1)
+			->queryRow(true, false);
+		
+		return $element ? $this->prepareResponse($element) : [];
+	}
+
+	public function flushDelayed(string $queueName): void
+	{
+		$now = date('Y-m-d H:i:s');
+		
+		$this->connector
+			->update()
+			->table(self::ENQUEUE_TABLE)
+			->set('DequeueTime', $now)
+			->byField('QueueName', $queueName)
+			->where('DequeueTime > ?', $now)
 			->executeDml();
 	}
 }

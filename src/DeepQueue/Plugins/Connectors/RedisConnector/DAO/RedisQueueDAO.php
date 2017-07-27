@@ -4,6 +4,7 @@ namespace DeepQueue\Plugins\Connectors\RedisConnector\DAO;
 
 use DeepQueue\Utils\TimeGenerator;
 use DeepQueue\Base\Config\IRedisConfig;
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManagerDAO;
 use DeepQueue\Plugins\Connectors\RedisConnector\Base\IRedisQueueDAO;
 use DeepQueue\Plugins\Connectors\RedisConnector\Helper\RedisNameBuilder;
 
@@ -14,7 +15,7 @@ use Predis\Transaction\MultiExec;
 /**
  * @autoload
  */
-class RedisQueueDAO implements IRedisQueueDAO
+class RedisQueueDAO implements IRedisQueueDAO, IQueueManagerDAO
 {
 	/** @var Client	*/
 	private $client;
@@ -114,7 +115,7 @@ class RedisQueueDAO implements IRedisQueueDAO
 
 		return array_filter(array_combine($keys, $payloads));
 	}
-
+	
 	
 	public function initClient(IRedisConfig $config): void
 	{
@@ -168,10 +169,15 @@ class RedisQueueDAO implements IRedisQueueDAO
 		return $this->getPayloads($queueName, $keys);
 	}
 	
-	public function popDelayed(string $queueName): void
+	public function popDelayed(string $queueName, ?int $time = 0): void
 	{
+		if (!$time)
+		{
+			$time = TimeGenerator::getMs();
+		}
+		
 		$delayed = $this->client->zrangebyscore(RedisNameBuilder::getDelayedKey($queueName), 
-			0, TimeGenerator::getMs());
+			0, $time);
 
 		if (!$delayed)
 		{
@@ -216,5 +222,36 @@ class RedisQueueDAO implements IRedisQueueDAO
 		]);
 		
 		$transaction->execute();
+	}
+
+	public function countNotDelayed(string $queueName): int
+	{
+		$size = $this->client->llen(RedisNameBuilder::getNowKey($queueName));
+		
+		if (!$size)
+		{
+			return 0;
+		}
+		
+		$firstKey = $this->client->lrange(RedisNameBuilder::getNowKey($queueName), 0, 0);
+		
+		return (isset($firstKey[0]) && $firstKey[0] == RedisNameBuilder::getZeroKey()) ? $size - 1 : $size;
+	}
+
+	public function countDelayedReadyToDequeue(string $queueName): int
+	{
+		return $this->client
+			->zcount(RedisNameBuilder::getDelayedKey($queueName),  0, TimeGenerator::getMs());
+	}
+
+	public function getDelayedElementByIndex(string $queueName, int $index): array
+	{
+		return $this->client->zrange(RedisNameBuilder::getDelayedKey($queueName), 
+				$index, $index, ['withscores' => true]);
+	}
+
+	public function flushDelayed(string $queueName): void
+	{
+		$this->popDelayed($queueName, PHP_INT_MAX);
 	}
 }

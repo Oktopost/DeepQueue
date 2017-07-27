@@ -2,55 +2,15 @@
 namespace DeepQueue\Plugins\Connectors\RedisConnector\Manager;
 
 
-use DeepQueue\Base\IMetaData;
-use DeepQueue\Manager\MetaData;
-use DeepQueue\Exceptions\InvalidUsageException;
-use DeepQueue\Plugins\Connectors\RedisConnector\Base\IRedisQueueDAO;
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManagerDAO;
+use DeepQueue\Plugins\Connectors\BaseQueueManager;
 use DeepQueue\Plugins\Connectors\RedisConnector\Base\IRedisQueueManager;
 
 
-class RedisQueueManager implements IRedisQueueManager
+class RedisQueueManager extends BaseQueueManager implements IRedisQueueManager
 {
-	private $queueName = null;
-	
-	/** @var IRedisQueueDAO */
-	private $dao;
-
-
-	public function __construct(IRedisQueueDAO $dao)
+	public function __construct(IQueueManagerDAO $dao)
 	{
-		$this->dao = $dao;
-	}
-
-
-	public function setQueueName(string $queueName): void
-	{
-		$this->queueName = $queueName;
-	}
-
-	public function getMetaData(): IMetaData
-	{
-		$metaData = new MetaData();
-		
-		if (!$this->queueName)
-			return $metaData;
-		
-		$enqueued = $this->dao->countEnqueued($this->queueName);
-		$delayed = $this->dao->countDelayed($this->queueName);
-		
-		$metaData->Enqueued = $enqueued;
-		$metaData->Delayed = $delayed;
-		
-		return $metaData;
-	}
-
-	public function clearQueue(): void
-	{
-		if (!$this->queueName)
-		{
-			throw new InvalidUsageException('It is required to set queue name in manager before clearing it');
-		}
-		
-		$this->dao->clearQueue($this->queueName);
+		$this->setDAO($dao);
 	}
 }

@@ -7,7 +7,6 @@ use DeepQueue\Plugins\Connectors\RedisConnector\Helper\RedisNameBuilder;
 use DeepQueue\Utils\PayloadConverter;
 use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Base\Config\IRedisConfig;
-use DeepQueue\Plugins\Connectors\RedisConnector\Base\IRedisQueueDAO;
 
 use PHPUnit\Framework\TestCase;
 
@@ -31,7 +30,7 @@ class RedisQueueDAOTest extends TestCase
 		return RedisConfigParser::parse($config);
 	}
 	
-	private function getSubject():IRedisQueueDAO
+	private function getSubject(): RedisQueueDAO
 	{
 		$config = $this->getConfig();
 		
@@ -562,5 +561,108 @@ class RedisQueueDAOTest extends TestCase
 		self::assertEmpty($now);
 		self::assertEmpty($delayIds);
 		self::assertEmpty($payloads);
+	}
+	
+	public function test_countNotDelayed_NothingExists_GotZero()
+	{
+		self::assertEquals(0, $this->getSubject()->countNotDelayed(self::QUEUE_NAME));
+	}
+	
+	public function test_countNotDelayed_OnlyDelayedExists_GotZero()
+	{
+		$payload = new Payload();
+		$payload->Key = 'n2';
+		$payload->Delay = 5;
+		
+		$payloads = $this->preparePayloads([$payload]);
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		self::assertEquals(0, $this->getSubject()->countNotDelayed(self::QUEUE_NAME));
+	}
+	
+	public function test_countNotDelayed_NowExists_GotCountOfNotDelayed()
+	{
+		$payload = new Payload();
+		$payload->Key = 'n2';
+		$payload->Delay = 5;
+		
+		$payload1 = new Payload();
+		$payload1->Key = 'n1';
+		$payload1->Delay = 0;
+		
+		$payloads = $this->preparePayloads([$payload, $payload1]);
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		self::assertEquals(1, $this->getSubject()->countNotDelayed(self::QUEUE_NAME));
+	}
+	
+	public function test_countDelayedReadyToDequeue_NothingReady_GotZero()
+	{
+		self::assertEquals(0, $this->getSubject()
+			->countDelayedReadyToDequeue(self::QUEUE_NAME));
+	}
+	
+	public function test_countDelayedReadyToDequeue_ReadyExists_GotCountOfReady()
+	{
+		$payload = new Payload();
+		$payload->Key = 'n2';
+		$payload->Delay = 0.5;
+		
+		$payloads = $this->preparePayloads([$payload]);
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		sleep(1);
+		
+		self::assertEquals(1, 
+			$this->getSubject()->countDelayedReadyToDequeue(self::QUEUE_NAME));
+	}
+	
+	public function test_getElementByIndex_ElementNotExist_GotEmptyArray()
+	{
+		self::assertEmpty($this->getSubject()
+			->getDelayedElementByIndex(self::QUEUE_NAME, 255));
+	}
+	
+	public function test_getElementByIndex_ElementExist_GotElementIdAsKeyDelayAsValue()
+	{
+		$payload = new Payload();
+		$payload->Key = 'n1';
+		$payload->Delay = 0.5;
+		
+		$payload1 = new Payload();
+		$payload1->Key = 'n2';
+		$payload1->Delay = 1;
+		
+		$payloads = $this->preparePayloads([$payload, $payload1]);
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		$element = $this->getSubject()->getDelayedElementByIndex(self::QUEUE_NAME, 1);
+		
+		self::assertNotEmpty($element);
+		self::assertEquals($payload1->Key, array_keys($element)[0]);
+		self::assertGreaterThan((time()+1) * 1000, array_values($element)[0]);
+	}
+	
+	public function test_flushDelayed()
+	{
+		$payload = new Payload();
+		$payload->Key = 'n1';
+		$payload->Delay = 0;
+		
+		$payload1 = new Payload();
+		$payload1->Key = 'n2';
+		$payload1->Delay = 1;
+		
+		$payload2 = new Payload();
+		$payload2->Key = 'n3';
+		$payload2->Delay = 2;
+		
+		$payloads = $this->preparePayloads([$payload, $payload1, $payload2]);
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		$this->getSubject()->flushDelayed(self::QUEUE_NAME);
+		
+		self::assertEquals(0, $this->getSubject()->countDelayed(self::QUEUE_NAME));
+		self::assertEquals(3, $this->getSubject()->countEnqueued(self::QUEUE_NAME));
 	}
 }

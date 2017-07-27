@@ -7,6 +7,7 @@ use DeepQueue\Base\IMetaData;
 use DeepQueue\Manager\MetaData;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueManager;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueDAO;
+use DeepQueue\Exceptions\InvalidUsageException;
 
 
 class InMemoryQueueManager implements IInMemoryQueueManager
@@ -17,9 +18,18 @@ class InMemoryQueueManager implements IInMemoryQueueManager
 	private $dao;
 
 	
-	public function __construct()
+	private function checkConfiguration(): void
 	{
-		$this->dao = Scope::skeleton(IInMemoryQueueDAO::class);
+		if (!$this->queueName)
+		{
+			throw new InvalidUsageException('Setup Queue name before using queue manager');
+		}
+	}
+	
+	
+	public function __construct(?IInMemoryQueueDAO $dao = null)
+	{
+		$this->dao = $dao ? $dao : Scope::skeleton(IInMemoryQueueDAO::class);
 	}
 	
 	
@@ -30,6 +40,8 @@ class InMemoryQueueManager implements IInMemoryQueueManager
 
 	public function getMetaData(): IMetaData
 	{
+		$this->checkConfiguration();
+		
 		$enqueued = $this->dao->countEnqueued($this->queueName);
 		
 		$metaData = new MetaData();
@@ -41,6 +53,18 @@ class InMemoryQueueManager implements IInMemoryQueueManager
 	
 	public function clearQueue(): void
 	{
+		$this->checkConfiguration();
 		$this->dao->clearQueue($this->queueName);
+	}
+
+	public function getWaitingTime(float $secondsDepth = 0.0, int $bulkSize = 0): ?float
+	{
+		$this->checkConfiguration();
+		return $this->dao->countEnqueued($this->queueName) > 0 ? 0 : null;
+	}
+
+	public function flushDelayed(): void
+	{
+		return;
 	}
 }

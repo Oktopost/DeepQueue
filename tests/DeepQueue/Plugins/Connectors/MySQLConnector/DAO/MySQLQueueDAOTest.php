@@ -3,7 +3,6 @@ namespace DeepQueue\Plugins\Connectors\MySQLConnector\DAO;
 
 
 use DeepQueue\Payload;
-use DeepQueue\Plugins\Connectors\MySQLConnector\Base\DAO\IMySQLQueueDAO;
 use DeepQueue\Plugins\Connectors\MySQLConnector\Converter\MySQLPayloadConverter;
 
 use lib\MySQLConfig;
@@ -13,7 +12,6 @@ use PHPUnit\Framework\TestCase;
 use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
-use Squid\MySql;
 
 
 class MySQLQueueDAOTest extends TestCase
@@ -22,7 +20,7 @@ class MySQLQueueDAOTest extends TestCase
 	private const ENQUEUE_TABLE_NAME	= 'DeepQueueEnqueue';
 	private const TEST_QUEUE_NAME		= 'dao.test.queue';
 	
-	private function getSubject(): IMySQLQueueDAO
+	private function getSubject(): MySQLQueueDAO
 	{
 		$dao = new MySQLQueueDAO();
 		$dao->initConnector(MySQLConfig::get());
@@ -340,5 +338,136 @@ class MySQLQueueDAOTest extends TestCase
 		
 		self::assertEmpty($this->getEnqueuedIds());
 		self::assertEmpty($this->getPayloads());
+	}
+	
+		public function test_countNotDelayed_NothingExists_GotZero()
+	{
+		self::assertEquals(0, $this->getSubject()->countNotDelayed(self::TEST_QUEUE_NAME));
+	}
+	
+	public function test_countNotDelayed_OnlyDelayedExists_GotZero()
+	{
+		$payload = new Payload();
+		$payload->Key = 'n2';
+		$payload->Delay = 5;
+		
+		$payloads = $this->preparePayloads([$payload]);
+		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
+		
+		self::assertEquals(0, $this->getSubject()->countNotDelayed(self::TEST_QUEUE_NAME));
+	}
+	
+	public function test_countNotDelayed_NowExists_GotCountOfNotDelayed()
+	{
+		$payload = new Payload();
+		$payload->Key = 'n2';
+		$payload->Delay = 5;
+		
+		$payload1 = new Payload();
+		$payload1->Key = 'n1';
+		$payload1->Delay = 0;
+		
+		$payloads = $this->preparePayloads([$payload, $payload1]);
+		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
+		
+		self::assertEquals(1, $this->getSubject()->countNotDelayed(self::TEST_QUEUE_NAME));
+	}
+	
+	public function test_countDelayedReadyToDequeue_NothingReady_GotZero()
+	{
+		self::assertEquals(0, $this->getSubject()
+			->countDelayedReadyToDequeue(self::TEST_QUEUE_NAME));
+	}
+	
+	public function test_countDelayedReadyToDequeue_ReadyExists_GotCountOfReady()
+	{
+		$payload = new Payload();
+		$payload->Key = 'n2';
+		$payload->Delay = 0.5;
+		
+		$payloads = $this->preparePayloads([$payload]);
+		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
+		
+		sleep(1);
+		
+		self::assertEquals(1, 
+			$this->getSubject()->countDelayedReadyToDequeue(self::TEST_QUEUE_NAME));
+	}
+	
+	public function test_getElementByIndex_ElementNotExist_GotEmptyArray()
+	{
+		self::assertEmpty($this->getSubject()
+			->getDelayedElementByIndex(self::TEST_QUEUE_NAME, 255));
+	}
+	
+	public function test_getElementByIndex_ElementExist_GotElementIdAsKeyDelayAsValue()
+	{
+		$payload = new Payload();
+		$payload->Key = 'n1';
+		$payload->Delay = 0.5;
+		
+		$payload1 = new Payload();
+		$payload1->Key = 'n2';
+		$payload1->Delay = 1;
+		
+		$payloads = $this->preparePayloads([$payload, $payload1]);
+		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
+		
+		$element = $this->getSubject()->getDelayedElementByIndex(self::TEST_QUEUE_NAME, 1);
+		
+		self::assertNotEmpty($element);
+		self::assertEquals($payload1->Key, array_keys($element)[0]);
+		self::assertGreaterThanOrEqual((time()+1) * 1000, array_values($element)[0]);
+	}
+	
+	public function test_flushDelayed()
+	{
+		$payload = new Payload();
+		$payload->Key = 'n1';
+		$payload->Delay = 0;
+		
+		$payload1 = new Payload();
+		$payload1->Key = 'n2';
+		$payload1->Delay = 1;
+		
+		$payload2 = new Payload();
+		$payload2->Key = 'n3';
+		$payload2->Delay = 2;
+		
+		$payloads = $this->preparePayloads([$payload, $payload1, $payload2]);
+		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
+		
+		$this->getSubject()->flushDelayed(self::TEST_QUEUE_NAME);
+		
+		self::assertEquals(0, $this->getSubject()->countDelayed(self::TEST_QUEUE_NAME));
+		self::assertEquals(3, $this->getSubject()->countEnqueued(self::TEST_QUEUE_NAME));
+	}
+	
+	public function test_GetFirstDelayed_NoDelayed_ReturnEmptyArray()
+	{
+		$firstDelayed = $this->getSubject()->getFirstDelayed(self::TEST_QUEUE_NAME);
+		
+		self::assertEmpty($firstDelayed);
+	}
+	
+	public function test_GetFirstDelayed_DelayedExist_ReturnFirst()
+	{
+		$payload1 = new Payload();
+		$payload1->Key = 'd1';
+		$payload1->Payload = 'payload1';
+		$payload1->Delay = 1;
+		
+		$payload2 = new Payload();
+		$payload2->Key = 'd2';
+		$payload2->Delay = 2;
+		
+		$payloads = $this->preparePayloads([$payload1, $payload2]);
+		
+		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
+		
+		$firstDelayed = $this->getSubject()->getFirstDelayed(self::TEST_QUEUE_NAME);
+		
+		self::assertNotEmpty($firstDelayed);
+		self::assertEquals($payload1->Key, array_keys($firstDelayed)[0]);
 	}
 }

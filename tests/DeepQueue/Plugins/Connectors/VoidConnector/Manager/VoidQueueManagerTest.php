@@ -16,12 +16,15 @@ class MySQLQueueManagerTest extends TestCase
 	}
 	
 	
-	public function test_sanity_getMetaData_MetaDataReturned()
+	public function test_sanity()
 	{
 		$this->getSubject()->clearQueue();
 		$this->getSubject()->setQueueName('test');
+		$this->getSubject()->flushDelayed();
 		
 		self::assertInstanceOf(IMetaData::class, 
 			$this->getSubject()->getMetaData());
+		
+		self::assertEquals(0, $this->getSubject()->getWaitingTime());
 	}
 }
