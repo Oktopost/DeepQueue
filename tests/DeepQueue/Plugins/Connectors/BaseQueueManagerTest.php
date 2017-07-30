@@ -80,21 +80,38 @@ class BaseQueueManagerTest extends TestCase
 		self::assertEquals(0, $offset);
 	}
 	
-	public function test_getWaitingTimeWithBulkSize_DelayedDataExist_BulkNotReady_GotBufferDelay()
+	public function test_getWaitingTimeWithBulkSize_DelayedDataExist_BufferOverflowFirst_GotBufferDelay()
 	{
-		$time = TimeGenerator::getMs(1);
-		$time2 = TimeGenerator::getMs(2);
+		$bufferOverflowTime = TimeGenerator::getMs(1);
+		$bulkReadyTime = TimeGenerator::getMs(2);
 		
 		$dao = $this->getDAOMock();
-		$dao->method('getFirstDelayed')->willReturn(['a' => $time]);
+		$dao->method('getFirstDelayed')->willReturn(['a' => $bufferOverflowTime]);
 		$dao->method('countDelayedReadyToDequeue')->willReturn(1);
-		$dao->method('getDelayedElementByIndex')->willReturn(['a' => $time2]);
+		$dao->method('getDelayedElementByIndex')->willReturn(['a' => $bulkReadyTime]);
 
 
-		$offset = $this->getSubject($dao)->getWaitingTime(2, 2);
+		$offset = $this->getSubject($dao)->getWaitingTime(2, 3);
 		
 		self::assertGreaterThan(1.9, $offset);
 		self::assertLessThanOrEqual(2, $offset);
+	}
+	
+	public function test_getWaitingTimeWithBulkSize_DelayedDataExist_BulkWillBeReadyFirst_GotBulkDelay()
+	{
+		$bufferOverflowTime = TimeGenerator::getMs(2);
+		$bulkReadyTime = TimeGenerator::getMs(1);
+		
+		$dao = $this->getDAOMock();
+		$dao->method('getFirstDelayed')->willReturn(['a' => $bufferOverflowTime]);
+		$dao->method('countDelayedReadyToDequeue')->willReturn(2);
+		$dao->method('getDelayedElementByIndex')->willReturn(['a' => $bulkReadyTime]);
+
+
+		$offset = $this->getSubject($dao)->getWaitingTime(5, 3);
+		
+		self::assertGreaterThan(0.9, $offset);
+		self::assertLessThanOrEqual(1, $offset);
 	}
 	
 	public function test_flushDelayed()
