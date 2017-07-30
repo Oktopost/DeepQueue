@@ -25,6 +25,6 @@ class MySQLQueueManagerTest extends TestCase
 		self::assertInstanceOf(IMetaData::class, 
 			$this->getSubject()->getMetaData());
 		
-		self::assertEquals(0, $this->getSubject()->getWaitingTime());
+		self::assertEquals(null, $this->getSubject()->getWaitingTime());
 	}
 }

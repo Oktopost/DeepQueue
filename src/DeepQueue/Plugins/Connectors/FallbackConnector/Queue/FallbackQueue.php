@@ -51,7 +51,7 @@ class FallbackQueue implements IFallbackQueue
 	/**
 	 * @return Workload[]|array
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
 	{
 		try
 		{
@@ -59,12 +59,12 @@ class FallbackQueue implements IFallbackQueue
 			
 			if ($this->needToDequeueFromFallback())
 			{
-				$workloads = $this->fallback->dequeueWorkload($count, 0);
+				$workloads = $this->fallback->dequeueWorkload($count, 0, $bufferDelay);
 			}
 			
 			if (!$workloads)
 			{
-				$workloads = $this->main->dequeueWorkload($count, $waitSeconds);
+				$workloads = $this->main->dequeueWorkload($count, $waitSeconds, $bufferDelay);
 			}
 			
 			return $workloads;
@@ -74,7 +74,8 @@ class FallbackQueue implements IFallbackQueue
 			$this->log($e, 'dequeueWorkload', [
 				'queue'			=> $this->name,
 				'count' 		=> $count,
-				'waitSeconds'	=> $waitSeconds
+				'waitSeconds'	=> $waitSeconds,
+				'bufferDelay'	=> $bufferDelay
 			]);
 			
 			return $this->fallback->dequeueWorkload($count, 0);

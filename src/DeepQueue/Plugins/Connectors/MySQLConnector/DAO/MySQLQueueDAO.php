@@ -21,9 +21,11 @@ class MySQLQueueDAO implements IMySQLQueueDAO, IQueueManagerDAO
 	private $connector = null;
 	
 	
-	private function getIds(string $queueName, int $count): array 
+	private function getIds(string $queueName, int $count, int $bufferDelay): array 
 	{
-		$now = date('Y-m-d H:i:s');
+		$time = time() - $bufferDelay;
+		
+		$now = date('Y-m-d H:i:s', $time);
 
 		$ids = $this->connector
 			->select()
@@ -105,14 +107,14 @@ class MySQLQueueDAO implements IMySQLQueueDAO, IQueueManagerDAO
 		return array_map($mapFunction, $payloads['enqueue']);
 	}
 
-	public function dequeue(string $queueName, int $count = 1): array
+	public function dequeue(string $queueName, int $count = 1, int $bufferDelay = 0): array
 	{
 		if ($count <= 0)
 		{
 			return [];
 		}
 		
-		$ids = $this->getIds($queueName, $count);
+		$ids = $this->getIds($queueName, $count, $bufferDelay);
 		
 		if (!$ids)
 			return [];

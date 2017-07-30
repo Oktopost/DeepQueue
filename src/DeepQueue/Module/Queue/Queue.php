@@ -58,7 +58,7 @@ class Queue implements IQueue
 	/**
 	 * @return Workload[]
 	 */
-	public function dequeueWorkload(int $count, ?float $waitSeconds = null): array
+	public function dequeueWorkload(int $count, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
 	{
 		try
 		{
@@ -79,24 +79,24 @@ class Queue implements IQueue
 	/**
 	 * @return mixed|null
 	 */
-	public function dequeueOnce(?float $waitSeconds = null)
+	public function dequeueOnce(?float $waitSeconds = null, float $bufferDelay = 0.0)
 	{
-		$res = $this->dequeueWorkload(1, $waitSeconds);
+		$res = $this->dequeueWorkload(1, $waitSeconds, $bufferDelay);
 		return ($res ? ($res[0])->Payload : null);
 	}
 	
-	public function dequeueWorkloadOnce(?float $waitSeconds = null): ?Workload
+	public function dequeueWorkloadOnce(?float $waitSeconds = null, float $bufferDelay = 0.0): ?Workload
 	{
-		$res = $this->dequeueWorkload(1, $waitSeconds);
+		$res = $this->dequeueWorkload(1, $waitSeconds, $bufferDelay);
 		return ($res ? $res[0] : null);
 	}
 	
 	/**
 	 * @return mixed[]
 	 */
-	public function dequeue(int $count, ?float $waitSeconds = null): array
+	public function dequeue(int $count, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
 	{
-		$res = $this->dequeueWorkload($count, $waitSeconds);
+		$res = $this->dequeueWorkload($count, $waitSeconds, $bufferDelay);
 		$payload = [];
 		
 		if ($res)

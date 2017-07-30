@@ -43,12 +43,12 @@ class MySQLQueue implements IRemoteQueue
 		}
 	}
 	
-	private function getPayloads(int $count): array 
+	private function getPayloads(int $count, int $bufferDelay): array 
 	{
-		return $this->dao->dequeue($this->name, $count);
+		return $this->dao->dequeue($this->name, $count, $bufferDelay);
 	}
 	
-	private function getPayloadsWithWaiting(int $count, float $waitSeconds)
+	private function getPayloadsWithWaiting(int $count, float $waitSeconds, int $bufferDelay)
 	{
 		$waitSeconds = (int)floor($waitSeconds);
 
@@ -56,7 +56,7 @@ class MySQLQueue implements IRemoteQueue
 
 		while ($waitSeconds >= 0)
 		{
-			$payloads = $this->getPayloads($count);
+			$payloads = $this->getPayloads($count, $bufferDelay);
 			
 			$sleepTime = min($waitSeconds, self::MAX_SLEEP_TIME);
 
@@ -86,15 +86,15 @@ class MySQLQueue implements IRemoteQueue
 	/**
 	 * @return Workload[]|array
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
 	{
 		if ($waitSeconds > 0)
 		{
-			$payloads = $this->getPayloadsWithWaiting($count, $waitSeconds);
+			$payloads = $this->getPayloadsWithWaiting($count, $waitSeconds, (int)floor($bufferDelay));
 		}
 		else
 		{
-			$payloads = $this->getPayloads($count);
+			$payloads = $this->getPayloads($count, $bufferDelay);
 		}
 		
 		if ($payloads)

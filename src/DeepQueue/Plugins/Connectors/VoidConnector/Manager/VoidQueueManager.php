@@ -26,7 +26,7 @@ class VoidQueueManager implements IQueueManager
 
 	public function getWaitingTime(float $secondsDepth = 0.0, int $bulkSize = 0): ?float
 	{
-		return 0;
+		return null;
 	}
 
 	public function flushDelayed(): void

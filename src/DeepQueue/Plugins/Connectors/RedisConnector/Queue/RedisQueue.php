@@ -52,7 +52,7 @@ class RedisQueue implements IRemoteQueue
 	/**
 	 * @return Workload[]|array
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
 	{
 		if ($count <= 0)
 		{
@@ -61,7 +61,7 @@ class RedisQueue implements IRemoteQueue
 		
 		$dequeuer = new RedisDequeue($this->dao, $this->name);
 		
-		$payloads = $dequeuer->dequeue($count, round($waitSeconds));
+		$payloads = $dequeuer->dequeue($count, round($waitSeconds), $bufferDelay);
 		
 		if ($payloads)
 		{

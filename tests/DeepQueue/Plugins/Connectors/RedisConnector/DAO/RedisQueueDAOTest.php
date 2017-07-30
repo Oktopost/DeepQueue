@@ -343,6 +343,47 @@ class RedisQueueDAOTest extends TestCase
 		self::assertEquals($payload4->Key, $delayIds[0]);
 	}
 	
+	public function test_PopDelayedWithBuffer_DelayedExists_DelayedOverTheBufferMovedToNow()
+	{
+		$payload1 = new Payload();
+		$payload1->Key = 'd1';
+		$payload1->Payload = 'payload1';
+		$payload1->Delay = 1;
+		
+		$payload2 = new Payload();
+		$payload2->Key = 'd2';
+		$payload2->Delay = 2;
+		
+		$payload3 = new Payload();
+		$payload3->Key = 'd3';
+		$payload3->Delay = 2;
+		
+		$payload4 = new Payload();
+		$payload4->Key = 'd4';
+		$payload4->Delay = 3;
+		
+		$payloads = $this->preparePayloads([$payload1, $payload2, $payload3, $payload4]);
+		
+		$this->getSubject()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		sleep(2);
+		
+		$this->getSubject()->popDelayed(self::QUEUE_NAME, 1);
+		
+		$now = $this->getClient()
+			->lrange(RedisNameBuilder::getNowKey(self::QUEUE_NAME), 0, 255);
+		
+		$delayIds = $this->getClient()
+			->zrange(RedisNameBuilder::getDelayedKey(self::QUEUE_NAME), 0, 9999999999999999);
+		
+		self::assertEquals(2, sizeof($now));
+		self::assertEquals($payload1->Key, $now[1]);
+		self::assertTrue(in_array(RedisNameBuilder::getZeroKey(), $now));
+		
+		self::assertEquals(3, sizeof($delayIds));
+		self::assertEquals($payload2->Key, $delayIds[0]);
+	}
+	
 	public function test_GetFirstDelayed_NoDelayed_ReturnEmptyArray()
 	{
 		$firstDelayed = $this->getSubject()->getFirstDelayed(self::QUEUE_NAME);

@@ -142,7 +142,7 @@ class RedisQueueDAO implements IRedisQueueDAO, IQueueManagerDAO
 		return array_merge($now_keys, $delayed_keys);
 	}
 	
-	public function dequeueInitialKey($queueName, $waitSeconds): ?string
+	public function dequeueInitialKey(string $queueName, int $waitSeconds): ?string
 	{
 		$waitSeconds = $waitSeconds == 0 ? -1 : $waitSeconds;
 		
@@ -169,11 +169,13 @@ class RedisQueueDAO implements IRedisQueueDAO, IQueueManagerDAO
 		return $this->getPayloads($queueName, $keys);
 	}
 	
-	public function popDelayed(string $queueName, ?int $time = 0): void
+	public function popDelayed(string $queueName, float $bufferOffset = 0.0, bool $popAll = false): void
 	{
-		if (!$time)
+		$time = TimeGenerator::getMs($bufferOffset * -1);
+		
+		if ($popAll)
 		{
-			$time = TimeGenerator::getMs();
+			$time = 'inf';
 		}
 		
 		$delayed = $this->client->zrangebyscore(RedisNameBuilder::getDelayedKey($queueName), 
@@ -252,6 +254,6 @@ class RedisQueueDAO implements IRedisQueueDAO, IQueueManagerDAO
 
 	public function flushDelayed(string $queueName): void
 	{
-		$this->popDelayed($queueName, PHP_INT_MAX);
+		$this->popDelayed($queueName, 0, true);
 	}
 }

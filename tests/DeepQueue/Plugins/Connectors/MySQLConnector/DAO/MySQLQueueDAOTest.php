@@ -313,6 +313,35 @@ class MySQLQueueDAOTest extends TestCase
 		self::assertEquals(3, sizeof($workloads));
 	}
 	
+	public function test_DequeueAllWithBuffer_PayloadsExists_GetOnlyBufferOverflowedArray()
+	{
+		$payload1 = new Payload();
+		$payload1->Key = 'n1';
+		$payload1->Delay = 1;
+		
+		$payload2 = new Payload();
+		$payload2->Key = 'n2';
+		$payload2->Delay = 2;
+		
+		$payload3 = new Payload();
+		$payload3->Key = 'n3';
+		$payload3->Delay = 2;
+		
+		$payloads = $this->preparePayloads([$payload1, $payload2, $payload3]);
+		
+		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
+		
+		sleep(2);
+		
+		$workloads = $this->getSubject()->dequeue(self::TEST_QUEUE_NAME, 3, 1);
+		
+		self::assertEquals(1, sizeof($workloads));
+		
+		$workloads = $this->getSubject()->dequeue(self::TEST_QUEUE_NAME, 255);
+		
+		self::assertEquals(2, sizeof($workloads));
+	}
+	
 	public function test_ClearQueue_EmptyQueue_StillEmpty()
 	{
 		$this->getSubject()->clearQueue(self::TEST_QUEUE_NAME);
