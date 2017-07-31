@@ -2,13 +2,14 @@
 namespace DeepQueue\Plugins\Connectors\VoidConnector\Queue;
 
 
+use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Utils\TimeBasedRandomIdGenerator;
 
 
 class VoidQueue implements IRemoteQueue
 {
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
 	{
 		return [];
 	}

@@ -19,7 +19,9 @@ class QueueConfig extends LiteObject implements IQueueConfig
 			'MinimalDelay'		=> LiteSetup::createDouble(-1),
 			'MaximalDelay'		=> LiteSetup::createDouble(-1),
 			'DefaultDelay'		=> LiteSetup::createDouble(-1),
-			'MaxBulkSize'		=> LiteSetup::createInt(256)
+			'MaxBulkSize'		=> LiteSetup::createInt(256),
+			'DelayBuffer'		=> LiteSetup::createDouble(0.0),
+			'PackageSize'		=> LiteSetup::createInt(0)
 		];
 	}
 }

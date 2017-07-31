@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\MySQLConnector\Queue;
 
 
+use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Payload;
 use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Plugins\Connectors\MySQLConnector\Converter\MySQLPayloadConverter;
@@ -117,12 +118,12 @@ class MySQLQueueTest extends TestCase
 	
 	public function test_dequeue_Empty_WithoutWaiting_GetEmptyArray()
 	{
-		self::assertEmpty($this->getSubject()->dequeueWorkload(255, 0));
+		self::assertEmpty($this->getSubject()->dequeueWorkload(255, 0, new QueueConfig()));
 	}
 	
 	public function test_dequeue_Empty_WithWaiting_GetEmptyArray()
 	{
-		self::assertEmpty($this->getSubject()->dequeueWorkload(255, 2));
+		self::assertEmpty($this->getSubject()->dequeueWorkload(255, 2, new QueueConfig()));
 	}
 	
 	public function test_dequeue_Now_WithoutWaiting_GetPayloads()
@@ -143,7 +144,7 @@ class MySQLQueueTest extends TestCase
 		$prepared = $this->preparePayloads([$payload1, $payload2, $payload3, $payload4]);
 		$this->getDAO()->enqueue(self::TEST_QUEUE_NAME, $prepared);
 		
-		$workloads = $this->getSubject()->dequeueWorkload(3, 0);
+		$workloads = $this->getSubject()->dequeueWorkload(3, 0, new QueueConfig());
 		
 		self::assertEquals(3, sizeof($workloads));
 		self::assertEquals($payload1->Key, $workloads[0]->Id);
@@ -172,7 +173,7 @@ class MySQLQueueTest extends TestCase
 		$prepared = $this->preparePayloads([$payload1, $payload2, $payload3, $payload4]);
 		$this->getDAO()->enqueue(self::TEST_QUEUE_NAME, $prepared);
 		
-		$workloads = $this->getSubject()->dequeueWorkload(3, 3);
+		$workloads = $this->getSubject()->dequeueWorkload(3, 3, new QueueConfig());
 		
 		self::assertEquals(3, sizeof($workloads));
 		self::assertEquals($payload1->Key, $workloads[0]->Id);
@@ -205,7 +206,7 @@ class MySQLQueueTest extends TestCase
 		$prepared = $this->preparePayloads([$payload1, $payload2, $payload3, $payload4]);
 		$this->getDAO()->enqueue(self::TEST_QUEUE_NAME, $prepared);
 		
-		$workloads = $this->getSubject()->dequeueWorkload(3, 5);
+		$workloads = $this->getSubject()->dequeueWorkload(3, 5, new QueueConfig());
 		
 		self::assertEquals(3, sizeof($workloads));
 		self::assertEquals($payload1->Key, $workloads[0]->Id);
@@ -234,7 +235,7 @@ class MySQLQueueTest extends TestCase
 		$prepared = $this->preparePayloads([$payload1, $payload2]);
 		$this->getDAO()->enqueue(self::TEST_QUEUE_NAME, $prepared);
 		
-		$workloads = $this->getSubject()->dequeueWorkload(3, 0);
+		$workloads = $this->getSubject()->dequeueWorkload(3, 0, new QueueConfig());
 		
 		self::assertEmpty($workloads);
 				
@@ -264,7 +265,7 @@ class MySQLQueueTest extends TestCase
 		
 		sleep(1);
 		
-		$workloads = $this->getSubject()->dequeueWorkload(3, 0);
+		$workloads = $this->getSubject()->dequeueWorkload(3, 0, new QueueConfig());
 		
 		self::assertEquals(1, sizeof($workloads));
 				
@@ -299,7 +300,7 @@ class MySQLQueueTest extends TestCase
 		$prepared = $this->preparePayloads([$payload1, $payload2, $payload3, $payload4]);
 		$this->getDAO()->enqueue(self::TEST_QUEUE_NAME, $prepared);
 		
-		$workloads = $this->getSubject()->dequeueWorkload(4, 5);
+		$workloads = $this->getSubject()->dequeueWorkload(4, 5, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 		self::assertEquals($payload1->Key, $workloads[0]->Id);
@@ -341,7 +342,7 @@ class MySQLQueueTest extends TestCase
 		
 		sleep(4);
 		
-		$workloads = $this->getSubject()->dequeueWorkload(255, 5);
+		$workloads = $this->getSubject()->dequeueWorkload(255, 5, new QueueConfig());
 				
 		self::assertEquals(4, sizeof($workloads));
 		self::assertEquals($payload3->Key, $workloads[0]->Id);

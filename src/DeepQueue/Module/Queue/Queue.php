@@ -2,6 +2,7 @@
 namespace DeepQueue\Module\Queue;
 
 
+use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\IQueue;
@@ -20,10 +21,13 @@ class Queue implements IQueue
 	
 	/** @var ILogger */
 	private $logger;
-	
+
 	private $name;
-	
-	
+
+	/** @var IQueueConfig */
+	private $config = null;
+
+
 	private function log(\Throwable $e, string $operation, array $data): void
 	{
 		$message = "Error: Failed to {$operation} data for {$this->name} queue.";
@@ -53,16 +57,21 @@ class Queue implements IQueue
 		$this->logger = $logger;
 		$this->name = $name;
 	}
+
 	
-	
+	public function setConfiguration(IQueueConfig $config): void
+	{
+		$this->config = $config;
+	}
+
 	/**
 	 * @return Workload[]
 	 */
-	public function dequeueWorkload(int $count, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
+	public function dequeueWorkload(int $count, ?float $waitSeconds = null): array
 	{
 		try
 		{
-			return $this->remoteDequeue->dequeueWorkload($count, $waitSeconds);
+			return $this->remoteDequeue->dequeueWorkload($count, $waitSeconds, $this->config);
 		}
 		catch (\Throwable $e)
 		{
@@ -79,24 +88,24 @@ class Queue implements IQueue
 	/**
 	 * @return mixed|null
 	 */
-	public function dequeueOnce(?float $waitSeconds = null, float $bufferDelay = 0.0)
+	public function dequeueOnce(?float $waitSeconds = null)
 	{
-		$res = $this->dequeueWorkload(1, $waitSeconds, $bufferDelay);
+		$res = $this->dequeueWorkload(1, $waitSeconds);
 		return ($res ? ($res[0])->Payload : null);
 	}
 	
 	public function dequeueWorkloadOnce(?float $waitSeconds = null, float $bufferDelay = 0.0): ?Workload
 	{
-		$res = $this->dequeueWorkload(1, $waitSeconds, $bufferDelay);
+		$res = $this->dequeueWorkload(1, $waitSeconds);
 		return ($res ? $res[0] : null);
 	}
 	
 	/**
 	 * @return mixed[]
 	 */
-	public function dequeue(int $count, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
+	public function dequeue(int $count, ?float $waitSeconds = null): array
 	{
-		$res = $this->dequeueWorkload($count, $waitSeconds, $bufferDelay);
+		$res = $this->dequeueWorkload($count, $waitSeconds);
 		$payload = [];
 		
 		if ($res)

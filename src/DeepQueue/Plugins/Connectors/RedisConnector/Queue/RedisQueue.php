@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\RedisConnector\Queue;
 
 
+use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
@@ -52,7 +53,7 @@ class RedisQueue implements IRemoteQueue
 	/**
 	 * @return Workload[]|array
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
 	{
 		if ($count <= 0)
 		{
@@ -61,7 +62,7 @@ class RedisQueue implements IRemoteQueue
 		
 		$dequeuer = new RedisDequeue($this->dao, $this->name);
 		
-		$payloads = $dequeuer->dequeue($count, round($waitSeconds), $bufferDelay);
+		$payloads = $dequeuer->dequeue($count, round($waitSeconds), $config->DelayBuffer);
 		
 		if ($payloads)
 		{

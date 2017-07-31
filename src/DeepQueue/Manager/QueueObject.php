@@ -39,7 +39,10 @@ class QueueObject extends LiteObject implements IQueueObject
 	{
 		$remoteQueue = $this->deepConfig->getConnectorProvider()->getRemoteQueue($this->Name);
 		
-		return new Queue($this->Name, $remoteQueue, $this->deepConfig->logger());
+		$queue = new Queue($this->Name, $remoteQueue, $this->deepConfig->logger());
+		$queue->setConfiguration($this->Config);
+		
+		return $queue;
 	}
 
 	public function getMetaData(): IMetaData

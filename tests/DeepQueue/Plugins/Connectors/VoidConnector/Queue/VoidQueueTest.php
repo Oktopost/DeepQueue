@@ -3,6 +3,7 @@ namespace DeepQueue\Plugins\Connectors\VoidConnector\Queue;
 
 
 use DeepQueue\Payload;
+use DeepQueue\Manager\QueueConfig;
 
 use PHPUnit\Framework\TestCase;
 
@@ -25,6 +26,6 @@ class VoidQueueTest extends TestCase
 	
 	public function test_dequeueWorkload()
 	{
-		self::assertEmpty($this->getSubject()->dequeueWorkload(255));
+		self::assertEmpty($this->getSubject()->dequeueWorkload(255, null, new QueueConfig()));
 	}
 }

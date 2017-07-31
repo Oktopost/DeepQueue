@@ -2,6 +2,7 @@
 namespace DeepQueue\Module\Queue;
 
 
+use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\IQueue;
@@ -30,6 +31,8 @@ class QueueTest extends TestCase
 	private function getSubject(): IQueue
 	{
 		$dq = PreparedQueue::InMemory((new JsonSerializer())->add(new ArraySerializer()));
+		
+		$dq->config()->setQueueNotExistsPolicy(QueueLoaderPolicy::CREATE_NEW);
 
 		return $dq->get(self::QUEUE_NAME);
 	}
@@ -39,6 +42,7 @@ class QueueTest extends TestCase
 		$dq = PreparedQueue::InMemory((new JsonSerializer())->add(new ArraySerializer()));
 		
 		$dq->config()->addConnectorBuilder(ThrowableQueueDecorator::class);
+		$dq->config()->setQueueNotExistsPolicy(QueueLoaderPolicy::CREATE_NEW);
 		
 		$this->dummyLogProvider = new TestLogProvider();
 		
@@ -63,6 +67,13 @@ class QueueTest extends TestCase
 	{
 		$remote = $this->createMock(IRemoteQueue::class);
 		return $remote;
+	}
+
+	
+	public function setUp()
+	{
+		$dq = PreparedQueue::InMemory((new JsonSerializer())->add(new ArraySerializer()));
+		$dq->manager(self::QUEUE_NAME)->clearQueue();
 	}
 
 

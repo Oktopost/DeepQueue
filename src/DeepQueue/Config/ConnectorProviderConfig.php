@@ -46,15 +46,18 @@ class ConnectorProviderConfig implements IConnectorProviderConfig
 		
 		$this->connectorBuilder = Scope::skeleton(IConnectorBuilder::class);
 
-		$this->connectorBuilder->setRemoteProvider($this->connector);
-		$this->connectorBuilder->setLoaderBuilder($this->loaderBuilder);
-		
 		$this->addConnectorBuilder(
 			QueueStateDecorator::class,
 			Validator::class
 		);
 		
 		return $this->connectorBuilder;
+	}
+	
+	private function setupConnectorBuilder(): void
+	{
+		$this->connectorBuilder->setRemoteProvider($this->connector);
+		$this->connectorBuilder->setLoaderBuilder($this->loaderBuilder);
 	}
 
 	
@@ -80,6 +83,7 @@ class ConnectorProviderConfig implements IConnectorProviderConfig
 		if (!$this->connectorBuilder)
 		{
 			$this->createConnectorBuilder();
+			$this->setupConnectorBuilder();
 		}
 		
 		foreach ($builders as $builder)
@@ -109,8 +113,10 @@ class ConnectorProviderConfig implements IConnectorProviderConfig
 	{
 		if (!$this->connectorBuilder)
 		{
-			return $this->createConnectorBuilder();
+			$this->createConnectorBuilder();
 		}
+		
+		$this->setupConnectorBuilder();
 		
 		return $this->connectorBuilder;
 	}

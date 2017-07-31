@@ -2,6 +2,7 @@
 namespace lib;
 
 
+use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Base\Loader\IQueueObjectLoader;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Base\Connector\Decorator\IRemoteQueueDecorator;
@@ -9,7 +10,7 @@ use DeepQueue\Base\Connector\Decorator\IRemoteQueueDecorator;
 
 class ThrowableQueueDecorator implements IRemoteQueueDecorator
 {
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
 	{
 		throw new \Exception();
 	}

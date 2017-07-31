@@ -38,15 +38,18 @@ class QueueLoaderConfig implements IQueueLoaderConfig
 		$this->checkConfiguration();
 		
 		$this->loaderBuilder = Scope::skeleton(IQueueLoaderBuilder::class);
-		
-		$this->loaderBuilder->setRemoteLoader($this->manager);
-		$this->loaderBuilder->setNewQueuePolicy($this->queueNotExistsPolicy);
-		
+
 		$this->addLoaderBuilder(
 			CachedLoaderDecorator::class	
 		);
 		
 		return $this->loaderBuilder;
+	}
+	
+	private function setupLoaderBuilder(): void
+	{	
+		$this->loaderBuilder->setRemoteLoader($this->manager);
+		$this->loaderBuilder->setNewQueuePolicy($this->queueNotExistsPolicy);
 	}
 	
 	
@@ -72,6 +75,7 @@ class QueueLoaderConfig implements IQueueLoaderConfig
 		if (!$this->loaderBuilder)
 		{
 			$this->createLoaderBuilder();
+			$this->setupLoaderBuilder();
 		}
 		
 		foreach ($builders as $builder)
@@ -101,8 +105,10 @@ class QueueLoaderConfig implements IQueueLoaderConfig
 	{
 		if (!$this->loaderBuilder)
 		{
-			return $this->createLoaderBuilder()->getRemoteLoader($name);
+			$this->createLoaderBuilder();
 		}
+		
+		$this->setupLoaderBuilder();
 		
 		return $this->loaderBuilder->getRemoteLoader($name);
 	}
@@ -111,8 +117,10 @@ class QueueLoaderConfig implements IQueueLoaderConfig
 	{
 		if (!$this->loaderBuilder)
 		{
-			return $this->createLoaderBuilder();
+			$this->createLoaderBuilder();
 		}
+		
+		$this->setupLoaderBuilder();
 		
 		return $this->loaderBuilder;
 	}

@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\MySQLConnector\Queue;
 
 
+use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
@@ -86,15 +87,17 @@ class MySQLQueue implements IRemoteQueue
 	/**
 	 * @return Workload[]|array
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
 	{
+		$buffer = (int)floor($config->DelayBuffer);
+		
 		if ($waitSeconds > 0)
 		{
-			$payloads = $this->getPayloadsWithWaiting($count, $waitSeconds, (int)floor($bufferDelay));
+			$payloads = $this->getPayloadsWithWaiting($count, $waitSeconds, $buffer);
 		}
 		else
 		{
-			$payloads = $this->getPayloads($count, $bufferDelay);
+			$payloads = $this->getPayloads($count, $buffer);
 		}
 		
 		if ($payloads)

@@ -2,16 +2,15 @@
 namespace DeepQueue\Plugins\Connectors\InMemoryConnector\Queue;
 
 
-use DeepQueue\Plugins\Logger\Base\ILogger;
 use DeepQueue\Scope;
 use DeepQueue\Payload;
-use DeepQueue\Plugins\Logger\Logger;
-use DeepQueue\Plugins\Connectors\InMemoryConnector\Base\IInMemoryQueueStorage;
+use DeepQueue\Manager\QueueConfig;
+use DeepQueue\Plugins\Logger\Base\ILogger;
 
 use PHPUnit\Framework\TestCase;
 
-use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Serializers\JsonSerializer;
+use Serialization\Json\Serializers\ArraySerializer;
 
 
 class InMemoryQueueTest extends TestCase
@@ -39,7 +38,7 @@ class InMemoryQueueTest extends TestCase
 		self::assertEquals($payload1->Key, $ids[0]);
 		self::assertEquals($payload2->Key, $ids[1]);
 		
-		$workloads = $queue->dequeueWorkload(2);
+		$workloads = $queue->dequeueWorkload(2, null, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 	}
@@ -56,7 +55,7 @@ class InMemoryQueueTest extends TestCase
 		
 		$queue->enqueue([$payload1, $payload2]);
 		
-		$workloads = $queue->dequeueWorkload(2);
+		$workloads = $queue->dequeueWorkload(2, null, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 		self::assertEquals(1, $workloads[0]->Payload[0]);
@@ -74,11 +73,11 @@ class InMemoryQueueTest extends TestCase
 		
 		$queue->enqueue([$payload1, $payload2]);
 		
-		$workloads = $queue->dequeueWorkload(0);
+		$workloads = $queue->dequeueWorkload(0, null, new QueueConfig());
 		
 		self::assertEquals(0, sizeof($workloads));
 		
-		$workloads = $queue->dequeueWorkload(2);
+		$workloads = $queue->dequeueWorkload(2, null, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 		self::assertEquals($payload1->Key, $workloads[0]->Id);
@@ -96,11 +95,11 @@ class InMemoryQueueTest extends TestCase
 		
 		$queue->enqueue([$payload1, $payload2]);
 		
-		$workloads = $queue->dequeueWorkload(-1);
+		$workloads = $queue->dequeueWorkload(-1, null, new QueueConfig());
 		
 		self::assertEquals(0, sizeof($workloads));
 		
-		$workloads = $queue->dequeueWorkload(2);
+		$workloads = $queue->dequeueWorkload(2, null, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 		self::assertEquals($payload1->Key, $workloads[0]->Id);
@@ -118,7 +117,7 @@ class InMemoryQueueTest extends TestCase
 		
 		$queue->enqueue([$payload1, $payload2]);
 		
-		$workloads = $queue->dequeueWorkload(2, 1);
+		$workloads = $queue->dequeueWorkload(2, 1, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 		self::assertEquals(1, $workloads[0]->Payload[0]);
@@ -128,7 +127,7 @@ class InMemoryQueueTest extends TestCase
 	{
 		$queue = $this->getSubject();
 
-		$workloads = $queue->dequeueWorkload(2, 1);
+		$workloads = $queue->dequeueWorkload(2, 1, new QueueConfig());
 		
 		self::assertEmpty($workloads);
 	}

@@ -2,6 +2,7 @@
 namespace DeepQueue\Module\Connector\Decorators;
 
 
+use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
 use DeepQueue\Enums\QueueState;
@@ -25,7 +26,7 @@ class QueueStateDecorator implements IRemoteQueueDecorator
 	/**
 	 * @return Workload[]
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
 	{
 		$queue = $this->requireQueue();
 
@@ -44,7 +45,7 @@ class QueueStateDecorator implements IRemoteQueueDecorator
 			$queue = $this->requireQueue();
 		}
 		
-		return $this->getRemoteQueue()->dequeueWorkload($count, $remainingMS / 1000, $bufferDelay);
+		return $this->getRemoteQueue()->dequeueWorkload($count, $remainingMS / 1000, $config);
 	}
 	
 	/**

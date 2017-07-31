@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\RedisConnector\Queue;
 
 
+use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Payload;
 use DeepQueue\Base\Config\IRedisConfig;
 use DeepQueue\Plugins\Logger\Base\ILogger;
@@ -92,14 +93,14 @@ class RedisQueueTest extends TestCase
 	
 	public function test_dequeue_countZero_getEmptyArray()
 	{
-		$dequeued = $this->getSubject()->dequeueWorkload(0);
+		$dequeued = $this->getSubject()->dequeueWorkload(0, null, new QueueConfig());
 		
 		self::assertEmpty($dequeued);
 	}
 	
 	public function test_dequeue_payloadsNotExist_GetEmptyArray()
 	{
-		$dequeued = $this->getSubject()->dequeueWorkload(255);
+		$dequeued = $this->getSubject()->dequeueWorkload(255, null, new QueueConfig());
 		
 		self::assertEmpty($dequeued);
 	}
@@ -114,7 +115,7 @@ class RedisQueueTest extends TestCase
 		
 		$this->getSubject()->enqueue([$payload1, $payload2]);
 		
-		$dequeued = $this->getSubject()->dequeueWorkload(255);
+		$dequeued = $this->getSubject()->dequeueWorkload(255, null, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($dequeued));
 		self::assertEquals($payload2->Key, $dequeued[1]->Id);

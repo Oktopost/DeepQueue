@@ -12,6 +12,8 @@ use DeepQueue\Enums\Policy;
  * @property float			$MaximalDelay
  * @property float			$DefaultDelay
  * @property int			$MaxBulkSize
+ * @property float			$DelayBuffer
+ * @property int			$PackageSize
  */
 interface IQueueConfig
 {

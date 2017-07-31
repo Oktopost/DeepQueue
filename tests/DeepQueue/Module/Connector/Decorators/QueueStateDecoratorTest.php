@@ -2,6 +2,8 @@
 namespace DeepQueue\Module\Connector\Decorators;
 
 
+use DeepQueue\Base\IQueueConfig;
+use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Payload;
 use DeepQueue\DeepQueue;
 use DeepQueue\Enums\QueueState;
@@ -27,6 +29,11 @@ class QueueStateDecoratorTest extends TestCase
 		return $dq;
 	}
 	
+	private function getConfig(): IQueueConfig
+	{
+		return new QueueConfig();
+	}
+	
 	private function getSubject(): QueueStateDecorator
 	{
 		$queueStateDecorator = new QueueStateDecorator();
@@ -46,7 +53,8 @@ class QueueStateDecoratorTest extends TestCase
 		
 		$decorator->enqueue([$payload1, $payload2]);
 		
-		self::assertEquals(2, sizeof($decorator->dequeueWorkload(2)));
+		self::assertEquals(2, sizeof($decorator
+			->dequeueWorkload(2, null, $this->getConfig())));
 	}
 	
 	public function test_enqueue_queueStopped()
@@ -62,7 +70,8 @@ class QueueStateDecoratorTest extends TestCase
 		
 		$decorator->enqueue([$payload1, $payload2]);
 		
-		self::assertEquals(0, sizeof($decorator->dequeueWorkload(2)));
+		self::assertEquals(0, sizeof($decorator
+			->dequeueWorkload(2, null, $this->getConfig())));
 	}
 	
 	public function test_dequeue_queueRunning()
@@ -79,7 +88,7 @@ class QueueStateDecoratorTest extends TestCase
 		
 		$decorator->enqueue([$payload1, $payload2]);
 		
-		$workloads = $decorator->dequeueWorkload(2);
+		$workloads = $decorator->dequeueWorkload(2, null, $this->getConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 	}
@@ -98,7 +107,7 @@ class QueueStateDecoratorTest extends TestCase
 		
 		$decorator->enqueue([$payload1, $payload2]);
 		
-		$workloads = $decorator->dequeueWorkload(2);
+		$workloads = $decorator->dequeueWorkload(2, null, $this->getConfig());
 		
 		self::assertEquals(0, sizeof($workloads));
 	}
@@ -117,7 +126,7 @@ class QueueStateDecoratorTest extends TestCase
 		
 		$decorator->enqueue([$payload1, $payload2]);
 		
-		$workloads = $decorator->dequeueWorkload(2, 1);
+		$workloads = $decorator->dequeueWorkload(2, 1, $this->getConfig());
 		
 		self::assertEquals(0, sizeof($workloads));
 	}

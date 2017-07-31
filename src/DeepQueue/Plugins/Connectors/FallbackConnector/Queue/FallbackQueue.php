@@ -2,6 +2,7 @@
 namespace DeepQueue\Plugins\Connectors\FallbackConnector\Queue;
 
 
+use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
@@ -51,7 +52,7 @@ class FallbackQueue implements IFallbackQueue
 	/**
 	 * @return Workload[]|array
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
 	{
 		try
 		{
@@ -59,12 +60,12 @@ class FallbackQueue implements IFallbackQueue
 			
 			if ($this->needToDequeueFromFallback())
 			{
-				$workloads = $this->fallback->dequeueWorkload($count, 0, $bufferDelay);
+				$workloads = $this->fallback->dequeueWorkload($count, 0, $config);
 			}
 			
 			if (!$workloads)
 			{
-				$workloads = $this->main->dequeueWorkload($count, $waitSeconds, $bufferDelay);
+				$workloads = $this->main->dequeueWorkload($count, $waitSeconds, $config);
 			}
 			
 			return $workloads;
@@ -75,10 +76,11 @@ class FallbackQueue implements IFallbackQueue
 				'queue'			=> $this->name,
 				'count' 		=> $count,
 				'waitSeconds'	=> $waitSeconds,
-				'bufferDelay'	=> $bufferDelay
+				'delayBuffer'	=> $config->DelayBuffer,
+				'packageSize'	=> $config->PackageSize
 			]);
 			
-			return $this->fallback->dequeueWorkload($count, 0);
+			return $this->fallback->dequeueWorkload($count, 0, $config);
 		}
 	}
 

@@ -5,6 +5,7 @@ namespace DeepQueue\Module\Connector\Decorators;
 use DeepQueue\Scope;
 use DeepQueue\Payload;
 use DeepQueue\Base\IQueueObject;
+use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Base\Validator\IKeyValidator;
 use DeepQueue\Base\Validator\IDelayValidator;
 use DeepQueue\Base\Connector\Decorator\IRemoteQueueDecorator;
@@ -40,7 +41,7 @@ class Validator implements IRemoteQueueDecorator
 		return $this->getRemoteQueue()->enqueue($payload);
 	}
 	
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, float $bufferDelay = 0.0): array
+	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
 	{
 		$queue = $this->requireQueue();
 		
@@ -54,6 +55,6 @@ class Validator implements IRemoteQueueDecorator
 			$count = 0;
 		}
 		
-		return $this->getRemoteQueue()->dequeueWorkload($count, $waitSeconds, $bufferDelay);
+		return $this->getRemoteQueue()->dequeueWorkload($count, $waitSeconds, $config);
 	}
 }
