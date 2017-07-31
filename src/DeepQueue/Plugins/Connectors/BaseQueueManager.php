@@ -10,7 +10,7 @@ use DeepQueue\Utils\TimeGenerator;
 use DeepQueue\Exceptions\InvalidUsageException;
 
 
-class BaseQueueManager implements IQueueManager
+abstract class BaseQueueManager implements IQueueManager
 {
 	/** @var IQueueManagerDAO */
 	private $dao = null;

@@ -26,7 +26,7 @@ class QueueStateDecorator implements IRemoteQueueDecorator
 	/**
 	 * @return Workload[]
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
+	public function dequeueWorkload(int $count = 1, IQueueConfig $config, ?float $waitSeconds = null): array
 	{
 		$queue = $this->requireQueue();
 
@@ -45,7 +45,7 @@ class QueueStateDecorator implements IRemoteQueueDecorator
 			$queue = $this->requireQueue();
 		}
 		
-		return $this->getRemoteQueue()->dequeueWorkload($count, $remainingMS / 1000, $config);
+		return $this->getRemoteQueue()->dequeueWorkload($count, $config, $remainingMS / 1000);
 	}
 	
 	/**

@@ -11,5 +11,5 @@ interface IRemoteDequeue
 	/**
 	 * @return Workload[]
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array;
+	public function dequeueWorkload(int $count = 1, IQueueConfig $config, ?float $waitSeconds = null): array;
 }

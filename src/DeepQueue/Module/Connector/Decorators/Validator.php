@@ -41,7 +41,7 @@ class Validator implements IRemoteQueueDecorator
 		return $this->getRemoteQueue()->enqueue($payload);
 	}
 	
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
+	public function dequeueWorkload(int $count = 1, IQueueConfig $config, ?float $waitSeconds = null): array
 	{
 		$queue = $this->requireQueue();
 		
@@ -55,6 +55,6 @@ class Validator implements IRemoteQueueDecorator
 			$count = 0;
 		}
 		
-		return $this->getRemoteQueue()->dequeueWorkload($count, $waitSeconds, $config);
+		return $this->getRemoteQueue()->dequeueWorkload($count, $config, $waitSeconds);
 	}
 }

@@ -335,11 +335,48 @@ class MySQLQueueDAOTest extends TestCase
 		
 		$workloads = $this->getSubject()->dequeue(self::TEST_QUEUE_NAME, 3, 1);
 		
-		self::assertEquals(1, sizeof($workloads));
+		self::assertEquals(3, sizeof($workloads));
 		
+		$this->getSubject()->flushDelayed(self::TEST_QUEUE_NAME);
 		$workloads = $this->getSubject()->dequeue(self::TEST_QUEUE_NAME, 255);
 		
-		self::assertEquals(2, sizeof($workloads));
+		self::assertEquals(0, sizeof($workloads));
+	}
+	
+	public function test_DequeueAllWithBufferAndPackageSize_DelayedExists_PackagesMoreThanSizeAllMovedToNow()
+	{
+		$payload1 = new Payload();
+		$payload1->Key = 'd1';
+		$payload1->Payload = 'payload1';
+		$payload1->Delay = 1;
+		
+		$payload2 = new Payload();
+		$payload2->Key = 'd2';
+		$payload2->Delay = 1;
+		
+		$payload3 = new Payload();
+		$payload3->Key = 'd3';
+		$payload3->Delay = 1;
+		
+		$payload4 = new Payload();
+		$payload4->Key = 'd4';
+		$payload4->Delay = 3;
+		
+		$payloads = $this->preparePayloads([$payload1, $payload2, $payload3, $payload4]);
+		
+		$this->getSubject()->enqueue(self::TEST_QUEUE_NAME, $payloads);
+		
+		sleep(2);
+		
+		$workloads = $this->getSubject()
+			->dequeue(self::TEST_QUEUE_NAME, 3, 6, 3);
+		
+		self::assertEquals(3, sizeof($workloads));
+		
+		$this->getSubject()->flushDelayed(self::TEST_QUEUE_NAME);
+		$workloads = $this->getSubject()->dequeue(self::TEST_QUEUE_NAME, 255);
+		
+		self::assertEquals(1, sizeof($workloads));
 	}
 	
 	public function test_ClearQueue_EmptyQueue_StillEmpty()

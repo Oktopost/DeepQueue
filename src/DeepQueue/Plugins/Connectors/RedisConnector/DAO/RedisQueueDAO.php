@@ -115,6 +115,34 @@ class RedisQueueDAO implements IRedisQueueDAO, IQueueManagerDAO
 
 		return array_filter(array_combine($keys, $payloads));
 	}
+
+	/**
+	 * @param int|string $time is string when "inf" passed
+	 */
+	private function moveDelayedToNow(string $queueName, $time): void
+	{
+		$delayed = $this->client->zrangebyscore(RedisNameBuilder::getDelayedKey($queueName), 
+			0, $time);
+
+		if (!$delayed)
+		{
+			return;
+		}
+		
+		$transaction = $this->client->transaction();
+		
+		$this->prepareNow($queueName, $transaction, $delayed);
+		
+		$transaction->zrem(RedisNameBuilder::getDelayedKey($queueName), $delayed);
+		
+		$transaction->execute();
+	}
+	
+	private function needToSetZeroBuffer(string $queueName, float $buffer, int $size): bool
+	{
+		return (($size > 0 && $this->countDelayedReadyToDequeue($queueName) >= $size) ||
+			($this->countDelayedReadyToDequeue($queueName, $buffer)) > 0);
+	}
 	
 	
 	public function initClient(IRedisConfig $config): void
@@ -169,30 +197,16 @@ class RedisQueueDAO implements IRedisQueueDAO, IQueueManagerDAO
 		return $this->getPayloads($queueName, $keys);
 	}
 	
-	public function popDelayed(string $queueName, float $bufferOffset = 0.0, bool $popAll = false): void
+	public function popDelayed(string $queueName, float $bufferOffset = 0.0, int $packageSize = 0): void
 	{
+		if ($this->needToSetZeroBuffer($queueName, $bufferOffset, $packageSize))
+		{
+			$bufferOffset = 0;
+		}
+		
 		$time = TimeGenerator::getMs($bufferOffset * -1);
 		
-		if ($popAll)
-		{
-			$time = 'inf';
-		}
-		
-		$delayed = $this->client->zrangebyscore(RedisNameBuilder::getDelayedKey($queueName), 
-			0, $time);
-
-		if (!$delayed)
-		{
-			return;
-		}
-		
-		$transaction = $this->client->transaction();
-		
-		$this->prepareNow($queueName, $transaction, $delayed);
-		
-		$transaction->zrem(RedisNameBuilder::getDelayedKey($queueName), $delayed);
-		
-		$transaction->execute();
+		$this->moveDelayedToNow($queueName, $time);
 	}
 	
 	public function getFirstDelayed(string $queueName): array 
@@ -240,10 +254,11 @@ class RedisQueueDAO implements IRedisQueueDAO, IQueueManagerDAO
 		return (isset($firstKey[0]) && $firstKey[0] == RedisNameBuilder::getZeroKey()) ? $size - 1 : $size;
 	}
 
-	public function countDelayedReadyToDequeue(string $queueName): int
+	public function countDelayedReadyToDequeue(string $queueName, ?float $delayBuffer = 0.0): int
 	{
 		return $this->client
-			->zcount(RedisNameBuilder::getDelayedKey($queueName),  0, TimeGenerator::getMs());
+			->zcount(RedisNameBuilder::getDelayedKey($queueName),  0, 
+				TimeGenerator::getMs($delayBuffer * -1));
 	}
 
 	public function getDelayedElementByIndex(string $queueName, int $index): array
@@ -254,6 +269,6 @@ class RedisQueueDAO implements IRedisQueueDAO, IQueueManagerDAO
 
 	public function flushDelayed(string $queueName): void
 	{
-		$this->popDelayed($queueName, 0, true);
+		$this->moveDelayedToNow($queueName, 'inf');
 	}
 }

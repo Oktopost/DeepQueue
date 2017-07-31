@@ -56,14 +56,14 @@ class RedisDequeue implements IRedisDequeue
 	}
 
 	
-	public function dequeue(int $count = 1, int $waitSeconds, float $bufferDelay = 0.0): array 
+	public function dequeue(int $count = 1, int $waitSeconds, float $bufferDelay = 0.0, int $size = 0): array 
 	{
 		if (!$this->startTime)
 		{
 			$this->startTime = TimeGenerator::getMs($waitSeconds);
 		}
-		
-		$this->dao->popDelayed($this->name, $bufferDelay);
+				
+		$this->dao->popDelayed($this->name, $bufferDelay, $size);
 
 		$waitSeconds = $this->decreaseWaiting();
 

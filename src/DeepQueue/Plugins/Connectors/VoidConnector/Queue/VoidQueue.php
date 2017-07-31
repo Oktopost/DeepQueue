@@ -9,7 +9,7 @@ use DeepQueue\Utils\TimeBasedRandomIdGenerator;
 
 class VoidQueue implements IRemoteQueue
 {
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
+	public function dequeueWorkload(int $count = 1, IQueueConfig $config, ?float $waitSeconds = null): array
 	{
 		return [];
 	}

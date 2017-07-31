@@ -2,9 +2,9 @@
 namespace DeepQueue\Plugins\Connectors\MySQLConnector\Queue;
 
 
-use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Payload;
 use DeepQueue\Workload;
+use DeepQueue\Base\IQueueConfig;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Utils\PayloadConverter;
 use DeepQueue\Plugins\Logger\Base\ILogger;
@@ -44,12 +44,12 @@ class MySQLQueue implements IRemoteQueue
 		}
 	}
 	
-	private function getPayloads(int $count, int $bufferDelay): array 
+	private function getPayloads(int $count, int $bufferDelay, int $packageSize): array 
 	{
-		return $this->dao->dequeue($this->name, $count, $bufferDelay);
+		return $this->dao->dequeue($this->name, $count, $bufferDelay, $packageSize);
 	}
 	
-	private function getPayloadsWithWaiting(int $count, float $waitSeconds, int $bufferDelay)
+	private function getPayloadsWithWaiting(int $count, float $waitSeconds, int $bufferDelay, int $packageSize)
 	{
 		$waitSeconds = (int)floor($waitSeconds);
 
@@ -57,7 +57,7 @@ class MySQLQueue implements IRemoteQueue
 
 		while ($waitSeconds >= 0)
 		{
-			$payloads = $this->getPayloads($count, $bufferDelay);
+			$payloads = $this->getPayloads($count, $bufferDelay, $packageSize);
 			
 			$sleepTime = min($waitSeconds, self::MAX_SLEEP_TIME);
 
@@ -87,17 +87,17 @@ class MySQLQueue implements IRemoteQueue
 	/**
 	 * @return Workload[]|array
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
+	public function dequeueWorkload(int $count = 1, IQueueConfig $config, ?float $waitSeconds = null): array
 	{
 		$buffer = (int)floor($config->DelayBuffer);
 		
 		if ($waitSeconds > 0)
 		{
-			$payloads = $this->getPayloadsWithWaiting($count, $waitSeconds, $buffer);
+			$payloads = $this->getPayloadsWithWaiting($count, $waitSeconds, $buffer, $config->PackageSize);
 		}
 		else
 		{
-			$payloads = $this->getPayloads($count, $buffer);
+			$payloads = $this->getPayloads($count, $buffer, $config->PackageSize);
 		}
 		
 		if ($payloads)

@@ -8,7 +8,7 @@ interface IQueueManagerDAO
 	public function countDelayed(string $queueName): int;
 	public function countNotDelayed(string $queueName): int;
 	
-	public function countDelayedReadyToDequeue(string $queueName): int;
+	public function countDelayedReadyToDequeue(string $queueName, ?float $delayBuffer = 0.0): int;
 	public function getFirstDelayed(string $queueName): array;
 	public function getDelayedElementByIndex(string $queueName, int $index): array;
 	

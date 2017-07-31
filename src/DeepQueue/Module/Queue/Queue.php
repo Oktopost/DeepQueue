@@ -71,7 +71,7 @@ class Queue implements IQueue
 	{
 		try
 		{
-			return $this->remoteDequeue->dequeueWorkload($count, $waitSeconds, $this->config);
+			return $this->remoteDequeue->dequeueWorkload($count, $this->config, $waitSeconds);
 		}
 		catch (\Throwable $e)
 		{

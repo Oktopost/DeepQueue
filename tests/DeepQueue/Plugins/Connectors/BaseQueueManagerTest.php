@@ -25,7 +25,7 @@ class BaseQueueManagerTest extends TestCase
 	
 	private function getSubject(?IQueueManagerDAO $dao = null): BaseQueueManager
 	{
-		$manager = new BaseQueueManager();
+		$manager = new TestQueueManager();
 		$manager->setQueueName(self::QUEUE_NAME);
 		
 		if (!$dao)
@@ -121,4 +121,10 @@ class BaseQueueManagerTest extends TestCase
 		
 		$this->getSubject($dao)->flushDelayed();
 	}
+}
+
+
+class TestQueueManager extends BaseQueueManager
+{
+	
 }

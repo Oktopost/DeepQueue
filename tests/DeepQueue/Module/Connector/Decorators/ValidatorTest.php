@@ -49,7 +49,7 @@ class ValidatorTest extends TestCase
 		
 		self::assertEquals(2, sizeof($ids));
 		
-		$validator->dequeueWorkload(2, null, new QueueConfig());
+		$validator->dequeueWorkload(2, new QueueConfig());
 	}
 
 	/**
@@ -71,7 +71,7 @@ class ValidatorTest extends TestCase
 		
 		self::assertEquals(2, sizeof($ids));
 		
-		$validator->dequeueWorkload(2, null, new QueueConfig());
+		$validator->dequeueWorkload(2, new QueueConfig());
 	}
 	
 	public function test_Dequeue_CorrectMaxBulkSize()
@@ -89,7 +89,7 @@ class ValidatorTest extends TestCase
 		
 		$validator->enqueue([$payload1, $payload2]);
 		
-		$workloads = $validator->dequeueWorkload(2, null, new QueueConfig());
+		$workloads = $validator->dequeueWorkload(2, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 	}
@@ -109,7 +109,7 @@ class ValidatorTest extends TestCase
 		
 		$validator->enqueue([$payload1, $payload2]);
 		
-		$workloads = $validator->dequeueWorkload(2, null, new QueueConfig());
+		$workloads = $validator->dequeueWorkload(2, new QueueConfig());
 		
 		self::assertEquals(1, sizeof($workloads));
 	}
@@ -118,6 +118,6 @@ class ValidatorTest extends TestCase
 	{
 		$validator = $this->getSubject();
 		
-		self::assertEmpty($validator->dequeueWorkload(-1, null, new QueueConfig()));
+		self::assertEmpty($validator->dequeueWorkload(-1, new QueueConfig()));
 	}
 }

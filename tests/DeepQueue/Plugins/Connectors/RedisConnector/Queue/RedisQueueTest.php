@@ -93,14 +93,14 @@ class RedisQueueTest extends TestCase
 	
 	public function test_dequeue_countZero_getEmptyArray()
 	{
-		$dequeued = $this->getSubject()->dequeueWorkload(0, null, new QueueConfig());
+		$dequeued = $this->getSubject()->dequeueWorkload(0, new QueueConfig());
 		
 		self::assertEmpty($dequeued);
 	}
 	
 	public function test_dequeue_payloadsNotExist_GetEmptyArray()
 	{
-		$dequeued = $this->getSubject()->dequeueWorkload(255, null, new QueueConfig());
+		$dequeued = $this->getSubject()->dequeueWorkload(255, new QueueConfig());
 		
 		self::assertEmpty($dequeued);
 	}
@@ -115,7 +115,7 @@ class RedisQueueTest extends TestCase
 		
 		$this->getSubject()->enqueue([$payload1, $payload2]);
 		
-		$dequeued = $this->getSubject()->dequeueWorkload(255, null, new QueueConfig());
+		$dequeued = $this->getSubject()->dequeueWorkload(255, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($dequeued));
 		self::assertEquals($payload2->Key, $dequeued[1]->Id);

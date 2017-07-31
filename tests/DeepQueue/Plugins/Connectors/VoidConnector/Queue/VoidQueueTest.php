@@ -26,6 +26,6 @@ class VoidQueueTest extends TestCase
 	
 	public function test_dequeueWorkload()
 	{
-		self::assertEmpty($this->getSubject()->dequeueWorkload(255, null, new QueueConfig()));
+		self::assertEmpty($this->getSubject()->dequeueWorkload(255, new QueueConfig()));
 	}
 }

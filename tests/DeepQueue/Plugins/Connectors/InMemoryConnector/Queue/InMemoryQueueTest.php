@@ -38,7 +38,7 @@ class InMemoryQueueTest extends TestCase
 		self::assertEquals($payload1->Key, $ids[0]);
 		self::assertEquals($payload2->Key, $ids[1]);
 		
-		$workloads = $queue->dequeueWorkload(2, null, new QueueConfig());
+		$workloads = $queue->dequeueWorkload(2, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 	}
@@ -55,7 +55,7 @@ class InMemoryQueueTest extends TestCase
 		
 		$queue->enqueue([$payload1, $payload2]);
 		
-		$workloads = $queue->dequeueWorkload(2, null, new QueueConfig());
+		$workloads = $queue->dequeueWorkload(2, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 		self::assertEquals(1, $workloads[0]->Payload[0]);
@@ -73,11 +73,11 @@ class InMemoryQueueTest extends TestCase
 		
 		$queue->enqueue([$payload1, $payload2]);
 		
-		$workloads = $queue->dequeueWorkload(0, null, new QueueConfig());
+		$workloads = $queue->dequeueWorkload(0, new QueueConfig());
 		
 		self::assertEquals(0, sizeof($workloads));
 		
-		$workloads = $queue->dequeueWorkload(2, null, new QueueConfig());
+		$workloads = $queue->dequeueWorkload(2, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 		self::assertEquals($payload1->Key, $workloads[0]->Id);
@@ -95,11 +95,11 @@ class InMemoryQueueTest extends TestCase
 		
 		$queue->enqueue([$payload1, $payload2]);
 		
-		$workloads = $queue->dequeueWorkload(-1, null, new QueueConfig());
+		$workloads = $queue->dequeueWorkload(-1, new QueueConfig());
 		
 		self::assertEquals(0, sizeof($workloads));
 		
-		$workloads = $queue->dequeueWorkload(2, null, new QueueConfig());
+		$workloads = $queue->dequeueWorkload(2, new QueueConfig());
 		
 		self::assertEquals(2, sizeof($workloads));
 		self::assertEquals($payload1->Key, $workloads[0]->Id);
@@ -117,7 +117,7 @@ class InMemoryQueueTest extends TestCase
 		
 		$queue->enqueue([$payload1, $payload2]);
 		
-		$workloads = $queue->dequeueWorkload(2, 1, new QueueConfig());
+		$workloads = $queue->dequeueWorkload(2, new QueueConfig(),1);
 		
 		self::assertEquals(2, sizeof($workloads));
 		self::assertEquals(1, $workloads[0]->Payload[0]);
@@ -127,7 +127,7 @@ class InMemoryQueueTest extends TestCase
 	{
 		$queue = $this->getSubject();
 
-		$workloads = $queue->dequeueWorkload(2, 1, new QueueConfig());
+		$workloads = $queue->dequeueWorkload(2, new QueueConfig(), 1);
 		
 		self::assertEmpty($workloads);
 	}

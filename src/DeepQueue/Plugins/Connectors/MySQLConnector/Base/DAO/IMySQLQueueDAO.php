@@ -16,5 +16,5 @@ interface IMySQLQueueDAO
 	public function initConnector($config): void;
 	
 	public function enqueue(string $queueName, array $payloads): array;
-	public function dequeue(string $queueName, int $count = 1, int $bufferDelay = 0): array;
+	public function dequeue(string $queueName, int $count = 1, int $bufferDelay = 0, int $packageSize = 0): array;
 }

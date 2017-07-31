@@ -10,7 +10,7 @@ use DeepQueue\Base\Connector\Decorator\IRemoteQueueDecorator;
 
 class ThrowableQueueDecorator implements IRemoteQueueDecorator
 {
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
+	public function dequeueWorkload(int $count = 1, IQueueConfig $config, ?float $waitSeconds = null): array
 	{
 		throw new \Exception();
 	}

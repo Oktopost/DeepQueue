@@ -61,6 +61,12 @@ class MySQLQueueDAO implements IMySQLQueueDAO, IQueueManagerDAO
 	{
 		return [$element['Id'] => strtotime($element['DequeueTime']) * 1000];
 	}
+	
+	private function needToSetZeroBuffer(string $queueName, int $buffer, int $size): bool
+	{
+		return (($size > 0 && $this->countDelayedReadyToDequeue($queueName) >= $size) ||
+			($this->countDelayedReadyToDequeue($queueName, $buffer)) > 0);
+	}
 
 
 	/**
@@ -107,11 +113,16 @@ class MySQLQueueDAO implements IMySQLQueueDAO, IQueueManagerDAO
 		return array_map($mapFunction, $payloads['enqueue']);
 	}
 
-	public function dequeue(string $queueName, int $count = 1, int $bufferDelay = 0): array
+	public function dequeue(string $queueName, int $count = 1, int $bufferDelay = 0, int $packageSize = 0): array
 	{
 		if ($count <= 0)
 		{
 			return [];
+		}
+		
+		if ($this->needToSetZeroBuffer($queueName, $bufferDelay, $packageSize))
+		{
+			$bufferDelay = 0;
 		}
 		
 		$ids = $this->getIds($queueName, $count, $bufferDelay);
@@ -166,9 +177,10 @@ class MySQLQueueDAO implements IMySQLQueueDAO, IQueueManagerDAO
 			->executeDml();
 	}
 
-	public function countNotDelayed(string $queueName): int
+	public function countNotDelayed(string $queueName, ?int $time = null): int
 	{
-		$now = date('Y-m-d H:i:s');
+		$time = $time ?: time();
+		$now = date('Y-m-d H:i:s', $time);
 		
 		return $this->connector
 			->select()
@@ -178,9 +190,11 @@ class MySQLQueueDAO implements IMySQLQueueDAO, IQueueManagerDAO
 			->queryCount();
 	}
 
-	public function countDelayedReadyToDequeue(string $queueName): int
+	public function countDelayedReadyToDequeue(string $queueName, ?float $delayBuffer = 0.0): int
 	{
-		return $this->countNotDelayed($queueName);
+		$time = time() - (int)floor($delayBuffer);
+		
+		return $this->countNotDelayed($queueName, $time);
 	}
 
 	public function getFirstDelayed(string $queueName): array

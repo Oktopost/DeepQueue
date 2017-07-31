@@ -52,7 +52,7 @@ class FallbackQueue implements IFallbackQueue
 	/**
 	 * @return Workload[]|array
 	 */
-	public function dequeueWorkload(int $count = 1, ?float $waitSeconds = null, IQueueConfig $config): array
+	public function dequeueWorkload(int $count = 1, IQueueConfig $config, ?float $waitSeconds = null): array
 	{
 		try
 		{
@@ -60,12 +60,12 @@ class FallbackQueue implements IFallbackQueue
 			
 			if ($this->needToDequeueFromFallback())
 			{
-				$workloads = $this->fallback->dequeueWorkload($count, 0, $config);
+				$workloads = $this->fallback->dequeueWorkload($count, $config);
 			}
 			
 			if (!$workloads)
 			{
-				$workloads = $this->main->dequeueWorkload($count, $waitSeconds, $config);
+				$workloads = $this->main->dequeueWorkload($count, $config, $waitSeconds);
 			}
 			
 			return $workloads;
@@ -80,7 +80,7 @@ class FallbackQueue implements IFallbackQueue
 				'packageSize'	=> $config->PackageSize
 			]);
 			
-			return $this->fallback->dequeueWorkload($count, 0, $config);
+			return $this->fallback->dequeueWorkload($count, $config);
 		}
 	}
 
