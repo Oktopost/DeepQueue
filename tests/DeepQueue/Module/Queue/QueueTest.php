@@ -270,6 +270,30 @@ class QueueTest extends TestCase
 		self::assertEquals($data2[0], $payloadData[1][0]);
 	}
 	
+	public function test_EnqueueAll_KeyExistWithoutPayload_GetKey()
+	{
+		$queue = $this->getSubject();
+		
+		$key1 = 'test';
+		$data1 = [1,2,3];
+		
+		$key2 = 'test2';
+		$data2 = ['a', 'b', 'c'];
+		
+		$ids = $queue->enqueueAll(['test' => $data1, 'test2' => $data2]);
+		
+		self::assertEquals($key1, $ids[0]);
+		self::assertEquals($key2, $ids[1]);
+		
+		$payloadData = $queue->dequeueWorkload(2);
+		
+		self::assertEquals($key1, $payloadData[0]->Id);
+		self::assertEquals($key2, $payloadData[1]->Id);
+		
+		self::assertEquals($data1[0], $payloadData[0]->Payload[0]);
+		self::assertEquals($data2[0], $payloadData[1]->Payload[0]);
+	}
+	
 	public function test_EnqueueAll_NoKeyExist_GetNewKey()
 	{
 		$queue = $this->getSubject();

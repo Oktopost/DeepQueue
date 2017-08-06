@@ -162,6 +162,12 @@ class Queue implements IQueue
 			if (!($payload instanceof Payload))
 			{
 				$payload = new Payload($payload);
+				
+				if (is_string($key))
+				{
+					$payload->Key = $key;
+				}
+				
 				$payloads[$key] = $payload;
 			}
 			
