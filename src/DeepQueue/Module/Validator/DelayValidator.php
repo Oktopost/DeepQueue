@@ -19,7 +19,7 @@ class DelayValidator implements IDelayValidator
 			$payload->Delay = $queue->Config->MaximalDelay;
 		}
 		
-		if ($payload->Delay < $queue->Config->MinimalDelay && $queue->Config->MaximalDelay > -1)
+		if ($payload->Delay < $queue->Config->MinimalDelay && $queue->Config->MinimalDelay > -1)
 		{
 			$payload->Delay = $queue->Config->MinimalDelay;
 		}
