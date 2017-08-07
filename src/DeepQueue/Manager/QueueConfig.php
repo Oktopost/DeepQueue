@@ -2,11 +2,11 @@
 namespace DeepQueue\Manager;
 
 
-use DeepQueue\Enums\Policy;
 use DeepQueue\Base\IQueueConfig;
+use DeepQueue\Enums\Policy;
 
-use Objection\LiteObject;
 use Objection\LiteSetup;
+use Objection\LiteObject;
 
 
 class QueueConfig extends LiteObject implements IQueueConfig
