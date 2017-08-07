@@ -156,6 +156,7 @@ class Queue implements IQueue
 	public function enqueueAll(array $payloads, ?float $delay = null): array
 	{
 		$hasDelay = !is_null($delay);
+		$parsedPayloads = [];
 		
 		foreach ($payloads as $key => $payload)
 		{
@@ -167,25 +168,25 @@ class Queue implements IQueue
 				{
 					$payload->Key = $key;
 				}
-				
-				$payloads[$key] = $payload;
 			}
 			
 			if ($hasDelay)
 			{
 				$payload->Delay = $delay;
 			}
+			
+			$parsedPayloads[] = $payload;
 		}
 		
 		try
 		{
-			return $this->remoteEnqueue->enqueue($payloads);
+			return $this->remoteEnqueue->enqueue($parsedPayloads);
 		}
 		catch (\Throwable $e)
 		{
 			$this->log($e, 'enqueueAll', [
 				'queue'			=> $this->name,
-				'payloadsCount'	=> sizeof($payloads),
+				'payloadsCount'	=> count($payloads),
 				'delay'			=> $delay
 			]);
 		}
