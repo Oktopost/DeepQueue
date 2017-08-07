@@ -32,8 +32,6 @@ class RedisManager extends AbstractManager implements IRedisManager
 			$this->defaultQueueConfig->UniqueKeyPolicy = Policy::ALLOWED;
 			$this->defaultQueueConfig->DelayPolicy = Policy::ALLOWED;
 			$this->defaultQueueConfig->MaxBulkSize = 256;
-			$this->defaultQueueConfig->MaximalDelay = -1;
-			$this->defaultQueueConfig->MinimalDelay = -1;
 			$this->defaultQueueConfig->DefaultDelay = 0;
 		}
 

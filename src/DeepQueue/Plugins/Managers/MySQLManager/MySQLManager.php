@@ -33,8 +33,7 @@ class MySQLManager extends AbstractManager implements IMySQLManager
 			$this->defaultQueueConfig->UniqueKeyPolicy = Policy::ALLOWED;
 			$this->defaultQueueConfig->DelayPolicy = Policy::ALLOWED;
 			$this->defaultQueueConfig->MaxBulkSize = 256;
-			$this->defaultQueueConfig->MaximalDelay = 5;
-			$this->defaultQueueConfig->DefaultDelay = 1;
+			$this->defaultQueueConfig->DefaultDelay = 0;
 		}
 
 		return clone $this->defaultQueueConfig;
