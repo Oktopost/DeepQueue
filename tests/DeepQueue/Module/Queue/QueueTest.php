@@ -290,8 +290,8 @@ class QueueTest extends TestCase
 		self::assertEquals($key1, $payloadData[0]->Id);
 		self::assertEquals($key2, $payloadData[1]->Id);
 		
-		self::assertEquals($data1[0], $payloadData[0]->Payload[0]);
-		self::assertEquals($data2[0], $payloadData[1]->Payload[0]);
+		self::assertEquals($data1, $payloadData[0]->Payload);
+		self::assertEquals($data2, $payloadData[1]->Payload);
 	}
 	
 	public function test_EnqueueAll_NoKeyExist_GetNewKey()
