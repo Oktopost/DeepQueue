@@ -8,6 +8,8 @@ use DeepQueue\Enums\QueueLoaderPolicy;
 use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\Config\IRedisConfig;
 use DeepQueue\Base\Plugins\IManagerPlugin;
+use DeepQueue\Payload;
+use DeepQueue\Plugins\Connectors\RedisConnector\RedisConnector;
 use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Manager\QueueConfig;
 use DeepQueue\Manager\QueueObject;
@@ -34,17 +36,22 @@ class RedisManagerTest extends TestCase
 		return RedisConfigParser::parse($config);
 	}
 	
-	private function getSubject(): IManagerPlugin
+	private function getDQ(): DeepQueue
 	{
 		$dq = new DeepQueue();
 		
 		$dq->config()
-			->setManagerPlugin(new RedisManager($this->getConfig()))
+			->setManagerPlugin(new RedisManager($this->getConfig()))	
 			->setQueueNotExistsPolicy(QueueLoaderPolicy::CREATE_NEW)
-			->setConnectorPlugin(new InMemoryConnector())
+			->setConnectorPlugin(new RedisConnector($this->getConfig()))
 			->setSerializer((new JsonSerializer())->add(new ArraySerializer())->add(new PrimitiveSerializer()));
 		
-		return $dq->config()->manager();
+		return $dq;
+	}
+	
+	private function getSubject(): IManagerPlugin
+	{
+		return $this->getDQ()->config()->manager();
 	}
 	
 	private function getClient(): Client
@@ -283,5 +290,37 @@ class RedisManagerTest extends TestCase
 		sleep(3);
 		
 		self::assertNull($manager->load('ttltest'));
+	}
+	
+	public function test_flushCache_QueueNotExistInCacheAfterFlush_QueuedDataNotAffected()
+	{
+		/** @var IRedisManager $manager */
+		$manager = $this->getSubject();
+		
+		$object = new QueueObject();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
+		$object->Name = 'flushtest';
+		
+		$objectConfig = new QueueConfig();
+		$objectConfig->UniqueKeyPolicy = Policy::ALLOWED;
+		$objectConfig->DelayPolicy = Policy::IGNORED;
+		$objectConfig->MaxBulkSize = 256;
+		
+		$object->Config = $objectConfig;
+		
+		$manager->create($object);
+		
+		$payload = new Payload('staying-alive');
+		$payload->Key = 'staying-alive';
+		
+		$this->getDQ()->get($object->Name)->enqueue($payload);
+			
+		$manager->flushCache();
+	
+		self::assertNull($manager->load('flushtest'));
+		
+		$payload = $this->getDQ()->get($object->Name)->dequeue(1);
+		
+		self::assertEquals('staying-alive', $payload[0]);
 	}
 }

@@ -335,4 +335,36 @@ class CachedManagerTest extends TestCase
 		
 		self::assertEquals($object->Id, $manager->load('ttltest')->Id);
 	}
+	
+	public function test_flushCache_QueueNotExistInCacheAfterFlush()
+	{
+		/** @var ICachedManager $manager */
+		$manager = $this->getSubject();
+		
+		$object = new QueueObject();
+		$object->Id = (new TimeBasedRandomIdGenerator())->get();
+		$object->Name = 'flushtest';
+		
+		$objectConfig = new QueueConfig();
+		$objectConfig->UniqueKeyPolicy = Policy::ALLOWED;
+		$objectConfig->DelayPolicy = Policy::IGNORED;
+		$objectConfig->MaxBulkSize = 256;
+		
+		$object->Config = $objectConfig;
+		
+		$manager->create($object);
+		$manager->load($object->Name);
+		
+		$cacheData = $this->getClient(self::CACHE_BUCKET)->hgetall('queue:flushtest');
+		
+		self::assertNotEmpty($cacheData);
+		
+		$manager->flushCache();
+		
+		$cacheData = $this->getClient(self::CACHE_BUCKET)->hgetall('queue:flushtest');
+		
+		self::assertEmpty($cacheData);
+		
+		self::assertEquals($object->Id, $manager->load('flushtest')->Id);
+	}
 }

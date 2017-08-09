@@ -83,4 +83,12 @@ class CachedManager implements ICachedManager
 	{
 		return $this->main->loadAll();
 	}
+	
+	public function flushCache(): void
+	{
+		if ($this->cache instanceof ICacheableManager)
+		{
+			$this->cache->flushCache();
+		}
+	}
 }

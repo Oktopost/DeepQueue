@@ -50,7 +50,7 @@ class RedisManagerDAO implements IRedisManagerDAO
 	
 	private function deserializeConfig(string $configData): IQueueConfig
 	{
-		return  $this->serializer->deserialize($configData);
+		return $this->serializer->deserialize($configData);
 	}
 
 	private function prepareData(IQueueObject $queueObject): array
@@ -169,5 +169,25 @@ class RedisManagerDAO implements IRedisManagerDAO
 		$this->client->pipeline()
 			->del([$this->getNameKey($name), $this->getIdKey($queueId)])
 			->execute();
+	}
+	
+	public function deleteAll(): void
+	{
+		$prefix = $this->client->getOptions()->prefix ? $this->client->getOptions()->prefix->getPrefix() : '';
+		
+		$keyPrefixes = [
+			$this->getIdKey(''),
+			$this->getNameKey('')
+		];
+		
+		$transaction = $this->client->transaction();
+		
+		foreach ($keyPrefixes as $keyPrefix)
+		{
+			$transaction->eval("return redis.call('del', 'defaultKey', unpack(redis.call('keys', ARGV[1])))", 
+			0, $prefix . $keyPrefix . '*');
+		}
+		
+		$transaction->execute();
 	}
 }

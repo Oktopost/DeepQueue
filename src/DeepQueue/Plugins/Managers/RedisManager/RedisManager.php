@@ -70,4 +70,9 @@ class RedisManager extends AbstractManager implements IRedisManager
 		
 		$this->dao->delete($object);
 	}
+	
+	public function flushCache(): void
+	{
+		$this->dao->deleteAll();
+	}
 }
