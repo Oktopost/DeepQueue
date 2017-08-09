@@ -138,10 +138,20 @@ class RedisQueueDAO implements IRedisQueueDAO, IQueueManagerDAO
 		$transaction->execute();
 	}
 	
-	private function needToSetZeroBuffer(string $queueName, float $buffer, int $size): bool
+	private function isPackageReady(string $queueName, int $packageSize): bool
 	{
-		return (($size > 0 && $this->countDelayedReadyToDequeue($queueName) >= $size) ||
-			($this->countDelayedReadyToDequeue($queueName, $buffer)) > 0);
+		return $this->countDelayedReadyToDequeue($queueName) >= $packageSize;
+	}
+	
+	private function isBufferOverflowed(string $queueName, float $buffer): bool
+	{
+		return $this->countDelayedReadyToDequeue($queueName, $buffer) > 0;
+	}
+	
+	private function needToSetZeroBuffer(string $queueName, float $buffer, int $packageSize): bool
+	{
+		return (($packageSize > 0 && $this->isPackageReady($queueName, $packageSize)) ||
+			$this->isBufferOverflowed($queueName, $buffer));
 	}
 	
 	

@@ -325,4 +325,93 @@ class RedisDequeueTest extends TestCase
 		self::assertEquals(1, sizeof($delayIds));
 		self::assertEquals($payload5->Key, $delayIds[0]);
 	}
+	
+	public function test_dequeue_Delayed_WithWaitingAndBuffer_WaitingLessThanBuffer_GotEmptyArray()
+	{
+		$delayedPayload = new Payload('payload-data');
+		$delayedPayload->Key = 'buftest1';
+		$delayedPayload->Delay = 1;
+		
+		$delayedPayload2 = new Payload('payload-data');
+		$delayedPayload2->Key = 'buftest2';
+		$delayedPayload2->Delay = 2;
+		
+		$payloads = $this->preparePayloads([$delayedPayload, $delayedPayload2]);
+		$this->getDAO()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		$startTime = microtime(true);
+		
+		$payloads = $this->getSubject()->dequeue(255, 2, 2);
+		
+		$endTime = microtime(true) - $startTime;
+		
+		self::assertEmpty($payloads);
+		self::assertEquals(2, $endTime, '', 0.5);
+	}
+	
+	public function test_dequeue_Delayed_WithWaitingAndBuffer_GetDelayedAfterBufferOverflow_GotDelayed()
+	{
+		$delayedPayload = new Payload('payload-data');
+		$delayedPayload->Key = 'buftest1';
+		$delayedPayload->Delay = 1;
+		
+		$delayedPayload2 = new Payload('payload-data');
+		$delayedPayload2->Key = 'buftest2';
+		$delayedPayload2->Delay = 2;
+		
+		$delayedPayload3 = new Payload('payload-data');
+		$delayedPayload3->Key = 'buftest3';
+		$delayedPayload3->Delay = 3;
+		
+		$payloads = $this->preparePayloads([$delayedPayload, $delayedPayload2, $delayedPayload3]);
+		$this->getDAO()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		$startTime = microtime(true);
+		
+		$payloads = $this->getSubject()->dequeue(255, 3, 1, 3);
+		
+		$endTime = microtime(true) - $startTime;
+		
+		self::assertEquals(2, count($payloads));
+		self::assertEquals(2, $endTime, '', 0.5);
+	}
+	
+	public function test_dequeue_Delayed_WithWaitBufferAndPackageSize_PackageReadyBeforeBuffer_GotDelayed()
+	{
+		$delayedPayload = new Payload('payload-data');
+		$delayedPayload->Key = 'buftest1';
+		$delayedPayload->Delay = 1;
+		
+		$delayedPayload2 = new Payload('payload-data');
+		$delayedPayload2->Key = 'buftest2';
+		$delayedPayload2->Delay = 2;
+		
+		$delayedPayload3 = new Payload('payload-data');
+		$delayedPayload3->Key = 'buftest3';
+		$delayedPayload3->Delay = 2;
+		
+		$payloads = $this->preparePayloads([$delayedPayload, $delayedPayload2, $delayedPayload3]);
+		$this->getDAO()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		$startTime = microtime(true);
+		
+		$payloads = $this->getSubject()->dequeue(255, 4, 4, 3);
+		
+		$endTime = microtime(true) - $startTime;
+		
+		self::assertEquals(3, count($payloads));
+		self::assertEquals(2, $endTime, '', 0.5);
+	}
+	
+	public function test_dequeue_NoDelayed_WithWaitBuffer_GotEmptyArray()
+	{
+		$startTime = microtime(true);
+		
+		$payloads = $this->getSubject()->dequeue(255, 2, 2, 3);
+		
+		$endTime = microtime(true) - $startTime;
+		
+		self::assertEmpty($payloads);
+		self::assertEquals(2, $endTime, '', 0.5);
+	}
 }

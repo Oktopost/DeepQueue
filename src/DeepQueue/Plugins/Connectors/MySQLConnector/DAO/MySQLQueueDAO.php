@@ -62,10 +62,20 @@ class MySQLQueueDAO implements IMySQLQueueDAO, IQueueManagerDAO
 		return [$element['Id'] => strtotime($element['DequeueTime']) * 1000];
 	}
 	
-	private function needToSetZeroBuffer(string $queueName, int $buffer, int $size): bool
+	private function isPackageReady(string $queueName, int $packageSize): bool
 	{
-		return (($size > 0 && $this->countDelayedReadyToDequeue($queueName) >= $size) ||
-			($this->countDelayedReadyToDequeue($queueName, $buffer)) > 0);
+		return $this->countDelayedReadyToDequeue($queueName) >= $packageSize;
+	}
+	
+	private function isBufferOverflowed(string $queueName, int $buffer): bool
+	{
+		return $this->countDelayedReadyToDequeue($queueName, $buffer) > 0;
+	}
+	
+	private function needToSetZeroBuffer(string $queueName, int $buffer, int $packageSize): bool
+	{
+		return (($packageSize > 0 && $this->isPackageReady($queueName, $packageSize)) ||
+			$this->isBufferOverflowed($queueName, $buffer));
 	}
 
 
