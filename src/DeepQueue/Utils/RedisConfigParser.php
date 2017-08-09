@@ -18,7 +18,8 @@ class RedisConfigParser
 		'host'		=> ['host'],
 		'port'		=> ['port'],
 		'ssl'		=> ['ssl'],
-		'prefix'	=> ['prefix', 'scope']
+		'prefix'	=> ['prefix', 'scope'],
+		'timeout'	=> ['read_write_timeout', 'timeout']
 	];
 	
 	private const DEFAULTS =
@@ -27,7 +28,8 @@ class RedisConfigParser
 		'host'		=> '127.0.0.1',
 		'port'		=> '6379',
 		'ssl'		=> [],
-		'prefix'	=> 'deepqueue'	
+		'prefix'	=> 'deepqueue',
+		'timeout'	=> '-1'
 	];
 
 
@@ -57,6 +59,7 @@ class RedisConfigParser
 		$object->Port		= self::getValue(self::DEFAULTS['port'], 'port', $config);
 		$object->SSL		= self::getValue(self::DEFAULTS['ssl'], 'ssl', $config);
 		$object->Prefix		= self::getValue(self::DEFAULTS['prefix'], 'prefix', $config);
+		$object->Timeout	= self::getValue(self::DEFAULTS['timeout'], 'timeout', $config);
 		
 		return $object;
 	}
