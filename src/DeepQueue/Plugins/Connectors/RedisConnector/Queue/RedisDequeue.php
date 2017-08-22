@@ -29,7 +29,7 @@ class RedisDequeue implements IRedisDequeue
 	
 	private function getWaitingTime(array $result, int $waitingSeconds): int 
 	{
-		$lastTime = round($this->getOffset($result) / 1000);	
+		$lastTime = round($this->getOffset($result) / 1000);
 		
 		return ($lastTime > 0 && $lastTime < $waitingSeconds) ? $lastTime : $waitingSeconds;
 	}
@@ -77,8 +77,41 @@ class RedisDequeue implements IRedisDequeue
 		{
 			$timeToWait = $this->getBufferReadyWaitSeconds($timeLeft, $bufferDelay, $size);
 		}
-
+		
 		return $timeToWait >= 0 ? $timeToWait : -1;
+	}
+
+	private function dequeueWithIteration(int $waitSeconds, int $count, $bufferDelay, int $size): array
+	{
+		$initialKey = null;
+		
+		while ($waitSeconds >= 0)
+		{
+			$this->dao->popDelayed($this->name, $bufferDelay, $size);
+
+			$waitSeconds = $this->decreaseWaiting($bufferDelay, $size);
+			
+			$initialKey = $this->dao->dequeueInitialKey($this->name, $waitSeconds);
+
+			if ($initialKey && $initialKey != RedisNameBuilder::getZeroKey())
+			{
+				return $this->dao->dequeueAll($this->name, $count - 1, $initialKey);
+			}
+		}
+		
+		if ($initialKey == RedisNameBuilder::getZeroKey())
+		{
+			$this->dao->popDelayed($this->name, $bufferDelay, $size);
+			
+			$initialKey = $this->dao->dequeueInitialKey($this->name, $waitSeconds);
+			
+			if ($initialKey && $initialKey != RedisNameBuilder::getZeroKey())
+			{
+				return $this->dao->dequeueAll($this->name, $count - 1, $initialKey);
+			}
+		}
+		
+		return [];
 	}
 	
 	
@@ -91,27 +124,8 @@ class RedisDequeue implements IRedisDequeue
 	
 	public function dequeue(int $count = 1, int $waitSeconds, float $bufferDelay = 0.0, int $size = 0): array 
 	{
-		if (!$this->startTime)
-		{
-			$this->startTime = TimeGenerator::getMs($waitSeconds);
-		}
+		$this->startTime = TimeGenerator::getMs($waitSeconds);
 				
-		$this->dao->popDelayed($this->name, $bufferDelay, $size);
-
-		$waitSeconds = $this->decreaseWaiting($bufferDelay, $size);
-
-		$initialKey = $this->dao->dequeueInitialKey($this->name, $waitSeconds);
-
-		if ($initialKey == RedisNameBuilder::getZeroKey() || (!$initialKey && $waitSeconds >= 0))
-		{
-			return $this->dequeue($count, $waitSeconds, $bufferDelay, $size);
-		}
-		
-		if (!$initialKey)
-		{
-			return [];
-		}
-		
-		return $this->dao->dequeueAll($this->name, $count - 1, $initialKey);
+		return $this->dequeueWithIteration($waitSeconds, $count, $bufferDelay, $size);
 	}
 }

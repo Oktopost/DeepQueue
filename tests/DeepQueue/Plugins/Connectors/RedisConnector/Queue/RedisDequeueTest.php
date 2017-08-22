@@ -80,6 +80,18 @@ class RedisDequeueTest extends TestCase
 		self::assertEmpty($this->getSubject()->dequeue(255, 2));
 	}
 	
+	public function test_dequeue_WithZeroValues_GetEmptyArray()
+	{
+		$payload = new Payload();
+		$payload->Key = 'bgg';
+		$payload->Delay = 60;
+		
+		$payloads = $this->preparePayloads([$payload]);
+		$this->getDAO()->enqueue(self::QUEUE_NAME, $payloads);
+		
+		self::assertEmpty($this->getSubject()->dequeue(1, 0,0,0));
+	}
+	
 	public function test_dequeue_Now_WithoutWaiting_GetPayloads()
 	{
 		$payload1 = new Payload();
