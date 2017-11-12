@@ -112,7 +112,14 @@ class Queue implements IQueue
 		{
 			foreach ($res as $workload)
 			{
-				$payload[] = $workload->Payload;
+				if (substr($workload->Id, 0, 3) === 'unq')
+				{
+					$payload[] = $workload->Payload;
+				}
+				else
+				{
+					$payload[$workload->Id] = $workload->Payload;
+				}
 			}
 		}
 		

@@ -319,8 +319,8 @@ class RedisManagerTest extends TestCase
 	
 		self::assertNull($manager->load('flushtest'));
 		
-		$payload = $this->getDQ()->get($object->Name)->dequeue(1);
+		$payloadData = $this->getDQ()->get($object->Name)->dequeue(1);
 		
-		self::assertEquals('staying-alive', $payload[0]);
+		self::assertEquals('staying-alive', $payloadData[$payload->Key]);
 	}
 }
