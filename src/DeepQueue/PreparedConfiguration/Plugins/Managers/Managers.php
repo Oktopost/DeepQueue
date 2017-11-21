@@ -7,8 +7,7 @@ use DeepQueue\Plugins\Managers\MySQLManager\MySQLManager;
 use DeepQueue\Plugins\Managers\RedisManager\RedisManager;
 use DeepQueue\Plugins\Managers\CachedManager\CachedManager;
 use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
-
-use Squid\MySql\IMySqlConnector;
+use DeepQueue\Plugins\Managers\MemoryCacheManager\MemoryCacheManager;
 
 
 class Managers
@@ -26,9 +25,6 @@ class Managers
 		return new InMemoryManager();
 	}
 	
-	/**
-	 * @param array|IMySqlConnector $mysqlConfig
-	 */
 	public static function MySQL($config): IManagerPlugin
 	{
 		return new MySQLManager($config);
@@ -37,5 +33,10 @@ class Managers
 	public static function Redis(array $config): IManagerPlugin
 	{
 		return new RedisManager($config);
+	}
+	
+	public static function MemoryCached(IManagerPlugin $parent, float $ttl = 1.0): IManagerPlugin
+	{
+		return new MemoryCacheManager($parent, $ttl);
 	}
 }

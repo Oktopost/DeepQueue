@@ -358,7 +358,7 @@ class RedisDequeueTest extends TestCase
 		$endTime = microtime(true) - $startTime;
 		
 		self::assertEmpty($payloads);
-		self::assertEquals(2, $endTime, '', 0.5);
+		self::assertEquals(2, $endTime, '', 0.7);
 	}
 	
 	public function test_dequeue_Delayed_WithWaitingAndBuffer_GetDelayedAfterBufferOverflow_GotDelayed()
@@ -385,7 +385,7 @@ class RedisDequeueTest extends TestCase
 		$endTime = microtime(true) - $startTime;
 		
 		self::assertEquals(2, count($payloads));
-		self::assertEquals(2, $endTime, '', 0.5);
+		self::assertEquals(2, $endTime, '', 0.7);
 	}
 	
 	public function test_dequeue_Delayed_WithWaitBufferAndPackageSize_PackageReadyBeforeBuffer_GotDelayed()
@@ -412,7 +412,7 @@ class RedisDequeueTest extends TestCase
 		$endTime = microtime(true) - $startTime;
 		
 		self::assertEquals(3, count($payloads));
-		self::assertEquals(2, $endTime, '', 0.5);
+		self::assertEquals(2, $endTime, '', 0.7);
 	}
 	
 	public function test_dequeue_NoDelayed_WithWaitBuffer_GotEmptyArray()
@@ -424,6 +424,6 @@ class RedisDequeueTest extends TestCase
 		$endTime = microtime(true) - $startTime;
 		
 		self::assertEmpty($payloads);
-		self::assertEquals(2, $endTime, '', 0.5);
+		self::assertEquals(2, $endTime, '', 0.7);
 	}
 }
