@@ -9,11 +9,12 @@ use DeepQueue\Plugins\Connectors\FallbackConnector\FallbackConnector;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
 
 use Squid\MySql\IMySqlConnector;
+use Traitor\TStaticClass;
 
 
 class Connectors
 {
-	use \Objection\TStaticClass;
+	use TStaticClass;
 	
 	
 	public static function Fallback(IConnectorPlugin $main, IConnectorPlugin $fallback): IConnectorPlugin

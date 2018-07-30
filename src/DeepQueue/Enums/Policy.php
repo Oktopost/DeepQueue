@@ -2,9 +2,12 @@
 namespace DeepQueue\Enums;
 
 
+use Traitor\TEnum;
+
+
 class Policy
 {
-	use \Objection\TEnum;
+	use TEnum;
 	
 	
 	public const ALLOWED	= 'allowed';

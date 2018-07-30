@@ -7,10 +7,12 @@ use Serialization\Serializers\JsonSerializer;
 use Serialization\Json\Serializers\ArraySerializer;
 use Serialization\Json\Serializers\PrimitiveSerializer;
 
+use Traitor\TStaticClass;
+
 
 class DefaultSerializer
 {
-	use \Objection\TStaticClass;
+	use TStaticClass;
 	
 	
 	public static function get(): ISerializer

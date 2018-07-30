@@ -3,11 +3,12 @@ namespace lib;
 
 
 use Squid\MySql;
+use Traitor\TStaticClass;
 
 
 class MySQLConfig
 {
-	use \Objection\TStaticClass;
+	use TStaticClass;
 	
 	
 	private const TABLES = [

@@ -18,7 +18,7 @@ class MemoryCacheManager implements ICacheableManager
 	private $cache = [];
 	
 	
-	public function __constructor(IManagerPlugin $parent, float $ttl = 1.0)
+	public function __construct(IManagerPlugin $parent, float $ttl = 1.0)
 	{
 		$this->parent	= $parent; 
 		$this->ttl		= $ttl;

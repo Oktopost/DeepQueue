@@ -2,9 +2,12 @@
 namespace DeepQueue\Enums;
 
 
+use Traitor\TEnum;
+
+
 class QueueState
 {
-	use \Objection\TEnum;
+	use TEnum;
 
 
 	/**

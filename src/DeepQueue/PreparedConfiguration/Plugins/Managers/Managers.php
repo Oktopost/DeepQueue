@@ -3,16 +3,19 @@ namespace DeepQueue\PreparedConfiguration\Plugins\Managers;
 
 
 use DeepQueue\Base\Plugins\IManagerPlugin;
+use DeepQueue\Plugins\Managers\SafeManager\SafeManager;
 use DeepQueue\Plugins\Managers\MySQLManager\MySQLManager;
 use DeepQueue\Plugins\Managers\RedisManager\RedisManager;
 use DeepQueue\Plugins\Managers\CachedManager\CachedManager;
 use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
 use DeepQueue\Plugins\Managers\MemoryCacheManager\MemoryCacheManager;
 
+use Traitor\TStaticClass;
+
 
 class Managers
 {
-	use \Objection\TStaticClass;
+	use TStaticClass;
 	
 	
 	public static function Cached(IManagerPlugin $main, IManagerPlugin $cache): IManagerPlugin
@@ -38,5 +41,10 @@ class Managers
 	public static function MemoryCached(IManagerPlugin $parent, float $ttl = 1.0): IManagerPlugin
 	{
 		return new MemoryCacheManager($parent, $ttl);
+	}
+	
+	public static function Safe(IManagerPlugin $parent, ?callable $onError = null): IManagerPlugin
+	{
+		return new SafeManager($parent, $onError);
 	}
 }

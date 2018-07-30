@@ -2,9 +2,12 @@
 namespace DeepQueue\Exceptions;
 
 
+use Traitor\TConstsClass;
+
+
 class CodeCategory
 {
-	use \Objection\TConstsClass;
+	use TConstsClass;
 	
 	
 	public const GENERIC	= 10000;

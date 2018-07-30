@@ -2,9 +2,12 @@
 namespace DeepQueue\Exceptions;
 
 
+use Traitor\TConstsClass;
+
+
 class ValidationErrorCode
 {
-	use \Objection\TConstsClass;
+	use TConstsClass;
 	
 	
 	public const KEY_REQUIRED			= 10000;

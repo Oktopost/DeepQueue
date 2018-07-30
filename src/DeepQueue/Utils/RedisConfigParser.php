@@ -6,10 +6,12 @@ use DeepQueue\Config\RedisConfig;
 use DeepQueue\Base\Config\IRedisConfig;
 use DeepQueue\Exceptions\InvalidUsageException;
 
+use Traitor\TStaticClass;
+
 
 class RedisConfigParser
 {
-	use \Objection\TStaticClass;
+	use TStaticClass;
 	
 	
 	private const MAP = 

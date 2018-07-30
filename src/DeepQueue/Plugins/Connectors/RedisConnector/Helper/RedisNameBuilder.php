@@ -2,9 +2,12 @@
 namespace DeepQueue\Plugins\Connectors\RedisConnector\Helper;
 
 
+use Traitor\TStaticClass;
+
+
 class RedisNameBuilder
 {
-	use \Objection\TStaticClass;
+	use TStaticClass;
 	
 	
 	private const ZEROKEY = '000-000-000';

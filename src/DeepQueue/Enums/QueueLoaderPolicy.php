@@ -2,9 +2,12 @@
 namespace DeepQueue\Enums;
 
 
+use Traitor\TEnum;
+
+
 class QueueLoaderPolicy
 {
-	use \Objection\TEnum;
+	use TEnum;
 	
 	
 	public const CREATE_NEW		= 0;

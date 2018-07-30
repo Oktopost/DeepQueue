@@ -3,11 +3,12 @@ namespace DeepQueue;
 
 
 use Skeleton\Skeleton;
+use Traitor\TStaticClass;
 
 
 class Scope
 {
-	use \Objection\TStaticClass;
+	use TStaticClass;
 	
 	
 	/** @var Skeleton */

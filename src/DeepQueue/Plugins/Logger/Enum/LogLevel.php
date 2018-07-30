@@ -2,9 +2,12 @@
 namespace DeepQueue\Plugins\Logger\Enum;
 
 
+use Traitor\TConstsClass;
+
+
 class LogLevel
 {
-	use \Objection\TConstsClass;
+	use TConstsClass;
 	
 	
 	public const ERROR 		= 2000;
