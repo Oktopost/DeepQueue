@@ -5,10 +5,7 @@ namespace DeepQueue\Plugins\Connectors\SoftSwitchConnector;
 use CosmicRay\Wrappers\PHPUnit\UnitestCase;
 
 use DeepQueue\Base\IQueueConfig;
-use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
-use DeepQueue\Base\Plugins\IConnectorPlugin;
-use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 
 
 class SoftSwitchQueueTest extends UnitestCase
