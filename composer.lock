@@ -47,16 +47,16 @@
         },
         {
             "name": "oktopost/cosmic-ray",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Oktopost/CosmicRay.git",
-                "reference": "1bb4d3a22f77de2b352b601ff3ea88c67bc50751"
+                "reference": "c8879e56f93a6c7716adc0c5725086c2b578d68a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Oktopost/CosmicRay/zipball/1bb4d3a22f77de2b352b601ff3ea88c67bc50751",
-                "reference": "1bb4d3a22f77de2b352b601ff3ea88c67bc50751",
+                "url": "https://api.github.com/repos/Oktopost/CosmicRay/zipball/c8879e56f93a6c7716adc0c5725086c2b578d68a",
+                "reference": "c8879e56f93a6c7716adc0c5725086c2b578d68a",
                 "shasum": ""
             },
             "require": {
@@ -83,7 +83,7 @@
                 }
             ],
             "homepage": "https://github.com/Oktopost/CosmicRay",
-            "time": "2018-06-27T05:17:53+00:00"
+            "time": "2018-10-28T06:25:42+00:00"
         },
         {
             "name": "oktopost/objection",
