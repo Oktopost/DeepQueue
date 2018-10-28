@@ -2,12 +2,10 @@
 namespace DeepQueue\Plugins\Connectors\FallbackConnector;
 
 
-use DeepQueue\Base\IMetaData;
-use DeepQueue\Base\IQueueObject;
 use DeepQueue\Base\IDeepQueueConfig;
-use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
-use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
+use DeepQueue\Base\Plugins\IConnectorPlugin;
+use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
 use DeepQueue\Plugins\Connectors\FallbackConnector\Queue\FallbackQueue;
 use DeepQueue\Plugins\Connectors\FallbackConnector\Base\IFallbackConnector;
 

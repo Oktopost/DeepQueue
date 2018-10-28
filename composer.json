@@ -16,13 +16,14 @@
     "minimum-stability": "stable",
     "require": {
         "oktopost/squid": "^1.0.24",
-        "oktopost/skeleton": "^1.0",
+        "oktopost/skeleton": "^1.1",
         "oktopost/objection": "^1.0",
         "oktopost/annotation": "^1.0",
         "predis/predis": "^1.1",
         "oktopost/serialization": "^1.0",
         "php-on-couch/php-on-couch": "^2.0",
-        "unstable-cacao/traitor": "^1.0"
+        "unstable-cacao/traitor": "^1.0",
+        "oktopost/cosmic-ray": "^1.0"
     },
     "autoload": {
         "psr-0": {
