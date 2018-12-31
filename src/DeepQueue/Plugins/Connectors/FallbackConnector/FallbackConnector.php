@@ -6,6 +6,7 @@ use DeepQueue\Base\IDeepQueueConfig;
 use DeepQueue\Base\Queue\Remote\IRemoteQueue;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Base\Plugins\ConnectorElements\IQueueManager;
+use DeepQueue\Plugins\Connectors\FallbackConnector\Manager\FallbackQueueManager;
 use DeepQueue\Plugins\Connectors\FallbackConnector\Queue\FallbackQueue;
 use DeepQueue\Plugins\Connectors\FallbackConnector\Base\IFallbackConnector;
 
@@ -39,17 +40,13 @@ class FallbackConnector implements IFallbackConnector
 
 	public function manager(string $queueName): IQueueManager
 	{
-		try
-		{
-			return $this->main->manager($queueName);
-		}
-		catch (\Throwable $e)
-		{
-			$this->deepConfig->logger()->logException($e, 
-				"Failed to load manager for {$queueName} queue object", [], $queueName);
-			
-			return $this->fallback->manager($queueName);
-		}
+		$mainManager = $this->main->manager($queueName);
+		$fallbackManager = $this->fallback->manager($queueName);
+		
+		$manager = new FallbackQueueManager($mainManager, $fallbackManager, $this->deepConfig->logger());
+		$manager->setQueueName($queueName);
+		
+		return $manager;
 	}
 
 	public function getQueue(string $name): IRemoteQueue

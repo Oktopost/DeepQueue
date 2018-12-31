@@ -9,6 +9,7 @@ use DeepQueue\Base\IMetaData;
 use DeepQueue\Base\Config\IRedisConfig;
 use DeepQueue\Base\Plugins\IConnectorPlugin;
 use DeepQueue\Enums\QueueLoaderPolicy;
+use DeepQueue\Plugins\Connectors\FallbackConnector\Manager\FallbackQueueManager;
 use DeepQueue\Utils\RedisConfigParser;
 use DeepQueue\Plugins\Managers\InMemoryManager\InMemoryManager;
 use DeepQueue\Plugins\Connectors\InMemoryConnector\InMemoryConnector;
@@ -115,12 +116,12 @@ class FallbackConnectorTest extends TestCase
 		self::assertEquals(2000, $loadedCounter + $meta->Enqueued + sizeof($leftInFallback));
 	}
 	
-	public function test_getManager_ExceptionThrowed_GetFallbackManager()
+	public function test_getManager_GetFallbackManager()
 	{	
-		$fallback = new FallbackConnector($this->getThrowableConnector(), new InMemoryConnector());
+		$fallback = new FallbackConnector(new InMemoryConnector(), new InMemoryConnector());
 		$fallback->setDeepConfig($this->getDQ()->config());
 		
-		self::assertInstanceOf(IQueueManager::class, $fallback
+		self::assertInstanceOf(FallbackQueueManager::class, $fallback
 			->manager('test'));
 	}
 }
