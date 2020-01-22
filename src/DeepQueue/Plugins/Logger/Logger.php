@@ -60,7 +60,9 @@ class Logger implements ILogger
 	 */
 	public function logException(\Throwable $e, string $message, $data = null, ?string $queueName = null): void
 	{
-		$this->error("{$message} Got {$e->getMessage()}, Trace: " . PHP_EOL . "{$e->getTraceAsString()}", 
+		$trace = base64_encode($e->getTraceAsString());
+		
+		$this->error("{$message} Got {$e->getMessage()}, Trace: " . "{$trace}", 
 			$data, null, $queueName);
 	}
 
