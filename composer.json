@@ -21,7 +21,6 @@
         "oktopost/annotation": "^1.0",
         "predis/predis": "^1.1",
         "oktopost/serialization": "^1.0",
-        "php-on-couch/php-on-couch": "^2.0",
         "unstable-cacao/traitor": "^1.0",
         "oktopost/cosmic-ray": "^1.0"
     },

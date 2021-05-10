@@ -7,7 +7,6 @@ php:
 services:
   - mysql
   - redis-server
-  - couchdb
   
 before_install:  
   - mysql -e 'CREATE DATABASE IF NOT EXISTS _deepqueue_test_;'
